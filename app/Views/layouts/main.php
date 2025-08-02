@@ -1,272 +1,451 @@
 <?php
-$assets = config('Assets');
+// Load assets helper
+helper('assets');
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light-style layout-menu-fixed layout-compact" dir="ltr" data-theme="theme-default" data-assets-path="<?= base_url('assets/') ?>" data-template="vertical-menu-template-free">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title><?= $this->renderSection('title') ?> | Grain Management System</title>
     
-    <!-- CSS Assets -->
-    <link rel="stylesheet" href="<?= $assets->getAssetUrl($assets->css['fontawesome']) ?>">
-    <link rel="stylesheet" href="<?= $assets->getAssetUrl($assets->css['adminlte']) ?>">
-    <link rel="stylesheet" href="<?= $assets->getAssetUrl($assets->css['custom']) ?>">
+    <meta name="description" content="Modern Grain Management System with Professional UI">
+    <meta name="keywords" content="grain, management, inventory, dashboard">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="<?= base_url('assets/img/favicon.ico') ?>">
     
-    <!-- Meta Tags -->
-    <meta name="description" content="Professional Grain Management System">
-    <meta name="author" content="Grain Management Co.">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= css_asset('custom') ?>">
     
     <?= $this->renderSection('head') ?>
 </head>
-<body class="hold-transition sidebar-mini layout-fixed">
-    <div class="wrapper">
-        
-        <!-- Preloader -->
-        <div class="preloader flex-column justify-content-center align-items-center">
-            <i class="fas fa-seedling fa-3x text-primary pulse"></i>
-            <p class="mt-2">Loading...</p>
-        </div>
-        
-        <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-            <!-- Left navbar links -->
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button">
-                        <i class="fas fa-bars"></i>
-                    </a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="<?= site_url('dashboard') ?>" class="nav-link">Home</a>
-                </li>
-            </ul>
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
             
-            <!-- Right navbar links -->
-            <ul class="navbar-nav ml-auto">
-                <!-- Notifications Dropdown Menu -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="far fa-bell"></i>
-                        <span class="badge badge-warning navbar-badge">3</span>
+            <!-- Menu -->
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                <!-- App Brand -->
+                <div class="app-brand demo">
+                    <a href="<?= site_url('dashboard') ?>" class="app-brand-link">
+                        <span class="app-brand-logo demo">
+                            <i class="bx bxs-leaf" style="font-size: 28px; color: #696cff;"></i>
+                        </span>
+                        <span class="app-brand-text demo menu-text fw-bold ms-2">Grain<span style="color: #696cff;">Flow</span></span>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <span class="dropdown-item dropdown-header">3 Notifications</span>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-box mr-2"></i> New batch received
-                            <span class="float-right text-muted text-sm">3 mins</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-truck mr-2"></i> Dispatch completed
-                            <span class="float-right text-muted text-sm">12 hours</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-exclamation-triangle mr-2"></i> Low stock alert
-                            <span class="float-right text-muted text-sm">2 days</span>
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-                    </div>
-                </li>
-                
-                <!-- User Menu -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link" data-toggle="dropdown" href="#">
-                        <i class="far fa-user"></i>
+                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                        <i class="bx bx-chevron-left bx-sm align-middle"></i>
                     </a>
-                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                        <div class="dropdown-header">
-                            <strong>Admin User</strong><br>
-                            <small>admin@grainmanagement.com</small>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-user mr-2"></i> Profile
-                        </a>
-                        <a href="<?= site_url('settings') ?>" class="dropdown-item">
-                            <i class="fas fa-cog mr-2"></i> Settings
-                        </a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item">
-                            <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                        </a>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-        
-        <!-- Main Sidebar Container -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <!-- Brand Logo -->
-            <a href="<?= site_url('dashboard') ?>" class="brand-link">
-                <i class="fas fa-seedling brand-image ml-3 mr-2"></i>
-                <span class="brand-text font-weight-light">Grain Management</span>
-            </a>
-            
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <!-- Sidebar user panel -->
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <i class="fas fa-user-circle fa-2x text-white"></i>
-                    </div>
-                    <div class="info">
-                        <a href="#" class="d-block">Admin User</a>
-                    </div>
                 </div>
                 
-                <!-- Sidebar Menu -->
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item">
-                            <a href="<?= site_url('dashboard') ?>" class="nav-link <?= uri_string() == 'dashboard' || uri_string() == '' ? 'active' : '' ?>">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a href="<?= site_url('batches') ?>" class="nav-link <?= strpos(uri_string(), 'batches') === 0 ? 'active' : '' ?>">
-                                <i class="nav-icon fas fa-boxes"></i>
-                                <p>
-                                    Batch Management
-                                    <span class="badge badge-info right">New</span>
-                                </p>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a href="<?= site_url('dispatches') ?>" class="nav-link <?= strpos(uri_string(), 'dispatches') === 0 ? 'active' : '' ?>">
-                                <i class="nav-icon fas fa-truck"></i>
-                                <p>Dispatch Management</p>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a href="<?= site_url('purchase-orders') ?>" class="nav-link <?= strpos(uri_string(), 'purchase-orders') === 0 ? 'active' : '' ?>">
-                                <i class="nav-icon fas fa-file-invoice"></i>
-                                <p>Purchase Orders</p>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a href="<?= site_url('inventory') ?>" class="nav-link <?= strpos(uri_string(), 'inventory') === 0 ? 'active' : '' ?>">
-                                <i class="nav-icon fas fa-warehouse"></i>
-                                <p>
-                                    Inventory
-                                    <span class="badge badge-success right">Live</span>
-                                </p>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a href="<?= site_url('expenses') ?>" class="nav-link <?= strpos(uri_string(), 'expenses') === 0 ? 'active' : '' ?>">
-                                <i class="nav-icon fas fa-money-bill-wave"></i>
-                                <p>Expense Tracking</p>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-header">SYSTEM</li>
-                        
-                        <li class="nav-item">
-                            <a href="<?= site_url('settings') ?>" class="nav-link <?= strpos(uri_string(), 'settings') === 0 ? 'active' : '' ?>">
-                                <i class="nav-icon fas fa-cogs"></i>
-                                <p>Settings</p>
-                            </a>
-                        </li>
-                        
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-question-circle"></i>
-                                <p>Help & Support</p>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </aside>
-        
-        <!-- Content Wrapper -->
-        <div class="content-wrapper">
-            <!-- Content Header -->
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1 class="m-0"><?= $this->renderSection('title') ?></h1>
-                        </div>
-                        <div class="col-sm-6">
-                            <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="<?= site_url('dashboard') ?>">Home</a></li>
-                                <?= $this->renderSection('breadcrumb') ?>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Main content -->
-            <section class="content">
-                <div class="container-fluid">
-                    <!-- Notifications Container -->
-                    <div id="notifications-container">
-                        <?php if(session()->getFlashdata('success')): ?>
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="fas fa-check-circle"></i> <?= session()->getFlashdata('success') ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        <?php endif; ?>
-                        
-                        <?php if(session()->getFlashdata('error')): ?>
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <i class="fas fa-exclamation-circle"></i> <?= session()->getFlashdata('error') ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        <?php endif; ?>
-                        
-                        <?php if(session()->getFlashdata('warning')): ?>
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                <i class="fas fa-exclamation-triangle"></i> <?= session()->getFlashdata('warning') ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        <?php endif; ?>
-                        
-                        <?php if(session()->getFlashdata('info')): ?>
-                            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                                <i class="fas fa-info-circle"></i> <?= session()->getFlashdata('info') ?>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                            </div>
-                        <?php endif; ?>
-                    </div>
+                <div class="menu-inner-shadow"></div>
+                
+                <!-- Menu Items -->
+                <ul class="menu-inner py-1">
+                    <!-- Dashboard -->
+                    <li class="menu-item <?= uri_string() == 'dashboard' || uri_string() == '' ? 'active' : '' ?>">
+                        <a href="<?= site_url('dashboard') ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div data-i18n="Analytics">Dashboard</div>
+                        </a>
+                    </li>
                     
-                    <!-- Page Content -->
-                    <?= $this->renderSection('content') ?>
+                    <!-- Inventory Management -->
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Inventory</span>
+                    </li>
+                    
+                    <li class="menu-item <?= strpos(uri_string(), 'batches') === 0 ? 'active' : '' ?>">
+                        <a href="<?= site_url('batches') ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-package"></i>
+                            <div data-i18n="Batch Management">Batch Management</div>
+                            <div class="badge badge-center rounded-pill bg-danger w-px-20 h-px-20 ms-auto">
+                                <span class="badge-content">5</span>
+                            </div>
+                        </a>
+                    </li>
+                    
+                    <li class="menu-item <?= strpos(uri_string(), 'inventory') === 0 ? 'active' : '' ?>">
+                        <a href="<?= site_url('inventory') ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-store"></i>
+                            <div data-i18n="Inventory">Inventory</div>
+                            <div class="badge badge-center rounded-pill bg-success w-px-20 h-px-20 ms-auto">
+                                <i class="bx bx-check bx-xs"></i>
+                            </div>
+                        </a>
+                    </li>
+                    
+                    <!-- Operations -->
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">Operations</span>
+                    </li>
+                    
+                    <li class="menu-item <?= strpos(uri_string(), 'dispatches') === 0 ? 'active' : '' ?>">
+                        <a href="<?= site_url('dispatches') ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-car"></i>
+                            <div data-i18n="Dispatches">Dispatch Management</div>
+                        </a>
+                    </li>
+                    
+                    <li class="menu-item <?= strpos(uri_string(), 'purchase-orders') === 0 ? 'active' : '' ?>">
+                        <a href="<?= site_url('purchase-orders') ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-receipt"></i>
+                            <div data-i18n="Purchase Orders">Purchase Orders</div>
+                        </a>
+                    </li>
+                    
+                    <li class="menu-item <?= strpos(uri_string(), 'expenses') === 0 ? 'active' : '' ?>">
+                        <a href="<?= site_url('expenses') ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-wallet"></i>
+                            <div data-i18n="Expenses">Expense Tracking</div>
+                        </a>
+                    </li>
+                    
+                    <li class="menu-item <?= strpos(uri_string(), 'reports') === 0 ? 'active' : '' ?>">
+                        <a href="<?= site_url('reports') ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
+                            <div data-i18n="Reports">Reports & Analytics</div>
+                        </a>
+                    </li>
+                    
+                    <!-- System -->
+                    <li class="menu-header small text-uppercase">
+                        <span class="menu-header-text">System</span>
+                    </li>
+                    
+                    <li class="menu-item <?= strpos(uri_string(), 'settings') === 0 ? 'active' : '' ?>">
+                        <a href="<?= site_url('settings') ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-cog"></i>
+                            <div data-i18n="Settings">Settings</div>
+                        </a>
+                    </li>
+                    
+                    <li class="menu-item">
+                        <a href="#" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-support"></i>
+                            <div data-i18n="Support">Help & Support</div>
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+            <!-- / Menu -->
+            
+            <!-- Layout container -->
+            <div class="layout-page">
+                
+                <!-- Navbar -->
+                <nav class="layout-navbar navbar navbar-expand-xl align-items-center bg-navbar-theme" id="layout-navbar">
+                    <div class="container-fluid">
+                        <!-- Mobile menu toggle -->
+                        <div class="layout-menu-toggle d-xl-none">
+                            <a class="nav-link px-0" href="javascript:void(0)" onclick="toggleMobileMenu()">
+                                <i class="bx bx-menu bx-md"></i>
+                            </a>
+                        </div>
+                        
+                        <!-- Navbar content -->
+                        <div class="navbar-collapse d-flex justify-content-between align-items-center flex-grow-1" id="navbar-collapse">
+                            
+                            <!-- Left side - Search -->
+                            <div class="navbar-nav-left d-flex align-items-center">
+                                <div class="nav-item navbar-search-wrapper">
+                                    <div class="input-group input-group-merge">
+                                        <span class="input-group-text border-0 bg-transparent">
+                                            <i class="bx bx-search fs-5"></i>
+                                        </span>
+                                        <input type="text" class="form-control border-0 shadow-none navbar-search-input" placeholder="Search..." aria-label="Search...">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Right side - Actions -->
+                            <div class="navbar-nav-right d-flex align-items-center">
+                                <ul class="navbar-nav flex-row align-items-center ms-auto">
+                            
+                            <!-- Quick Actions -->
+                            <li class="nav-item dropdown-shortcuts navbar-dropdown dropdown me-2 me-xl-0">
+                                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    <i class="bx bx-grid-alt fs-4 lh-0"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end py-0">
+                                    <div class="dropdown-menu-header border-bottom">
+                                        <div class="dropdown-header d-flex align-items-center py-3">
+                                            <h5 class="text-body mb-0 me-auto">Quick Actions</h5>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-shortcuts-list scrollable-container">
+                                        <div class="row row-bordered overflow-visible g-0">
+                                            <div class="dropdown-shortcuts-item col">
+                                                <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
+                                                    <i class="bx bx-package fs-4"></i>
+                                                </span>
+                                                <a href="<?= site_url('batches/new') ?>" class="stretched-link">New Batch</a>
+                                                <small class="text-muted mb-0">Add batch</small>
+                                            </div>
+                                            <div class="dropdown-shortcuts-item col">
+                                                <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
+                                                    <i class="bx bx-car fs-4"></i>
+                                                </span>
+                                                <a href="<?= site_url('dispatches/new') ?>" class="stretched-link">New Dispatch</a>
+                                                <small class="text-muted mb-0">Create dispatch</small>
+                                            </div>
+                                        </div>
+                                        <div class="row row-bordered overflow-visible g-0">
+                                            <div class="dropdown-shortcuts-item col">
+                                                <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
+                                                    <i class="bx bx-receipt fs-4"></i>
+                                                </span>
+                                                <a href="<?= site_url('purchase-orders/new') ?>" class="stretched-link">Purchase Order</a>
+                                                <small class="text-muted mb-0">New PO</small>
+                                            </div>
+                                            <div class="dropdown-shortcuts-item col">
+                                                <span class="dropdown-shortcuts-icon bg-label-secondary rounded-circle mb-2">
+                                                    <i class="bx bx-wallet fs-4"></i>
+                                                </span>
+                                                <a href="<?= site_url('expenses/new') ?>" class="stretched-link">Log Expense</a>
+                                                <small class="text-muted mb-0">Track expense</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            
+                            <!-- Notifications -->
+                            <li class="nav-item navbar-dropdown dropdown-notifications dropdown me-3 me-xl-1">
+                                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                    <i class="bx bx-bell bx-sm"></i>
+                                    <span class="badge bg-danger rounded-pill badge-notifications">3</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end py-0">
+                                    <li class="dropdown-menu-header border-bottom">
+                                        <div class="dropdown-header d-flex align-items-center py-3">
+                                            <h5 class="text-body mb-0 me-auto">Notifications</h5>
+                                            <span class="badge rounded-pill bg-label-primary p-2 me-2">3 New</span>
+                                        </div>
+                                    </li>
+                                    <li class="dropdown-notifications-list scrollable-container">
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item list-group-item-action dropdown-notifications-item">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-3">
+                                                        <div class="avatar">
+                                                            <span class="avatar-initial rounded-circle bg-label-success"><i class="bx bx-package"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="mb-1">New batch received</h6>
+                                                        <p class="mb-0">Batch #B001 has been received</p>
+                                                        <small class="text-muted">3 minutes ago</small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item list-group-item-action dropdown-notifications-item">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-3">
+                                                        <div class="avatar">
+                                                            <span class="avatar-initial rounded-circle bg-label-info"><i class="bx bx-car"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="mb-1">Dispatch completed</h6>
+                                                        <p class="mb-0">Dispatch #D001 has been completed</p>
+                                                        <small class="text-muted">12 hours ago</small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="list-group-item list-group-item-action dropdown-notifications-item">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-3">
+                                                        <div class="avatar">
+                                                            <span class="avatar-initial rounded-circle bg-label-warning"><i class="bx bx-error"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <h6 class="mb-1">Low stock alert</h6>
+                                                        <p class="mb-0">Wheat stock is running low</p>
+                                                        <small class="text-muted">2 days ago</small>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="dropdown-menu-footer border-top">
+                                        <a href="javascript:void(0);" class="dropdown-item d-flex justify-content-center p-3">
+                                            View all notifications
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            
+                            <!-- User -->
+                            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                    <div class="avatar avatar-online">
+                                        <img src="<?= base_url('assets/img/avatars/1.png') ?>" alt class="w-px-40 h-auto rounded-circle" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2OTZjZmYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDEgNSAyMUg3QzcgMTguMjM4NiA5LjIzODU4IDE2IDEyIDE2QzE0Ljc2MTQgMTYgMTcgMTguMjM4NiAxNyAyMUgxOUMxOSAxNy4xMzQxIDE1Ljg2NiAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K'">
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <div class="d-flex">
+                                                <div class="flex-shrink-0 me-3">
+                                                    <div class="avatar avatar-online">
+                                                        <img src="<?= base_url('assets/img/avatars/1.png') ?>" alt class="w-px-40 h-auto rounded-circle" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2OTZjZmYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDEgNSAyMUg3QzcgMTguMjM4NiA5LjIzODU4IDE2IDEyIDE2QzE0Ljc2MTQgMTYgMTcgMTguMjM4NiAxNyAyMUgxOUMxOSAxNy4xMzQxIDE1Ljg2NiAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K'">
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <span class="fw-medium d-block">Admin User</span>
+                                                    <small class="text-muted">Administrator</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="dropdown-divider"></div>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bx bx-user me-2"></i>
+                                            <span class="align-middle">My Profile</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="<?= site_url('settings') ?>">
+                                            <i class="bx bx-cog me-2"></i>
+                                            <span class="align-middle">Settings</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="dropdown-divider"></div>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bx bx-power-off me-2"></i>
+                                            <span class="align-middle">Log Out</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+                <!-- / Navbar -->
+                
+                <!-- Content wrapper -->
+                <div class="content-wrapper">
+                    
+                    <!-- Content -->
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        
+                        <!-- Page Header -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div>
+                                        <h4 class="py-3 mb-0"><?= $this->renderSection('title') ?></h4>
+                                        <nav aria-label="breadcrumb">
+                                            <ol class="breadcrumb breadcrumb-style1">
+                                                <li class="breadcrumb-item">
+                                                    <a href="<?= site_url('dashboard') ?>">Home</a>
+                                                </li>
+                                                <?= $this->renderSection('breadcrumb') ?>
+                                            </ol>
+                                        </nav>
+                                    </div>
+                                    <div>
+                                        <?= $this->renderSection('page_actions') ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Notifications Container -->
+                        <div id="notifications-container">
+                            <?php if(session()->getFlashdata('success')): ?>
+                                <div class="alert alert-success alert-dismissible" role="alert">
+                                    <i class="bx bx-check-circle me-2"></i>
+                                    <?= session()->getFlashdata('success') ?>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if(session()->getFlashdata('error')): ?>
+                                <div class="alert alert-danger alert-dismissible" role="alert">
+                                    <i class="bx bx-error-circle me-2"></i>
+                                    <?= session()->getFlashdata('error') ?>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if(session()->getFlashdata('warning')): ?>
+                                <div class="alert alert-warning alert-dismissible" role="alert">
+                                    <i class="bx bx-error me-2"></i>
+                                    <?= session()->getFlashdata('warning') ?>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if(session()->getFlashdata('info')): ?>
+                                <div class="alert alert-info alert-dismissible" role="alert">
+                                    <i class="bx bx-info-circle me-2"></i>
+                                    <?= session()->getFlashdata('info') ?>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <!-- Page Content -->
+                        <?= $this->renderSection('content') ?>
+                        
+                    </div>
+                    <!-- / Content -->
+                    
+                    <!-- Footer -->
+                    <footer class="content-footer footer bg-footer-theme">
+                        <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                            <div class="mb-2 mb-md-0">
+                                © <?= date('Y') ?> <a href="#" target="_blank" class="footer-link fw-medium">GrainFlow</a>. All rights reserved.
+                            </div>
+                            <div class="d-none d-lg-inline-block">
+                                <a href="#" class="footer-link me-4">License</a>
+                                <a href="#" class="footer-link me-4">Documentation</a>
+                                <a href="#" class="footer-link">Support</a>
+                            </div>
+                        </div>
+                    </footer>
+                    <!-- / Footer -->
+                    
                 </div>
-            </section>
-        </div>
-        
-        <!-- Footer -->
-        <footer class="main-footer">
-            <strong>Copyright &copy; <?= date('Y') ?> <a href="#">Grain Management System</a>.</strong>
-            All rights reserved.
-            <div class="float-right d-none d-sm-inline-block">
-                <b>Version</b> 1.0.0
+                <!-- / Content wrapper -->
+                
             </div>
-        </footer>
+            <!-- / Layout page -->
+            
+        </div>
+        <!-- / Layout container -->
+        
     </div>
+    <!-- / Layout wrapper -->
     
-    <!-- JavaScript Assets -->
-    <script src="<?= $assets->getAssetUrl($assets->js['jquery']) ?>"></script>
-    <script src="<?= $assets->getAssetUrl($assets->js['bootstrap']) ?>"></script>
-    <script src="<?= $assets->getAssetUrl($assets->js['adminlte']) ?>"></script>
-    <script src="<?= $assets->getAssetUrl($assets->js['custom']) ?>"></script>
+    <!-- Core JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= js_asset('custom') ?>"></script>
     
+    <!-- Page specific scripts -->
     <?= $this->renderSection('scripts') ?>
 </body>
 </html>

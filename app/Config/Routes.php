@@ -55,6 +55,15 @@ $routes->group('settings', function ($routes) {
     $routes->post('update', 'SettingsController::update');
 });
 
+// Reports Module
+$routes->group('reports', function ($routes) {
+    $routes->get('/', 'ReportsController::index');
+    $routes->get('batches', 'ReportsController::batches');
+    $routes->get('inventory', 'ReportsController::inventory');
+    $routes->get('financial', 'ReportsController::financial');
+    $routes->get('export/(:alpha)', 'ReportsController::export/$1');
+});
+
 // Set 404 override
 $routes->set404Override(function() {
     return view('errors/custom_404');

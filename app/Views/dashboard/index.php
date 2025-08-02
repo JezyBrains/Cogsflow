@@ -6,100 +6,171 @@
 <li class="breadcrumb-item active">Dashboard</li>
 <?= $this->endSection() ?>
 
+<?= $this->section('page_actions') ?>
+<div class="d-flex gap-2">
+    <button type="button" class="btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bx bx-plus me-1"></i> Quick Add
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="<?= site_url('batches/new') ?>"><i class="bx bx-package me-2"></i>New Batch</a></li>
+        <li><a class="dropdown-item" href="<?= site_url('dispatches/new') ?>"><i class="bx bx-car me-2"></i>New Dispatch</a></li>
+        <li><a class="dropdown-item" href="<?= site_url('purchase-orders/new') ?>"><i class="bx bx-receipt me-2"></i>Purchase Order</a></li>
+    </ul>
+    <button type="button" class="btn btn-outline-secondary">
+        <i class="bx bx-refresh me-1"></i> Refresh
+    </button>
+</div>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
-<!-- Info boxes -->
-<div class="row">
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-boxes"></i></span>
-            <div class="info-box-content">
-                <span class="info-box-text">Total Batches</span>
-                <span class="info-box-number">
-                    0
-                    <small>batches</small>
-                </span>
+<!-- Statistics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="text-heading">Total Batches</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="mb-0 me-2">0</h3>
+                            <p class="text-success mb-0">(+0%)</p>
+                        </div>
+                        <p class="mb-0">Active inventory batches</p>
+                    </div>
+                    <div class="avatar">
+                        <span class="avatar-initial rounded bg-label-primary">
+                            <i class="bx bx-package bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box mb-3">
-            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-truck"></i></span>
-            <div class="info-box-content">
-                <span class="info-box-text">Active Dispatches</span>
-                <span class="info-box-number">
-                    0
-                    <small>active</small>
-                </span>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="text-heading">Active Dispatches</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="mb-0 me-2">0</h3>
+                            <p class="text-success mb-0">(+0%)</p>
+                        </div>
+                        <p class="mb-0">In-transit shipments</p>
+                    </div>
+                    <div class="avatar">
+                        <span class="avatar-initial rounded bg-label-success">
+                            <i class="bx bx-car bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box mb-3">
-            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-file-invoice"></i></span>
-            <div class="info-box-content">
-                <span class="info-box-text">Purchase Orders</span>
-                <span class="info-box-number">
-                    0
-                    <small>pending</small>
-                </span>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="text-heading">Purchase Orders</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="mb-0 me-2">0</h3>
+                            <p class="text-warning mb-0">(+0%)</p>
+                        </div>
+                        <p class="mb-0">Pending orders</p>
+                    </div>
+                    <div class="avatar">
+                        <span class="avatar-initial rounded bg-label-warning">
+                            <i class="bx bx-receipt bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box mb-3">
-            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-warehouse"></i></span>
-            <div class="info-box-content">
-                <span class="info-box-text">Inventory</span>
-                <span class="info-box-number">
-                    0
-                    <small>kg</small>
-                </span>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="content-left">
+                        <span class="text-heading">Total Inventory</span>
+                        <div class="d-flex align-items-center my-2">
+                            <h3 class="mb-0 me-2">0</h3>
+                            <p class="text-info mb-0">kg</p>
+                        </div>
+                        <p class="mb-0">Current stock levels</p>
+                    </div>
+                    <div class="avatar">
+                        <span class="avatar-initial rounded bg-label-info">
+                            <i class="bx bx-store bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Main row -->
-<div class="row">
-    <!-- Left col -->
-    <section class="col-lg-7 connectedSortable">
-        <!-- Custom tabs (Charts with tabs)-->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-chart-pie mr-1"></i>
-                    Inventory Overview
-                </h3>
-                <div class="card-tools">
-                    <ul class="nav nav-pills ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="#revenue-chart" data-toggle="tab">Stock Levels</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#sales-chart" data-toggle="tab">Grain Types</a>
-                        </li>
+<!-- Main Content Row -->
+<div class="row g-4">
+    <!-- Left Column -->
+    <div class="col-xl-8 col-lg-7 col-md-12">
+        <!-- Inventory Overview -->
+        <div class="card mb-4">
+            <div class="card-header d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                <h5 class="mb-0">Inventory Overview</h5>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bx bx-calendar me-1"></i> <span class="d-none d-sm-inline">This Month</span><span class="d-sm-none">Month</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">This Week</a></li>
+                        <li><a class="dropdown-item" href="#">This Month</a></li>
+                        <li><a class="dropdown-item" href="#">This Quarter</a></li>
+                        <li><a class="dropdown-item" href="#">This Year</a></li>
                     </ul>
                 </div>
             </div>
             <div class="card-body">
-                <div class="tab-content p-0">
-                    <!-- Morris chart - Stock Levels -->
-                    <div class="chart tab-pane active" id="revenue-chart" style="position: relative; height: 300px;">
-                        <div class="d-flex justify-content-center align-items-center h-100">
+                <ul class="nav nav-pills mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#stock-levels" type="button" role="tab">
+                            <i class="bx bx-bar-chart me-1"></i> Stock Levels
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#grain-types" type="button" role="tab">
+                            <i class="bx bx-pie-chart me-1"></i> Grain Types
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="stock-levels" role="tabpanel">
+                        <div class="d-flex justify-content-center align-items-center" style="height: 300px;">
                             <div class="text-center">
-                                <i class="fas fa-chart-bar fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Stock level charts will be available in Phase 2</p>
+                                <div class="avatar avatar-xl mb-3">
+                                    <span class="avatar-initial rounded bg-label-primary">
+                                        <i class="bx bx-bar-chart bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Stock Level Analytics</h6>
+                                <p class="text-muted mb-0">Charts and analytics will be available in Phase 2</p>
                             </div>
                         </div>
                     </div>
-                    <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;">
-                        <div class="d-flex justify-content-center align-items-center h-100">
+                    <div class="tab-pane fade" id="grain-types" role="tabpanel">
+                        <div class="d-flex justify-content-center align-items-center" style="height: 300px;">
                             <div class="text-center">
-                                <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Grain type distribution will be available in Phase 2</p>
+                                <div class="avatar avatar-xl mb-3">
+                                    <span class="avatar-initial rounded bg-label-success">
+                                        <i class="bx bx-pie-chart bx-lg"></i>
+                                    </span>
+                                </div>
+                                <h6 class="mb-1">Grain Distribution</h6>
+                                <p class="text-muted mb-0">Grain type analytics will be available in Phase 2</p>
                             </div>
                         </div>
                     </div>
@@ -108,35 +179,37 @@
         </div>
         
         <!-- Recent Batches -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-boxes mr-1"></i>
-                    Recent Batch Entries
-                </h3>
-                <div class="card-tools">
-                    <a href="<?= site_url('batches/new') ?>" class="btn btn-primary btn-sm">
-                        <i class="fas fa-plus"></i> New Batch
-                    </a>
+        <div class="card mt-4">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="card-title mb-0">Recent Batch Entries</h5>
+                    <small class="text-muted">Latest inventory additions</small>
                 </div>
+                <a href="<?= site_url('batches/new') ?>" class="btn btn-primary btn-sm">
+                    <i class="bx bx-plus me-1"></i> New Batch
+                </a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-sm">
+                    <table class="table table-borderless">
                         <thead>
                             <tr>
-                                <th>Batch ID</th>
-                                <th>Supplier</th>
-                                <th>Weight</th>
-                                <th>Date</th>
-                                <th>Status</th>
+                                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Batch</th>
+                                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Supplier</th>
+                                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Weight</th>
+                                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="5" class="text-center text-muted py-4">
-                                    <i class="fas fa-inbox fa-2x mb-2"></i><br>
-                                    No recent batch entries found.
+                                <td colspan="4" class="text-center py-5">
+                                    <div class="avatar avatar-xl mb-3">
+                                        <span class="avatar-initial rounded bg-label-secondary">
+                                            <i class="bx bx-package bx-lg"></i>
+                                        </span>
+                                    </div>
+                                    <h6 class="mb-1">No Recent Batches</h6>
+                                    <p class="text-muted mb-0">Start by creating your first batch entry</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -144,106 +217,150 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     
-    <!-- Right col -->
-    <section class="col-lg-5 connectedSortable">
-        <!-- Calendar -->
-        <div class="card bg-gradient-success">
-            <div class="card-header border-0">
-                <h3 class="card-title">
-                    <i class="far fa-calendar-alt"></i>
-                    Calendar
-                </h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-success btn-sm" data-card-widget="collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="card-body pt-0">
-                <div id="calendar" style="width: 100%">
-                    <div class="text-center text-white py-4">
-                        <i class="far fa-calendar fa-3x mb-3"></i>
-                        <p>Calendar widget will be implemented in Phase 2</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Recent Dispatches -->
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-truck mr-1"></i>
-                    Recent Dispatches
-                </h3>
-                <div class="card-tools">
-                    <a href="<?= site_url('dispatches/new') ?>" class="btn btn-success btn-sm">
-                        <i class="fas fa-plus"></i> New Dispatch
-                    </a>
-                </div>
-            </div>
-            <div class="card-body">
-                <ul class="todo-list" data-widget="todo-list">
-                    <li class="text-center text-muted py-4">
-                        <i class="fas fa-truck fa-2x mb-2"></i><br>
-                        No recent dispatches found.
-                    </li>
-                </ul>
-            </div>
-        </div>
-        
+    <!-- Activity & Quick Actions Sidebar -->
+    <div class="col-lg-4">
         <!-- Quick Actions -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">
-                    <i class="fas fa-bolt mr-1"></i>
-                    Quick Actions
-                </h3>
+                <h5 class="card-title mb-0">Quick Actions</h5>
+                <small class="text-muted">Common tasks and shortcuts</small>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-6">
-                        <a href="<?= site_url('batches/new') ?>" class="btn btn-primary btn-block btn-sm">
-                            <i class="fas fa-plus"></i> New Batch
-                        </a>
-                    </div>
-                    <div class="col-6">
-                        <a href="<?= site_url('dispatches/new') ?>" class="btn btn-success btn-block btn-sm">
-                            <i class="fas fa-truck"></i> New Dispatch
-                        </a>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-6">
-                        <a href="<?= site_url('purchase-orders/new') ?>" class="btn btn-warning btn-block btn-sm">
-                            <i class="fas fa-file-invoice"></i> New PO
-                        </a>
-                    </div>
-                    <div class="col-6">
-                        <a href="<?= site_url('inventory/adjust') ?>" class="btn btn-info btn-block btn-sm">
-                            <i class="fas fa-edit"></i> Adjust Stock
-                        </a>
-                    </div>
+                <div class="d-grid gap-2">
+                    <a href="<?= site_url('batches/new') ?>" class="btn btn-outline-primary">
+                        <i class="bx bx-package me-2"></i> Add New Batch
+                    </a>
+                    <a href="<?= site_url('dispatches/new') ?>" class="btn btn-outline-success">
+                        <i class="bx bx-car me-2"></i> Create Dispatch
+                    </a>
+                    <a href="<?= site_url('purchase-orders/new') ?>" class="btn btn-outline-warning">
+                        <i class="bx bx-receipt me-2"></i> New Purchase Order
+                    </a>
+                    <a href="<?= site_url('inventory/adjust') ?>" class="btn btn-outline-info">
+                        <i class="bx bx-edit me-2"></i> Adjust Inventory
+                    </a>
                 </div>
             </div>
         </div>
-    </section>
+        
+        <!-- Recent Activity -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Recent Activity</h5>
+                <small class="text-muted">Latest system activities and updates</small>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-point timeline-point-primary"></div>
+                        <div class="timeline-event">
+                            <div class="timeline-header mb-1">
+                                <h6 class="mb-0">System Initialized</h6>
+                                <small class="text-muted">Just now</small>
+                            </div>
+                            <p class="mb-0">GrainFlow management system is ready for use</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <small class="text-muted">Activity tracking will expand in Phase 2</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Status -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">System Status</h5>
+                <small class="text-muted">Current system health</small>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="avatar avatar-sm me-3">
+                        <span class="avatar-initial rounded bg-label-success">
+                            <i class="bx bx-check"></i>
+                        </span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">Database</h6>
+                        <small class="text-muted">Connected</small>
+                    </div>
+                    <span class="badge bg-success">Online</span>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="avatar avatar-sm me-3">
+                        <span class="avatar-initial rounded bg-label-success">
+                            <i class="bx bx-server"></i>
+                        </span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">Application</h6>
+                        <small class="text-muted">Running smoothly</small>
+                    </div>
+                    <span class="badge bg-success">Healthy</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="avatar avatar-sm me-3">
+                        <span class="avatar-initial rounded bg-label-warning">
+                            <i class="bx bx-time"></i>
+                        </span>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">Last Backup</h6>
+                        <small class="text-muted">Automated backups pending</small>
+                    </div>
+                    <span class="badge bg-warning">Pending</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <?= $this->endSection() ?>
 
 <?= $this->section('scripts') ?>
 <script>
-$(document).ready(function() {
-    // Initialize dashboard widgets
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize dashboard
     console.log('Dashboard loaded successfully');
     
-    // Add fade-in animation to cards
-    $('.card').addClass('fade-in');
+    // Add smooth entrance animations
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.3s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
     
-    // Initialize tooltips for quick actions
-    $('[data-bs-toggle="tooltip"]').tooltip();
+    // Initialize refresh functionality
+    const refreshBtn = document.querySelector('.btn-outline-secondary');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Add loading state
+            const originalContent = this.innerHTML;
+            this.innerHTML = '<i class="bx bx-loader-alt bx-spin me-1"></i> Refreshing...';
+            this.disabled = true;
+            
+            // Simulate refresh (replace with actual data loading)
+            setTimeout(() => {
+                this.innerHTML = originalContent;
+                this.disabled = false;
+                
+                // Show success notification
+                if (window.GrainFlow && window.GrainFlow.showNotification) {
+                    window.GrainFlow.showNotification('Dashboard refreshed successfully', 'success');
+                }
+            }, 1500);
+        });
+    }
 });
 </script>
 <?= $this->endSection() ?>
