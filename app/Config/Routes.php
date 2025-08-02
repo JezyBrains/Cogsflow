@@ -17,6 +17,9 @@ $routes->group('batches', function ($routes) {
     $routes->get('/', 'BatchController::index');
     $routes->get('new', 'BatchController::new');
     $routes->post('create', 'BatchController::create');
+    $routes->get('view/(:num)', 'BatchController::view/$1');
+    $routes->post('approve/(:num)', 'BatchController::approve/$1');
+    $routes->post('reject/(:num)', 'BatchController::reject/$1');
 });
 
 // Dispatches Module

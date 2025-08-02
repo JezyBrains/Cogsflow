@@ -352,26 +352,39 @@ helper('assets');
                     <div class="container-xxl flex-grow-1 container-p-y">
                         
                         <!-- Page Header -->
+                        <?php 
+                        $title = $this->renderSection('title');
+                        $breadcrumb = $this->renderSection('breadcrumb');
+                        $page_actions = $this->renderSection('page_actions');
+                        if (!empty($title) || !empty($breadcrumb) || !empty($page_actions)): 
+                        ?>
                         <div class="row">
                             <div class="col-12">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
                                     <div>
-                                        <h4 class="py-3 mb-0"><?= $this->renderSection('title') ?></h4>
+                                        <?php if (!empty($title)): ?>
+                                        <h4 class="mb-2"><?= $title ?></h4>
+                                        <?php endif; ?>
+                                        <?php if (!empty($breadcrumb)): ?>
                                         <nav aria-label="breadcrumb">
                                             <ol class="breadcrumb breadcrumb-style1">
                                                 <li class="breadcrumb-item">
                                                     <a href="<?= site_url('dashboard') ?>">Home</a>
                                                 </li>
-                                                <?= $this->renderSection('breadcrumb') ?>
+                                                <?= $breadcrumb ?>
                                             </ol>
                                         </nav>
+                                        <?php endif; ?>
                                     </div>
+                                    <?php if (!empty($page_actions)): ?>
                                     <div>
-                                        <?= $this->renderSection('page_actions') ?>
+                                        <?= $page_actions ?>
                                     </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
+                        <?php endif; ?>
                         
                         <!-- Notifications Container -->
                         <div id="notifications-container">
