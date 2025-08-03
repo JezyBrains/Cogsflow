@@ -7,6 +7,11 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // Default route - redirect to dashboard
+// Authentication routes
+$routes->get('login', 'AuthController::login');
+$routes->post('auth/authenticate', 'AuthController::authenticate');
+$routes->get('logout', 'AuthController::logout');
+
 $routes->get('/', 'DashboardController::index');
 
 // Debug routes
@@ -17,24 +22,27 @@ $routes->get('test/settings', 'TestController::settings');
 $routes->get('dashboard', 'DashboardController::index');
 
 // Batches Module
-$routes->group('batches', function ($routes) {
+$routes->group('batches', ['filter' => 'role:admin,warehouse_staff,batches.view'], function ($routes) {
     $routes->get('/', 'BatchController::index');
-    $routes->get('new', 'BatchController::new');
-    $routes->post('create', 'BatchController::create');
+    $routes->get('new', 'BatchController::new', ['filter' => 'role:admin,warehouse_staff,batches.create']);
+    $routes->post('create', 'BatchController::create', ['filter' => 'role:admin,warehouse_staff,batches.create']);
     $routes->get('view/(:num)', 'BatchController::view/$1');
+    $routes->get('edit/(:num)', 'BatchController::edit/$1', ['filter' => 'role:admin,warehouse_staff,batches.edit']);
+    $routes->post('update/(:num)', 'BatchController::update/$1', ['filter' => 'role:admin,warehouse_staff,batches.edit']);
+    $routes->post('delete/(:num)', 'BatchController::delete/$1', ['filter' => 'role:admin,batches.delete']);
     $routes->post('approve/(:num)', 'BatchController::approve/$1');
     $routes->post('reject/(:num)', 'BatchController::reject/$1');
 });
 
 // Dispatches Module
-$routes->group('dispatches', function ($routes) {
+$routes->group('dispatches', ['filter' => 'role:admin,warehouse_staff,dispatches.view'], function ($routes) {
     $routes->get('/', 'DispatchController::index');
-    $routes->get('new', 'DispatchController::new');
-    $routes->post('create', 'DispatchController::create');
+    $routes->get('new', 'DispatchController::new', ['filter' => 'role:admin,warehouse_staff,dispatches.create']);
+    $routes->post('create', 'DispatchController::create', ['filter' => 'role:admin,warehouse_staff,dispatches.create']);
     $routes->get('view/(:num)', 'DispatchController::view/$1');
-    $routes->post('updateStatus/(:num)', 'DispatchController::updateStatus/$1');
-    $routes->get('receive/(:num)', 'DispatchController::showReceiveForm/$1');
-    $routes->post('receive', 'DispatchController::receive');
+    $routes->post('updateStatus/(:num)', 'DispatchController::updateStatus/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
+    $routes->get('receive/(:num)', 'DispatchController::showReceiveForm/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
+    $routes->post('receive', 'DispatchController::receive', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
 });
 
 // Purchase Orders Module
@@ -59,14 +67,14 @@ $routes->group('expenses', function ($routes) {
 });
 
 // Settings Module
-$routes->group('settings', function ($routes) {
+$routes->group('settings', ['filter' => 'role:admin,settings.view'], function ($routes) {
     $routes->get('/', 'SettingsController::index');
-    $routes->post('update', 'SettingsController::update');
-    $routes->post('admin-utility', 'SettingsController::adminUtility');
-    $routes->get('system-info', 'SettingsController::systemInfo');
-    $routes->get('logs', 'SettingsController::logs');
-    $routes->get('export', 'SettingsController::exportSettings');
-    $routes->post('import', 'SettingsController::importSettings');
+    $routes->post('update', 'SettingsController::update', ['filter' => 'role:admin,settings.edit']);
+    $routes->post('admin-utility', 'SettingsController::adminUtility', ['filter' => 'role:admin,settings.admin']);
+    $routes->get('system-info', 'SettingsController::systemInfo', ['filter' => 'role:admin,settings.view']);
+    $routes->get('logs', 'SettingsController::logs', ['filter' => 'role:admin,settings.view']);
+    $routes->get('export', 'SettingsController::exportSettings', ['filter' => 'role:admin,settings.view']);
+    $routes->post('import', 'SettingsController::importSettings', ['filter' => 'role:admin,settings.edit']);
 });
 
 // Reports Module
@@ -76,6 +84,20 @@ $routes->group('reports', function ($routes) {
     $routes->get('inventory', 'ReportsController::inventory');
     $routes->get('financial', 'ReportsController::financial');
     $routes->get('export/(:alpha)', 'ReportsController::export/$1');
+});
+
+// Role Management Module
+$routes->group('roles', ['filter' => 'role:admin,roles.view'], function ($routes) {
+    $routes->get('/', 'RoleController::index');
+    $routes->get('get-roles-data', 'RoleController::getRolesData');
+    $routes->post('create', 'RoleController::create', ['filter' => 'role:admin,roles.create']);
+    $routes->get('get-role/(:num)', 'RoleController::getRole/$1');
+    $routes->post('update/(:num)', 'RoleController::update/$1', ['filter' => 'role:admin,roles.edit']);
+    $routes->delete('delete/(:num)', 'RoleController::delete/$1', ['filter' => 'role:admin,roles.delete']);
+    $routes->match(['get', 'post'], 'manage-permissions/(:num)', 'RoleController::managePermissions/$1', ['filter' => 'role:admin,roles.edit']);
+    $routes->match(['get', 'post'], 'assign-users/(:num)', 'RoleController::assignUsers/$1', ['filter' => 'role:admin,roles.assign']);
+    $routes->get('get-user-roles/(:num)', 'RoleController::getUserRoles/$1');
+    $routes->post('update-user-roles/(:num)', 'RoleController::updateUserRoles/$1', ['filter' => 'role:admin,roles.assign']);
 });
 
 // Set 404 override

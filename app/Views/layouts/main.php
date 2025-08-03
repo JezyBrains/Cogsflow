@@ -1,6 +1,7 @@
 <?php
 // Load assets helper
 helper('assets');
+helper('role');
 ?>
 <!DOCTYPE html>
 <html lang="en" class="light-style layout-menu-fixed layout-compact" dir="ltr" data-theme="theme-default" data-assets-path="<?= base_url('assets/') ?>" data-template="vertical-menu-template-free">
@@ -63,10 +64,13 @@ helper('assets');
                     </li>
                     
                     <!-- Inventory Management -->
+                    <?php if (canAccess('inventory', 'view') || canAccess('batches', 'view')): ?>
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">Inventory</span>
                     </li>
+                    <?php endif; ?>
                     
+                    <?php if (canAccess('batches', 'view')): ?>
                     <li class="menu-item <?= strpos(uri_string(), 'batches') === 0 ? 'active' : '' ?>">
                         <a href="<?= site_url('batches') ?>" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-package"></i>
@@ -76,7 +80,9 @@ helper('assets');
                             </div>
                         </a>
                     </li>
+                    <?php endif; ?>
                     
+                    <?php if (canAccess('inventory', 'view')): ?>
                     <li class="menu-item <?= strpos(uri_string(), 'inventory') === 0 ? 'active' : '' ?>">
                         <a href="<?= site_url('inventory') ?>" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-store"></i>
@@ -86,18 +92,23 @@ helper('assets');
                             </div>
                         </a>
                     </li>
+                    <?php endif; ?>
                     
                     <!-- Operations -->
+                    <?php if (canAccess('dispatches', 'view') || canAccess('purchase_orders', 'view') || canAccess('expenses', 'view')): ?>
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">Operations</span>
                     </li>
+                    <?php endif; ?>
                     
+                    <?php if (canAccess('dispatches', 'view')): ?>
                     <li class="menu-item <?= strpos(uri_string(), 'dispatches') === 0 ? 'active' : '' ?>">
                         <a href="<?= site_url('dispatches') ?>" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-car"></i>
                             <div data-i18n="Dispatches">Dispatch Management</div>
                         </a>
                     </li>
+                    <?php endif; ?>
                     
                     <li class="menu-item <?= strpos(uri_string(), 'purchase-orders') === 0 ? 'active' : '' ?>">
                         <a href="<?= site_url('purchase-orders') ?>" class="menu-link">
@@ -121,16 +132,29 @@ helper('assets');
                     </li>
                     
                     <!-- System -->
+                    <?php if (isAdmin() || canAccess('settings', 'view')): ?>
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">System</span>
                     </li>
+                    <?php endif; ?>
                     
+                    <?php if (isAdmin()): ?>
+                    <li class="menu-item <?= strpos(uri_string(), 'roles') === 0 ? 'active' : '' ?>">
+                        <a href="<?= site_url('roles') ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-user-check"></i>
+                            <div data-i18n="Roles">Role Management</div>
+                        </a>
+                    </li>
+                    <?php endif; ?>
+                    
+                    <?php if (canAccess('settings', 'view')): ?>
                     <li class="menu-item <?= strpos(uri_string(), 'settings') === 0 ? 'active' : '' ?>">
                         <a href="<?= site_url('settings') ?>" class="menu-link">
                             <i class="menu-icon tf-icons bx bx-cog"></i>
                             <div data-i18n="Settings">Settings</div>
                         </a>
                     </li>
+                    <?php endif; ?>
                     
                     <li class="menu-item">
                         <a href="#" class="menu-link">
@@ -306,8 +330,8 @@ helper('assets');
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
-                                                    <span class="fw-medium d-block">Admin User</span>
-                                                    <small class="text-muted">Administrator</small>
+                                                    <span class="fw-medium d-block"><?= session()->get('username') ?: 'User' ?></span>
+                                                    <small class="text-muted"><?= ucfirst(str_replace('_', ' ', getUserRoles()[0]['name'] ?? 'User')) ?></small>
                                                 </div>
                                             </div>
                                         </a>
@@ -331,7 +355,7 @@ helper('assets');
                                         <div class="dropdown-divider"></div>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" href="<?= site_url('logout') ?>">
                                             <i class="bx bx-power-off me-2"></i>
                                             <span class="align-middle">Log Out</span>
                                         </a>
