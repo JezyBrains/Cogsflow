@@ -27,6 +27,8 @@ $routes->group('dispatches', function ($routes) {
     $routes->get('/', 'DispatchController::index');
     $routes->get('new', 'DispatchController::new');
     $routes->post('create', 'DispatchController::create');
+    $routes->get('view/(:num)', 'DispatchController::view/$1');
+    $routes->post('updateStatus/(:num)', 'DispatchController::updateStatus/$1');
     $routes->get('receive/(:num)', 'DispatchController::showReceiveForm/$1');
     $routes->post('receive', 'DispatchController::receive');
 });
@@ -56,6 +58,11 @@ $routes->group('expenses', function ($routes) {
 $routes->group('settings', function ($routes) {
     $routes->get('/', 'SettingsController::index');
     $routes->post('update', 'SettingsController::update');
+    $routes->post('adminUtility', 'SettingsController::adminUtility');
+    $routes->get('systemInfo', 'SettingsController::systemInfo');
+    $routes->get('logs', 'SettingsController::logs');
+    $routes->get('exportSettings', 'SettingsController::exportSettings');
+    $routes->post('importSettings', 'SettingsController::importSettings');
 });
 
 // Reports Module

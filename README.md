@@ -24,6 +24,16 @@ A comprehensive grain management system built with CodeIgniter 4 and modern UI c
 - **Error Handling**: Custom 404 pages and proper error management
 - **Reports Module**: Complete analytics and reporting system
 
+### Phase 5: Settings Panel & Admin Utilities (COMPLETED)
+- **Comprehensive Settings Management**: Database-driven configuration system
+- **Admin Utilities Panel**: Cache management, database optimization, backup tools
+- **System Health Monitoring**: Real-time health status and diagnostics
+- **Settings Categories**: Company, System, Business, Security configurations
+- **Import/Export Functionality**: JSON-based settings backup and restore
+- **System Logs Viewer**: Paginated log viewing with filtering capabilities
+- **Role-Based Access Control**: Admin-only access protection
+- **Modern Tabbed Interface**: Clean, responsive settings dashboard
+
 ## 📋 System Modules
 
 ### Core Business Modules
@@ -144,6 +154,11 @@ cogsflow/
 | `/expenses/log` | ExpenseController | log | Process expense logging |
 | `/settings` | SettingsController | index | System settings |
 | `/settings/update` | SettingsController | update | Update settings |
+| `/settings/adminUtility` | SettingsController | adminUtility | Admin utilities (AJAX) |
+| `/settings/systemInfo` | SettingsController | systemInfo | System information (AJAX) |
+| `/settings/logs` | SettingsController | logs | System logs viewer |
+| `/settings/exportSettings` | SettingsController | exportSettings | Export settings (JSON) |
+| `/settings/importSettings` | SettingsController | importSettings | Import settings (JSON) |
 
 ## Workflow Overview
 
@@ -169,6 +184,101 @@ cogsflow/
 1. **Log Expenses**: Record operational costs by category
 2. **Track Spending**: Monitor expenses by category and time period
 
+### Settings & Configuration
+1. **System Settings**: Configure system-wide preferences and behavior
+2. **Admin Utilities**: Manage system maintenance and optimization
+3. **Import/Export**: Backup and restore system configurations
+4. **System Monitoring**: View health status and system logs
+
+## System Configuration
+
+### Configurable Settings Categories
+
+#### Company Settings
+- **Company Name**: Business name displayed throughout the system
+- **Company Email**: Primary contact email for notifications and communications
+- **Company Phone**: Business phone number for contact purposes
+- **Company Address**: Physical business address for documentation
+
+#### System Settings
+- **System Name**: Application title shown in browser and headers
+- **Base URL**: Application base URL for proper link generation
+- **Default Currency**: Currency code for financial calculations (KES, USD, EUR, GBP)
+- **Default Timezone**: System timezone for date/time operations
+- **Date Format**: Display format for dates (YYYY-MM-DD, DD/MM/YYYY, etc.)
+- **DateTime Format**: Display format for timestamps
+
+#### Business Settings
+- **Low Stock Threshold**: Minimum stock level before triggering alerts
+- **Enable Notifications**: Toggle system-wide notification system
+- **Auto Backup**: Enable automatic daily database backups
+- **Backup Retention Days**: Number of days to keep backup files (1-365)
+
+#### Security Settings
+- **Session Timeout**: User session duration in seconds (300-86400)
+- **Password Min Length**: Minimum required password length (6-50)
+- **Enable 2FA**: Toggle two-factor authentication (future feature)
+
+### Admin Utilities
+
+#### System Maintenance
+- **Clear Cache**: Remove all cached data and temporary files
+- **Reset Queue Jobs**: Reset background job queue (future feature)
+- **Optimize Database**: Run database optimization on all tables
+- **Clean Old Logs**: Remove system logs older than specified days
+
+#### Backup & Recovery
+- **Trigger Backup**: Create immediate database backup
+- **View System Logs**: Browse and filter system activity logs
+- **System Health**: Monitor application health and performance
+
+#### Import/Export
+- **Export Settings**: Download all settings as JSON file
+- **Import Settings**: Upload and restore settings from JSON file
+
+### Settings Management
+
+#### Accessing Settings
+1. Navigate to **Settings** from the main menu
+2. Admin privileges required (role-based access control)
+3. Settings organized in tabbed interface for easy navigation
+
+#### Modifying Settings
+1. Select appropriate category tab (Company, System, Business, Security)
+2. Update desired values in the form
+3. Click **Update [Category] Settings** to save changes
+4. Changes take effect immediately without system restart
+
+#### Backup & Restore
+1. **Export**: Click "Export" button to download current settings as JSON
+2. **Import**: Use "Import" button to upload and restore settings from JSON file
+3. **Warning**: Import overwrites existing settings - export first as backup
+
+#### System Monitoring
+1. **Health Status**: Real-time system health indicators
+2. **System Info**: View PHP, database, and server information
+3. **Logs**: Browse system logs with filtering by level and date
+4. **Maintenance**: Access admin utilities for system maintenance
+
+### Fallback Behavior
+
+If settings are not configured or database is unavailable:
+- System uses default values from `.env` file
+- Company name defaults to "Grain Management System"
+- Currency defaults to "KES" (Kenyan Shilling)
+- Timezone defaults to "Africa/Nairobi"
+- Date format defaults to "Y-m-d" (YYYY-MM-DD)
+- Low stock threshold defaults to 20 units
+- Session timeout defaults to 7200 seconds (2 hours)
+
+### Security Considerations
+
+- **Sensitive Settings**: Marked as sensitive and excluded from frontend exposure
+- **Role-Based Access**: Settings panel requires admin privileges
+- **CSRF Protection**: All forms protected against cross-site request forgery
+- **Input Validation**: Server-side validation for all setting updates
+- **Audit Trail**: All setting changes logged with user and timestamp
+
 ## Development Guidelines
 
 ### Best Practices
@@ -193,7 +303,7 @@ For issues and questions:
 
 ## Version
 
-**Current Version**: Phase 1 - Base Setup Complete
+**Current Version**: Phase 5 - Settings Panel & Admin Utilities Complete
 **CodeIgniter Version**: 4.6.2
 **PHP Version**: 8.1+ 
 
