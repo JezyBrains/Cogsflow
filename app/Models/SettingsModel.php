@@ -119,7 +119,7 @@ class SettingsModel extends Model
             $builder->where('is_sensitive', false);
         }
         
-        $settings = $builder->findAll();
+        $settings = $builder->get()->getResultArray();
         $result = [];
         
         foreach ($settings as $setting) {
@@ -219,6 +219,38 @@ class SettingsModel extends Model
             if (!$existing) {
                 $this->insert($default);
             }
+        }
+    }
+
+    /**
+     * Update or create a setting
+     */
+    public function updateSetting($key, $value, $category = null)
+    {
+        try {
+            // Find existing setting
+            $existing = $this->where('key', $key)->first();
+            
+            if ($existing) {
+                // Update existing setting
+                return $this->update($existing['id'], [
+                    'value' => $value,
+                    'category' => $category ?? $existing['category']
+                ]);
+            } else {
+                // Create new setting if it doesn't exist
+                return $this->insert([
+                    'key' => $key,
+                    'value' => $value,
+                    'category' => $category ?? 'system',
+                    'type' => 'string',
+                    'description' => 'Imported setting',
+                    'is_sensitive' => false
+                ]);
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to update setting: ' . $e->getMessage());
+            return false;
         }
     }
 }

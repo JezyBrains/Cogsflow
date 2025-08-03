@@ -12,11 +12,31 @@
         </div>
         <div class="col-md-4 text-end">
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-primary" onclick="exportSettings()">
-                    <i class="fas fa-download"></i> Export
-                </button>
+                <!-- Export Dropdown -->
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bx bx-download me-1"></i> Export
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><h6 class="dropdown-header">Export Formats</h6></li>
+                        <li><a class="dropdown-item" href="#" onclick="exportSettings('json')">
+                            <i class="bx bx-file-blank me-2"></i>JSON Format
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="exportSettings('pdf')">
+                            <i class="bx bx-file-pdf me-2"></i>PDF Report
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" onclick="exportSettings('excel')">
+                            <i class="bx bx-spreadsheet me-2"></i>Excel Spreadsheet
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="exportSettings('backup')">
+                            <i class="bx bx-archive me-2"></i>Full Backup
+                        </a></li>
+                    </ul>
+                </div>
+                <!-- Import Button -->
                 <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importModal">
-                    <i class="fas fa-upload"></i> Import
+                    <i class="bx bx-upload me-1"></i> Import
                 </button>
             </div>
         </div>
@@ -565,8 +585,33 @@ function loadSystemInfo() {
 }
 
 // Export settings
-function exportSettings() {
-    window.location.href = '<?= site_url('settings/exportSettings') ?>';
+function exportSettings(format = 'json') {
+    // Show loading state
+    const loadingToast = showLoadingToast('Preparing export...');
+    
+    // Build the export URL with format parameter
+    const exportUrl = '<?= site_url('settings/exportSettings') ?>?format=' + format;
+    
+    // Handle different export types
+    switch(format) {
+        case 'pdf':
+            // For PDF, open in new tab to allow preview/download
+            window.open(exportUrl, '_blank');
+            break;
+        case 'excel':
+        case 'json':
+        case 'backup':
+            // For file downloads, use direct navigation
+            window.location.href = exportUrl;
+            break;
+        default:
+            window.location.href = exportUrl;
+    }
+    
+    // Hide loading toast after a short delay
+    setTimeout(() => {
+        hideLoadingToast(loadingToast);
+    }, 2000);
 }
 
 // Clean logs
@@ -630,6 +675,43 @@ function showAlert(type, message) {
             bsAlert.close();
         }
     }, 5000);
+}
+
+// Show loading toast
+function showLoadingToast(message) {
+    const toastId = 'loading-toast-' + Date.now();
+    const toastHtml = `
+        <div class="toast align-items-center text-white bg-primary border-0 position-fixed" 
+             id="${toastId}" role="alert" aria-live="assertive" aria-atomic="true" 
+             style="top: 20px; right: 20px; z-index: 9999;">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-spinner fa-spin me-2"></i>${message}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', toastHtml);
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, { autohide: false });
+    toast.show();
+    
+    return toastId;
+}
+
+// Hide loading toast
+function hideLoadingToast(toastId) {
+    const toastElement = document.getElementById(toastId);
+    if (toastElement) {
+        const toast = bootstrap.Toast.getInstance(toastElement);
+        if (toast) {
+            toast.hide();
+        }
+        setTimeout(() => {
+            toastElement.remove();
+        }, 500);
+    }
 }
 </script>
 

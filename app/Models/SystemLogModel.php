@@ -51,20 +51,51 @@ class SystemLogModel extends Model
     }
 
     /**
+     * Log an admin action
+     */
+    public function logAction($action, $level, $message, $context = null)
+    {
+        $logMessage = "Admin action '{$action}': {$message}";
+        return $this->addLog($level, $logMessage, $context);
+    }
+
+    /**
      * Get logs with pagination and filtering
      */
-    public function getLogs($level = null, $limit = 100, $offset = 0)
+    public function getLogs($level = null, $limit = 100, $offset = 0, $search = '')
     {
         $builder = $this->builder();
         
-        if ($level) {
+        if ($level && $level !== 'all') {
             $builder->where('level', $level);
+        }
+        
+        if (!empty($search)) {
+            $builder->like('message', $search);
         }
         
         return $builder->orderBy('created_at', 'DESC')
                       ->limit($limit, $offset)
                       ->get()
                       ->getResultArray();
+    }
+
+    /**
+     * Get total count of logs with filtering
+     */
+    public function getLogsCount($level = null, $search = '')
+    {
+        $builder = $this->builder();
+        
+        if ($level && $level !== 'all') {
+            $builder->where('level', $level);
+        }
+        
+        if (!empty($search)) {
+            $builder->like('message', $search);
+        }
+        
+        return $builder->countAllResults();
     }
 
     /**

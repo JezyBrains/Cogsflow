@@ -334,4 +334,48 @@ class AdminUtilities
         
         return $val;
     }
+
+    /**
+     * Reset queue (alias for resetQueueJobs)
+     */
+    public function resetQueue()
+    {
+        return $this->resetQueueJobs();
+    }
+
+    /**
+     * Clean logs (alias for cleanSystemLogs)
+     */
+    public function cleanLogs($days = 30)
+    {
+        return $this->cleanSystemLogs($days);
+    }
+
+    /**
+     * Get logs with pagination and filtering
+     */
+    public function getLogs($page = 1, $limit = 50, $level = 'all', $search = '')
+    {
+        try {
+            $offset = ($page - 1) * $limit;
+            
+            // Get logs from SystemLogModel
+            $logs = $this->logModel->getLogs($level, $limit, $offset, $search);
+            $totalCount = $this->logModel->getLogsCount($level, $search);
+            
+            return [
+                'logs' => $logs,
+                'pagination' => [
+                    'current_page' => $page,
+                    'per_page' => $limit,
+                    'total' => $totalCount,
+                    'total_pages' => ceil($totalCount / $limit)
+                ]
+            ];
+            
+        } catch (\Exception $e) {
+            $this->logModel->addLog('error', 'Failed to retrieve logs: ' . $e->getMessage());
+            throw $e;
+        }
+    }
 }

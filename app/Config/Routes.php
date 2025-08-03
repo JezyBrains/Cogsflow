@@ -9,6 +9,10 @@ use CodeIgniter\Router\RouteCollection;
 // Default route - redirect to dashboard
 $routes->get('/', 'DashboardController::index');
 
+// Debug routes
+$routes->get('test', 'TestController::index');
+$routes->get('test/settings', 'TestController::settings');
+
 // Dashboard Module
 $routes->get('dashboard', 'DashboardController::index');
 
@@ -58,11 +62,11 @@ $routes->group('expenses', function ($routes) {
 $routes->group('settings', function ($routes) {
     $routes->get('/', 'SettingsController::index');
     $routes->post('update', 'SettingsController::update');
-    $routes->post('adminUtility', 'SettingsController::adminUtility');
-    $routes->get('systemInfo', 'SettingsController::systemInfo');
+    $routes->post('admin-utility', 'SettingsController::adminUtility');
+    $routes->get('system-info', 'SettingsController::systemInfo');
     $routes->get('logs', 'SettingsController::logs');
-    $routes->get('exportSettings', 'SettingsController::exportSettings');
-    $routes->post('importSettings', 'SettingsController::importSettings');
+    $routes->get('export', 'SettingsController::exportSettings');
+    $routes->post('import', 'SettingsController::importSettings');
 });
 
 // Reports Module
