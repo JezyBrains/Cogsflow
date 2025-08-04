@@ -1,2 +1,13 @@
 User-agent: *
-Disallow: 
+Disallow: /app/
+Disallow: /writable/
+Disallow: /vendor/
+Disallow: /tests/
+Disallow: /docs/
+Disallow: /.env
+Disallow: /.git/
+Disallow: /composer.json
+Disallow: /composer.lock
+Disallow: /spark
+
+Sitemap: https://nipoagro.com/sitemap.xml 

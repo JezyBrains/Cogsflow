@@ -2,6 +2,7 @@
 // Load assets helper
 helper('assets');
 helper('role');
+helper('notification');
 ?>
 <!DOCTYPE html>
 <html lang="en" class="light-style layout-menu-fixed layout-compact" dir="ltr" data-theme="theme-default" data-assets-path="<?= base_url('assets/') ?>" data-template="vertical-menu-template-free">
@@ -250,63 +251,28 @@ helper('role');
                             <li class="nav-item navbar-dropdown dropdown-notifications dropdown me-3 me-xl-1">
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                     <i class="bx bx-bell bx-sm"></i>
-                                    <span class="badge bg-danger rounded-pill badge-notifications">3</span>
+                                    <span class="badge bg-danger rounded-pill badge-notifications" id="notificationBadge" style="display: none;">0</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end py-0">
                                     <li class="dropdown-menu-header border-bottom">
                                         <div class="dropdown-header d-flex align-items-center py-3">
                                             <h5 class="text-body mb-0 me-auto">Notifications</h5>
-                                            <span class="badge rounded-pill bg-label-primary p-2 me-2">3 New</span>
+                                            <span class="badge rounded-pill bg-label-primary p-2 me-2" id="notificationHeaderBadge" style="display: none;">0 New</span>
                                         </div>
                                     </li>
                                     <li class="dropdown-notifications-list scrollable-container">
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                                                <div class="d-flex">
-                                                    <div class="flex-shrink-0 me-3">
-                                                        <div class="avatar">
-                                                            <span class="avatar-initial rounded-circle bg-label-success"><i class="bx bx-package"></i></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        <h6 class="mb-1">New batch received</h6>
-                                                        <p class="mb-0">Batch #B001 has been received</p>
-                                                        <small class="text-muted">3 minutes ago</small>
-                                                    </div>
+                                        <ul class="list-group list-group-flush" id="notificationDropdownList">
+                                            <!-- Notifications will be loaded here via AJAX -->
+                                            <li class="list-group-item text-center py-4">
+                                                <div class="spinner-border spinner-border-sm" role="status">
+                                                    <span class="visually-hidden">Loading...</span>
                                                 </div>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                                                <div class="d-flex">
-                                                    <div class="flex-shrink-0 me-3">
-                                                        <div class="avatar">
-                                                            <span class="avatar-initial rounded-circle bg-label-info"><i class="bx bx-car"></i></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        <h6 class="mb-1">Dispatch completed</h6>
-                                                        <p class="mb-0">Dispatch #D001 has been completed</p>
-                                                        <small class="text-muted">12 hours ago</small>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item list-group-item-action dropdown-notifications-item">
-                                                <div class="d-flex">
-                                                    <div class="flex-shrink-0 me-3">
-                                                        <div class="avatar">
-                                                            <span class="avatar-initial rounded-circle bg-label-warning"><i class="bx bx-error"></i></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        <h6 class="mb-1">Low stock alert</h6>
-                                                        <p class="mb-0">Wheat stock is running low</p>
-                                                        <small class="text-muted">2 days ago</small>
-                                                    </div>
-                                                </div>
+                                                <p class="mb-0 mt-2 text-muted">Loading notifications...</p>
                                             </li>
                                         </ul>
                                     </li>
                                     <li class="dropdown-menu-footer border-top">
-                                        <a href="javascript:void(0);" class="dropdown-item d-flex justify-content-center p-3">
+                                        <a href="<?= site_url('notifications') ?>" class="dropdown-item d-flex justify-content-center p-3">
                                             View all notifications
                                         </a>
                                     </li>
@@ -481,6 +447,131 @@ helper('role');
     <!-- Core JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= js_asset('custom') ?>"></script>
+    
+    <!-- Notification System -->
+    <script>
+    $(document).ready(function() {
+        // Load notifications on page load
+        loadNotifications();
+        
+        // Poll for new notifications every 30 seconds
+        setInterval(loadNotifications, 30000);
+        
+        // Load notifications when dropdown is opened
+        $('.dropdown-notifications').on('show.bs.dropdown', function() {
+            loadNotifications();
+        });
+    });
+    
+    function loadNotifications() {
+        $.get('<?= site_url('notifications/recent') ?>')
+        .done(function(response) {
+            if (response.success) {
+                updateNotificationDropdown(response.notifications);
+                updateNotificationBadges(response.unread_count);
+            }
+        })
+        .fail(function() {
+            console.log('Failed to load notifications');
+        });
+    }
+    
+    function updateNotificationDropdown(notifications) {
+        const container = $('#notificationDropdownList');
+        container.empty();
+        
+        if (notifications.length === 0) {
+            container.html(`
+                <li class="list-group-item text-center py-4">
+                    <i class="bx bx-bell-off text-muted mb-2" style="font-size: 2rem;"></i>
+                    <p class="mb-0 text-muted">No notifications</p>
+                </li>
+            `);
+            return;
+        }
+        
+        notifications.forEach(function(notification) {
+            const iconClass = getNotificationIcon(notification.type);
+            const iconColor = getNotificationColor(notification.type, notification.priority);
+            const isUnread = notification.is_unread;
+            
+            const notificationHtml = `
+                <li class="list-group-item list-group-item-action dropdown-notifications-item ${isUnread ? 'bg-light' : ''}" 
+                    onclick="markNotificationAsRead(${notification.id})">
+                    <div class="d-flex">
+                        <div class="flex-shrink-0 me-3">
+                            <div class="avatar">
+                                <span class="avatar-initial rounded-circle bg-label-${iconColor}">
+                                    <i class="bx ${iconClass}"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 ${isUnread ? 'fw-bold' : ''}">${notification.title}</h6>
+                            <p class="mb-0 small">${notification.message}</p>
+                            <small class="text-muted">${notification.time_ago}</small>
+                        </div>
+                    </div>
+                </li>
+            `;
+            
+            container.append(notificationHtml);
+        });
+    }
+    
+    function updateNotificationBadges(unreadCount) {
+        const badge = $('#notificationBadge');
+        const headerBadge = $('#notificationHeaderBadge');
+        
+        if (unreadCount > 0) {
+            badge.text(unreadCount).show();
+            headerBadge.text(unreadCount + ' New').show();
+        } else {
+            badge.hide();
+            headerBadge.hide();
+        }
+    }
+    
+    function getNotificationIcon(type) {
+        const icons = {
+            'batch_arrival': 'bx-package',
+            'dispatch_status': 'bx-truck',
+            'expense_alert': 'bx-money',
+            'inventory_threshold': 'bx-store',
+            'system_error': 'bx-error',
+            'user_management': 'bx-user',
+            'system_maintenance': 'bx-wrench'
+        };
+        return icons[type] || 'bx-bell';
+    }
+    
+    function getNotificationColor(type, priority) {
+        if (priority === 'critical') return 'danger';
+        if (priority === 'high') return 'warning';
+        
+        const colors = {
+            'batch_arrival': 'success',
+            'dispatch_status': 'info',
+            'expense_alert': 'warning',
+            'inventory_threshold': 'danger',
+            'system_error': 'danger',
+            'user_management': 'primary',
+            'system_maintenance': 'secondary'
+        };
+        return colors[type] || 'primary';
+    }
+    
+    function markNotificationAsRead(notificationId) {
+        $.post('<?= site_url('notifications/mark-read') ?>/' + notificationId, {
+            '<?= csrf_token() ?>': '<?= csrf_hash() ?>'
+        })
+        .done(function(response) {
+            if (response.success) {
+                loadNotifications(); // Reload to update UI
+            }
+        });
+    }
+    </script>
     
     <!-- Page specific scripts -->
     <?= $this->renderSection('scripts') ?>

@@ -121,6 +121,16 @@ class DispatchController extends BaseController
                 throw new \Exception('Transaction failed');
             }
             
+            // Send notification about new dispatch
+            helper('notification');
+            sendDispatchNotification(
+                $dispatchId,
+                'dispatch_created',
+                'New Dispatch Created',
+                "Dispatch #{$dispatchData['dispatch_number']} has been created for batch {$batch['batch_number']}. Vehicle: {$dispatchData['vehicle_number']}",
+                ['batch_number' => $batch['batch_number'], 'vehicle_number' => $dispatchData['vehicle_number']]
+            );
+        
             session()->setFlashdata('success', 'Dispatch created successfully for batch ' . $batch['batch_number'] . '. Dispatch #: ' . $dispatchData['dispatch_number'] . ', Vehicle: ' . $dispatchData['vehicle_number']);
             return redirect()->to('/dispatches');
             
@@ -198,6 +208,16 @@ class DispatchController extends BaseController
                 'cancelled' => 'Dispatch cancelled and batch returned to available pool'
             ];
             
+            // Send notification about status change
+            helper('notification');
+            sendDispatchNotification(
+                $id,
+                'dispatch_status_changed',
+                'Dispatch Status Updated',
+                "Dispatch #{$dispatch['dispatch_number']} status changed to {$newStatus}",
+                ['old_status' => $dispatch['status'], 'new_status' => $newStatus]
+            );
+        
             session()->setFlashdata('success', $statusMessages[$newStatus]);
             return redirect()->to('/dispatches');
             

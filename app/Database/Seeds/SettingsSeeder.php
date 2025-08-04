@@ -64,7 +64,7 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'key' => 'base_url',
-                'value' => 'http://localhost/cogsflow/',
+                'value' => 'https://nipoagro.com/',
                 'type' => 'string',
                 'category' => 'system',
                 'description' => 'Base URL of the application',

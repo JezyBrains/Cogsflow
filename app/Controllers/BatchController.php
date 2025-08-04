@@ -126,6 +126,13 @@ class BatchController extends BaseController
                 throw new \Exception('Transaction failed');
             }
             
+            // Send notification about new batch
+            sendBatchNotification($batchId, $batchData['batch_number'], 'created', [
+                'total_weight' => $batchData['total_weight_mt'],
+                'grain_type' => $batchData['grain_type'],
+                'quality_grade' => $batchData['quality_grade']
+            ]);
+            
             session()->setFlashdata('success', 'Batch ' . $batchData['batch_number'] . ' was successfully created with ' . $bagCount . ' bags totaling ' . $batchData['total_weight_mt'] . ' MT.');
             
             return redirect()->to('/batches');
@@ -181,6 +188,13 @@ class BatchController extends BaseController
         }
         
         $this->batchModel->update($id, ['status' => 'approved']);
+        
+        // Send notification about batch approval
+        sendBatchNotification($id, $batch['batch_number'], 'arrived', [
+            'status' => 'approved',
+            'grain_type' => $batch['grain_type']
+        ]);
+        
         session()->setFlashdata('success', 'Batch ' . $batch['batch_number'] . ' has been approved and is ready for dispatch.');
         
         return redirect()->back();

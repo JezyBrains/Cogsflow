@@ -100,6 +100,33 @@ $routes->group('roles', ['filter' => 'role:admin,roles.view'], function ($routes
     $routes->post('update-user-roles/(:num)', 'RoleController::updateUserRoles/$1', ['filter' => 'role:admin,roles.assign']);
 });
 
+// Notification Routes
+$routes->group('notifications', ['filter' => 'auth'], function($routes) {
+    $routes->get('/', 'NotificationController::index');
+    $routes->get('recent', 'NotificationController::getRecent');
+    $routes->get('get', 'NotificationController::getNotifications');
+    $routes->post('mark-read/(:num)', 'NotificationController::markAsRead/$1');
+    $routes->post('mark-read', 'NotificationController::markAsRead');
+    $routes->delete('delete/(:num)', 'NotificationController::delete/$1');
+    $routes->get('settings', 'NotificationController::settings');
+    $routes->post('update-settings', 'NotificationController::updateSettings');
+    $routes->post('create', 'NotificationController::create');
+    $routes->post('create-bulk', 'NotificationController::createBulk');
+    $routes->get('unread-count', 'NotificationController::getUnreadCount');
+});
+
+// Report Routes
+$routes->group('report-system', ['filter' => 'auth'], function($routes) {
+    $routes->get('/', 'ReportController::index');
+    $routes->get('view/(:segment)', 'ReportController::view/$1');
+    $routes->get('generate/(:segment)', 'ReportController::generate/$1');
+    $routes->get('export-pdf/(:segment)', 'ReportController::exportPdf/$1');
+    $routes->get('export-excel/(:segment)', 'ReportController::exportExcel/$1');
+    $routes->get('quick-stats', 'ReportController::quickStats');
+    $routes->get('debug', 'ReportController::debug');
+    $routes->get('export-all/(:segment)', 'ReportController::exportAll/$1');
+});
+
 // Set 404 override
 $routes->set404Override(function() {
     return view('errors/custom_404');
