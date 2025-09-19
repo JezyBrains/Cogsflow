@@ -58,9 +58,9 @@ class DispatchController extends BaseController
         $rules = [
             'batch_id' => 'required|integer',
             'vehicle_number' => 'required|min_length[3]|max_length[20]',
-            'trailer_number' => 'permit_empty|min_length[3]|max_length[20]',
+            'trailer_number' => 'required|min_length[3]|max_length[20]',
             'driver_name' => 'required|min_length[3]|max_length[255]',
-            'driver_phone' => 'permit_empty|min_length[10]|max_length[20]',
+            'driver_phone' => 'permit_empty|regex_match[/^\\+255\\d{3}\\s\\d{3}\\s\\d{3}$/]',
             'dispatcher_name' => 'required|min_length[3]|max_length[255]',
             'estimated_arrival' => 'required|valid_date',
             'destination' => 'required|min_length[3]|max_length[255]',
@@ -102,9 +102,19 @@ class DispatchController extends BaseController
                 'dispatcher_name' => $this->request->getPost('dispatcher_name'),
                 'destination' => $this->request->getPost('destination'),
                 'estimated_arrival' => $this->request->getPost('estimated_arrival'),
+                'quantity_mt' => $batch['total_weight_mt'],
+                'dispatch_date' => date('Y-m-d H:i:s'),
                 'status' => 'pending',
                 'notes' => $this->request->getPost('notes')
             ];
+
+            // Append Driver ID Number to notes if provided (temporary until DB migration adds dedicated field)
+            $driverId = trim((string)$this->request->getPost('driver_id_number'));
+            if (!empty($driverId)) {
+                $existingNotes = (string)($dispatchData['notes'] ?? '');
+                $prefix = $existingNotes ? "\n" : '';
+                $dispatchData['notes'] = $existingNotes . $prefix . 'Driver ID: ' . $driverId;
+            }
             
             $dispatchId = $this->dispatchModel->insert($dispatchData);
             
@@ -125,9 +135,8 @@ class DispatchController extends BaseController
             helper('notification');
             sendDispatchNotification(
                 $dispatchId,
+                $dispatchData['dispatch_number'],
                 'dispatch_created',
-                'New Dispatch Created',
-                "Dispatch #{$dispatchData['dispatch_number']} has been created for batch {$batch['batch_number']}. Vehicle: {$dispatchData['vehicle_number']}",
                 ['batch_number' => $batch['batch_number'], 'vehicle_number' => $dispatchData['vehicle_number']]
             );
         
@@ -176,7 +185,7 @@ class DispatchController extends BaseController
         }
         
         $newStatus = $this->request->getPost('status');
-        $validStatuses = ['pending', 'in_transit', 'delivered', 'cancelled'];
+        $validStatuses = ['pending', 'in_transit', 'arrived', 'delivered', 'cancelled'];
         
         if (!in_array($newStatus, $validStatuses)) {
             session()->setFlashdata('error', 'Invalid status provided');
@@ -187,8 +196,15 @@ class DispatchController extends BaseController
         $db->transStart();
         
         try {
+            $updateData = ['status' => $newStatus];
+            
+            // Add arrival time for arrived status
+            if ($newStatus === 'arrived') {
+                $updateData['actual_arrival'] = date('Y-m-d H:i:s');
+            }
+            
             // Update dispatch status
-            $this->dispatchModel->update($id, ['status' => $newStatus]);
+            $this->dispatchModel->update($id, $updateData);
             
             // If cancelled, update batch status back to approved
             if ($newStatus === 'cancelled') {
@@ -204,6 +220,7 @@ class DispatchController extends BaseController
             $statusMessages = [
                 'pending' => 'Dispatch status updated to pending',
                 'in_transit' => 'Dispatch marked as in transit',
+                'arrived' => 'Dispatch has arrived and is awaiting inspection',
                 'delivered' => 'Dispatch marked as delivered',
                 'cancelled' => 'Dispatch cancelled and batch returned to available pool'
             ];
@@ -212,9 +229,8 @@ class DispatchController extends BaseController
             helper('notification');
             sendDispatchNotification(
                 $id,
+                $dispatch['dispatch_number'],
                 'dispatch_status_changed',
-                'Dispatch Status Updated',
-                "Dispatch #{$dispatch['dispatch_number']} status changed to {$newStatus}",
                 ['old_status' => $dispatch['status'], 'new_status' => $newStatus]
             );
         
@@ -225,6 +241,236 @@ class DispatchController extends BaseController
             $db->transRollback();
             session()->setFlashdata('error', 'Failed to update dispatch status: ' . $e->getMessage());
             return redirect()->back();
+        }
+    }
+
+    /**
+     * Mark dispatch as arrived (for drivers/dispatchers)
+     */
+    public function markAsArrived($id)
+    {
+        try {
+            $dispatch = $this->dispatchModel->find($id);
+            
+            if (!$dispatch) {
+                return redirect()->to('/dispatches')->with('error', 'Dispatch not found');
+            }
+
+            if ($dispatch['status'] !== 'in_transit') {
+                return redirect()->back()->with('error', 'Only in-transit dispatches can be marked as arrived');
+            }
+
+            $updateData = [
+                'status' => 'arrived',
+                'actual_arrival' => date('Y-m-d H:i:s')
+            ];
+
+            $this->dispatchModel->update($id, $updateData);
+
+            // Send notification to receiving officers
+            helper('notification');
+            sendDispatchNotification(
+                $id,
+                $dispatch['dispatch_number'],
+                'dispatch_arrived',
+                ['arrival_time' => $updateData['actual_arrival']]
+            );
+
+            return redirect()->to('/dispatches')->with('success', 'Dispatch marked as arrived. Awaiting receiving officer inspection.');
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Mark Dispatch Arrived Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to mark dispatch as arrived: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Perform receiving inspection
+     */
+    public function performInspection($id)
+    {
+        try {
+            $session = session();
+            $userId = $session->get('user_id');
+            
+            // Check if user can perform inspection
+            $canInspect = $this->dispatchModel->canUserInspectDispatch($id, $userId);
+            if (!$canInspect['can_inspect']) {
+                return redirect()->back()->with('error', $canInspect['message']);
+            }
+
+            $dispatch = $this->dispatchModel->find($id);
+            
+            if (!$dispatch) {
+                return redirect()->to('/dispatches')->with('error', 'Dispatch not found');
+            }
+
+            // Validate inspection data
+            $rules = [
+                'actual_bags' => 'required|integer|greater_than[0]',
+                'actual_weight_kg' => 'required|decimal|greater_than[0]',
+                'inspection_notes' => 'required|min_length[10]'
+            ];
+
+            if (!$this->validate($rules)) {
+                return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+            }
+
+            $actualBags = (int)$this->request->getPost('actual_bags');
+            $actualWeightKg = (float)$this->request->getPost('actual_weight_kg');
+            $inspectionNotes = $this->request->getPost('inspection_notes');
+            $actualWeightMt = round($actualWeightKg / 1000, 3);
+
+            // Calculate discrepancies
+            $discrepancyAnalysis = $this->dispatchModel->calculateDiscrepancies($id, $actualBags, $actualWeightKg);
+            
+            $db = \Config\Database::connect();
+            $db->transStart();
+
+            // Update dispatch with inspection results
+            $updateData = [
+                'status' => 'delivered',
+                'received_by' => $userId,
+                'inspection_date' => date('Y-m-d H:i:s'),
+                'actual_bags' => $actualBags,
+                'actual_weight_kg' => $actualWeightKg,
+                'actual_weight_mt' => $actualWeightMt,
+                'discrepancies' => $discrepancyAnalysis['discrepancy_summary'],
+                'inspection_notes' => $inspectionNotes
+            ];
+
+            $this->dispatchModel->update($id, $updateData);
+
+            // Update batch status to delivered
+            $this->batchModel->update($dispatch['batch_id'], ['status' => 'delivered']);
+
+            // Update PO fulfillment progress
+            $batch = $this->batchModel->find($dispatch['batch_id']);
+            if ($batch && $batch['purchase_order_id']) {
+                $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
+                $purchaseOrderModel->updateDeliveryProgress($batch['purchase_order_id'], $actualWeightMt);
+            }
+
+            // Update inventory with batch-wise traceability
+            $this->updateInventoryFromDelivery($dispatch['batch_id'], $actualWeightMt, $discrepancyAnalysis);
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \Exception('Transaction failed');
+            }
+
+            // Send notifications
+            helper('notification');
+            if ($discrepancyAnalysis['has_discrepancies']) {
+                sendSystemNotification(
+                    'Delivery Discrepancy Detected',
+                    'Dispatch ' . $dispatch['dispatch_number'] . ' has discrepancies: ' . $discrepancyAnalysis['discrepancy_summary'],
+                    'delivery_discrepancy',
+                    ['dispatch_id' => $id, 'discrepancies' => $discrepancyAnalysis]
+                );
+            }
+
+            sendDispatchNotification(
+                $id,
+                $dispatch['dispatch_number'],
+                'dispatch_delivered',
+                ['actual_weight' => $actualWeightMt, 'has_discrepancies' => $discrepancyAnalysis['has_discrepancies']]
+            );
+
+            $message = 'Inspection completed successfully. Dispatch marked as delivered.';
+            if ($discrepancyAnalysis['has_discrepancies']) {
+                $message .= ' Discrepancies have been logged and flagged for review.';
+            }
+
+            return redirect()->to('/dispatches')->with('success', $message);
+            
+        } catch (\Exception $e) {
+            if (isset($db)) {
+                $db->transRollback();
+            }
+            log_message('error', 'Dispatch Inspection Error: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Failed to complete inspection: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update inventory from delivery with batch-wise traceability
+     */
+    private function updateInventoryFromDelivery($batchId, $actualWeightMt, $discrepancyAnalysis)
+    {
+        $batch = $this->batchModel->find($batchId);
+        if (!$batch) {
+            throw new \Exception('Batch not found for inventory update');
+        }
+
+        $inventoryModel = new \App\Models\InventoryModel();
+        
+        // Check if inventory record exists for this grain type
+        $existingInventory = $inventoryModel->where('grain_type', $batch['grain_type'])->first();
+        
+        if ($existingInventory) {
+            // Update existing inventory
+            $newQuantity = $existingInventory['quantity_mt'] + $actualWeightMt;
+            $inventoryModel->update($existingInventory['id'], [
+                'quantity_mt' => $newQuantity,
+                'last_updated' => date('Y-m-d H:i:s')
+            ]);
+        } else {
+            // Create new inventory record
+            $inventoryModel->insert([
+                'grain_type' => $batch['grain_type'],
+                'quantity_mt' => $actualWeightMt,
+                'last_updated' => date('Y-m-d H:i:s')
+            ]);
+        }
+
+        // Log inventory adjustment for traceability
+        $adjustmentModel = new \App\Models\InventoryAdjustmentModel();
+        $adjustmentModel->insert([
+            'grain_type' => $batch['grain_type'],
+            'adjustment_type' => 'batch_delivery',
+            'quantity_change_mt' => $actualWeightMt,
+            'reference_id' => $batchId,
+            'reference_type' => 'batch',
+            'notes' => 'Batch delivery - ' . $batch['batch_number'] . 
+                      ($discrepancyAnalysis['has_discrepancies'] ? ' (With discrepancies: ' . $discrepancyAnalysis['discrepancy_summary'] . ')' : ''),
+            'created_by' => session()->get('user_id'),
+            'created_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    /**
+     * Get inspection form for arrived dispatch
+     */
+    public function inspectionForm($id)
+    {
+        try {
+            $session = session();
+            $userId = $session->get('user_id');
+            
+            // Check if user can perform inspection
+            $canInspect = $this->dispatchModel->canUserInspectDispatch($id, $userId);
+            if (!$canInspect['can_inspect']) {
+                return redirect()->back()->with('error', $canInspect['message']);
+            }
+
+            $dispatch = $this->dispatchModel->getDispatchWithBatchInfo($id);
+            
+            if (!$dispatch) {
+                return redirect()->to('/dispatches')->with('error', 'Dispatch not found');
+            }
+
+            $data = [
+                'dispatch' => $dispatch,
+                'title' => 'Receiving Inspection - ' . $dispatch['dispatch_number']
+            ];
+            
+            return view('dispatches/inspection', $data);
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Dispatch Inspection Form Error: ' . $e->getMessage());
+            return redirect()->to('/dispatches')->with('error', 'Failed to load inspection form');
         }
     }
 }

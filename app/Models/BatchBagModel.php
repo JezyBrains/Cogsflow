@@ -13,7 +13,7 @@ class BatchBagModel extends Model
     protected $useSoftDeletes = false;
     protected $protectFields = true;
     protected $allowedFields = [
-        'batch_id', 'bag_number', 'weight_kg', 'moisture_percentage'
+        'batch_id', 'bag_number', 'weight_kg', 'moisture_content', 'quality_notes', 'status'
     ];
 
     // Dates
@@ -27,7 +27,7 @@ class BatchBagModel extends Model
         'batch_id' => 'required|integer',
         'bag_number' => 'required|integer|greater_than[0]',
         'weight_kg' => 'required|decimal|greater_than[0]',
-        'moisture_percentage' => 'required|decimal|greater_than[0]|less_than[100]'
+        'moisture_content' => 'required|decimal|greater_than[0]|less_than[100]'
     ];
 
     protected $validationMessages = [
@@ -39,8 +39,8 @@ class BatchBagModel extends Model
             'required' => 'Weight is required',
             'greater_than' => 'Weight must be greater than 0'
         ],
-        'moisture_percentage' => [
-            'required' => 'Moisture percentage is required',
+        'moisture_content' => [
+            'required' => 'Moisture content is required',
             'greater_than' => 'Moisture must be greater than 0%',
             'less_than' => 'Moisture must be less than 100%'
         ]
@@ -60,7 +60,7 @@ class BatchBagModel extends Model
     public function calculateBatchTotals($batchId)
     {
         $builder = $this->db->table('batch_bags');
-        $builder->select('COUNT(*) as total_bags, SUM(weight_kg) as total_weight, AVG(moisture_percentage) as avg_moisture');
+        $builder->select('COUNT(*) as total_bags, SUM(weight_kg) as total_weight, AVG(moisture_content) as avg_moisture');
         $builder->where('batch_id', $batchId);
         
         return $builder->get()->getRowArray();
@@ -74,7 +74,7 @@ class BatchBagModel extends Model
                 'batch_id' => $batchId,
                 'bag_number' => $bag['bag_number'],
                 'weight_kg' => $bag['weight_kg'],
-                'moisture_percentage' => $bag['moisture_percentage']
+                'moisture_content' => $bag['moisture_percentage']
             ];
         }
         

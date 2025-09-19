@@ -193,12 +193,13 @@
                                 $avgWeight = $batch['total_weight_kg'] / $batch['total_bags'];
                                 foreach ($bags as $bag): 
                                     $weightVariance = (($bag['weight_kg'] - $avgWeight) / $avgWeight) * 100;
-                                    $moistureStatus = $bag['moisture_percentage'] <= 14 ? 'good' : ($bag['moisture_percentage'] <= 18 ? 'acceptable' : 'high');
+                                    $moistureContent = $bag['moisture_content'] ?? 0;
+                                    $moistureStatus = $moistureContent <= 14 ? 'good' : ($moistureContent <= 18 ? 'acceptable' : 'high');
                                 ?>
                                     <tr>
                                         <td><strong><?= $bag['bag_number'] ?></strong></td>
                                         <td><?= number_format($bag['weight_kg'], 2) ?></td>
-                                        <td><?= number_format($bag['moisture_percentage'], 2) ?></td>
+                                        <td><?= number_format($moistureContent, 2) ?></td>
                                         <td>
                                             <?php if (abs($weightVariance) <= 5): ?>
                                                 <span class="badge bg-label-success">Normal</span>

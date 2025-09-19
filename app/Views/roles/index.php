@@ -16,7 +16,7 @@
             <p class="text-muted mb-0">Manage system roles, permissions, and user access control</p>
         </div>
         <div>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#roleModal">
+            <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#roleModal">
                 <i class="fas fa-plus me-2"></i>Create Role
             </button>
         </div>
@@ -274,9 +274,45 @@
 
 <?= $this->endSection() ?>
 
+<?= $this->section('head') ?>
+<style>
+/* Fix modal z-index and overlay issues */
+.modal {
+    z-index: 9999 !important;
+}
+.modal-backdrop {
+    z-index: 9998 !important;
+}
+.modal-dialog {
+    z-index: 10000 !important;
+    pointer-events: auto !important;
+    position: relative !important;
+}
+.modal-content {
+    z-index: 10001 !important;
+    pointer-events: auto !important;
+    position: relative !important;
+}
+/* Ensure modal is always on top */
+.modal.show {
+    display: block !important;
+}
+/* Fix backdrop overlay issue */
+body.modal-open {
+    overflow: hidden;
+}
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('scripts') ?>
 <script>
 $(document).ready(function() {
+    // Debug: Check if Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.error('Bootstrap JavaScript is not loaded!');
+        return;
+    }
+    
     // Initialize DataTable for roles
     $('#rolesTable').DataTable({
         ajax: {
@@ -319,13 +355,84 @@ $(document).ready(function() {
         const totalPerms = $(`.permission-checkbox[data-resource="${resource}"]`).length;
         const checkedPerms = $(`.permission-checkbox[data-resource="${resource}"]:checked`).length;
         
-        const resourceCheckbox = $(`#resource_${resource}`);
+        const resourceCheckbox = $(`.resource-checkbox[data-resource="${resource}"]`);
+        
         if (checkedPerms === 0) {
             resourceCheckbox.prop('checked', false).prop('indeterminate', false);
         } else if (checkedPerms === totalPerms) {
             resourceCheckbox.prop('checked', true).prop('indeterminate', false);
         } else {
             resourceCheckbox.prop('checked', false).prop('indeterminate', true);
+        }
+    });
+
+    // Initialize modals properly - remove backdrop to fix overlay issues
+    const roleModal = new bootstrap.Modal(document.getElementById('roleModal'), {
+        backdrop: false,
+        keyboard: true,
+        focus: true
+    });
+
+    const userRolesModal = new bootstrap.Modal(document.getElementById('userRolesModal'), {
+        backdrop: false,
+        keyboard: true,
+        focus: true
+    });
+
+    // Handle Create Role button click
+    $('[data-bs-target="#roleModal"]').on('click', function(e) {
+        e.preventDefault();
+        console.log('Create Role button clicked');
+        
+        // Reset form
+        $('#roleForm')[0].reset();
+        $('#roleId').val('');
+        $('#roleModalLabel').text('Create Role');
+        clearFormErrors();
+        
+        // Show modal
+        roleModal.show();
+    });
+
+    // Handle modal events for debugging
+    $('#roleModal').on('show.bs.modal', function() {
+        console.log('Modal is about to show');
+    });
+
+    $('#roleModal').on('shown.bs.modal', function() {
+        console.log('Modal is fully shown');
+        $('#roleName').focus();
+    });
+
+    $('#roleModal').on('hide.bs.modal', function() {
+        console.log('Modal is about to hide');
+    });
+
+    $('#roleModal').on('hidden.bs.modal', function() {
+        console.log('Modal is fully hidden');
+        clearFormErrors();
+    });
+
+    // Handle close button clicks manually since we removed backdrop
+    $('#roleModal .btn-close, #roleModal [data-bs-dismiss="modal"]').on('click', function(e) {
+        e.preventDefault();
+        roleModal.hide();
+    });
+
+    $('#userRolesModal .btn-close, #userRolesModal [data-bs-dismiss="modal"]').on('click', function(e) {
+        e.preventDefault();
+        userRolesModal.hide();
+    });
+
+    // Handle escape key to close modals
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape') {
+            if ($('#roleModal').hasClass('show')) {
+                roleModal.hide();
+            }
+            if ($('#userRolesModal').hasClass('show')) {
+                userRolesModal.hide();
+            }
         }
     });
 

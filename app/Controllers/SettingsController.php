@@ -60,7 +60,118 @@ class SettingsController extends BaseController
     
     public function update()
     {
-        return 'Update method - Phase 5 implementation in progress.';
+
+        try {
+            $category = $this->request->getPost('category');
+            $validation = \Config\Services::validation();
+            
+            // Validate category
+            if (!in_array($category, ['company', 'system', 'business', 'notification', 'security'])) {
+                return redirect()->to('/settings')->with('error', 'Invalid settings category');
+            }
+
+            // Define validation rules based on category
+            $rules = [];
+            if ($category === 'company') {
+                $rules = [
+                    'company_name' => 'required|min_length[2]|max_length[255]',
+                    'company_email' => 'required|valid_email|max_length[255]',
+                    'company_phone' => 'permit_empty|max_length[20]',
+                    'company_address' => 'permit_empty|max_length[500]'
+                ];
+            } elseif ($category === 'system') {
+                $rules = [
+                    'system_timezone' => 'permit_empty|max_length[50]',
+                    'system_currency' => 'permit_empty|max_length[10]',
+                    'system_language' => 'permit_empty|max_length[10]'
+                ];
+            } elseif ($category === 'business') {
+                $rules = [
+                    'business_name' => 'permit_empty|max_length[255]',
+                    'business_type' => 'permit_empty|max_length[100]',
+                    'tax_number' => 'permit_empty|max_length[50]',
+                    'registration_number' => 'permit_empty|max_length[50]'
+                ];
+            }
+
+            // Validate input
+            if (!empty($rules) && !$validation->setRules($rules)->run($this->request->getPost())) {
+                return redirect()->to('/settings')
+                    ->withInput()
+                    ->with('errors', $validation->getErrors());
+            }
+
+            // Get database connection
+            $db = \Config\Database::connect();
+            
+            // Start transaction
+            $db->transStart();
+
+            // Update settings based on category
+            $updated = 0;
+            foreach ($this->request->getPost() as $key => $value) {
+                if (in_array($key, ['category', 'csrf_token', 'csrf_hash', 'csrf_test_name'])) {
+                    continue;
+                }
+
+                // Check if setting exists
+                $existingSetting = $db->table('settings')
+                    ->where('category', $category)
+                    ->where('key', $key)
+                    ->get()
+                    ->getRowArray();
+
+                if ($existingSetting) {
+                    // Update existing setting
+                    $updateResult = $db->table('settings')
+                        ->where('id', $existingSetting['id'])
+                        ->update([
+                            'value' => $value,
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ]);
+                    
+                    if ($updateResult) {
+                        $updated++;
+                    }
+                } else {
+                    // Insert new setting
+                    $insertResult = $db->table('settings')->insert([
+                        'category' => $category,
+                        'key' => $key,
+                        'value' => $value,
+                        'type' => 'string',
+                        'description' => ucfirst(str_replace('_', ' ', $key)),
+                        'is_hidden' => 0,
+                        'is_sensitive' => 0,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                    
+                    if ($insertResult) {
+                        $updated++;
+                    }
+                }
+            }
+
+            // Complete transaction
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                throw new \Exception('Failed to update settings');
+            }
+
+            $message = $updated > 0 
+                ? "Successfully updated {$updated} " . ucfirst($category) . " setting(s)"
+                : "No changes were made to " . ucfirst($category) . " settings";
+
+            return redirect()->to('/settings')->with('success', $message);
+
+        } catch (\Exception $e) {
+            log_message('error', 'Settings update failed: ' . $e->getMessage());
+            return redirect()->to('/settings')
+                ->withInput()
+                ->with('error', 'Failed to update settings: ' . $e->getMessage());
+        }
     }
     
     public function adminUtility()
@@ -130,7 +241,31 @@ class SettingsController extends BaseController
     public function systemInfo()
     {
         try {
-            $systemInfo = $this->adminUtilities->getSystemInfo();
+            // Get basic system information without relying on AdminUtilities
+            $systemInfo = [
+                'php_version' => PHP_VERSION,
+                'codeigniter_version' => \CodeIgniter\CodeIgniter::CI_VERSION,
+                'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown',
+                'operating_system' => PHP_OS,
+                'memory_limit' => ini_get('memory_limit'),
+                'max_execution_time' => ini_get('max_execution_time'),
+                'upload_max_filesize' => ini_get('upload_max_filesize'),
+                'post_max_size' => ini_get('post_max_size'),
+                'timezone' => date_default_timezone_get(),
+                'current_time' => date('Y-m-d H:i:s'),
+                'disk_free_space' => $this->getDiskSpace('free'),
+                'disk_total_space' => $this->getDiskSpace('total'),
+            ];
+            
+            // Add database information
+            try {
+                $db = \Config\Database::connect();
+                $systemInfo['database_version'] = $db->getVersion();
+                $systemInfo['database_platform'] = $db->getPlatform();
+            } catch (\Exception $e) {
+                $systemInfo['database_version'] = 'Connection failed';
+                $systemInfo['database_platform'] = 'Unknown';
+            }
             
             return $this->response->setJSON([
                 'success' => true,
@@ -141,8 +276,46 @@ class SettingsController extends BaseController
             log_message('error', 'System info retrieval failed: ' . $e->getMessage());
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Failed to retrieve system information: ' . $e->getMessage()
+                'message' => 'Failed to retrieve system information'
             ]);
+        }
+    }
+    
+    /**
+     * Format bytes to human readable format
+     */
+    private function formatBytes($size, $precision = 2)
+    {
+        if ($size <= 0) {
+            return '0 B';
+        }
+        
+        $base = log($size, 1024);
+        $suffixes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $index = min(floor($base), count($suffixes) - 1);
+        
+        return round(pow(1024, $base - $index), $precision) . ' ' . $suffixes[$index];
+    }
+    
+    /**
+     * Get disk space information safely
+     */
+    private function getDiskSpace($type = 'free')
+    {
+        try {
+            if ($type === 'free') {
+                $space = disk_free_space('.');
+            } else {
+                $space = disk_total_space('.');
+            }
+            
+            if ($space === false || $space === null) {
+                return 'Unknown';
+            }
+            
+            return $this->formatBytes($space);
+        } catch (\Exception $e) {
+            return 'Unknown';
         }
     }
     

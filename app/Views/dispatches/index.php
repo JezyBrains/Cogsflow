@@ -64,8 +64,8 @@
         <h5>Dispatch List</h5>
     </div>
     <div class="col-md-6 text-end">
-        <a href="<?= site_url('dispatches/new') ?>" class="btn btn-primary">
-            <i class="bx bx-plus"></i> New Dispatch
+        <a href="<?= site_url('dispatches/new') ?>" class="btn btn-outline-primary">
+            <i class="bx bx-plus me-1"></i> New Dispatch
         </a>
     </div>
 </div>
@@ -106,8 +106,13 @@
                     <?php if (empty($dispatches)): ?>
                         <tr>
                             <td colspan="8" class="text-center py-4">
-                                <i class="bx bx-package fs-1 text-muted"></i>
-                                <p class="text-muted mt-2">No dispatches found. <a href="<?= site_url('dispatches/new') ?>">Create your first dispatch</a></p>
+                                <div class="d-flex flex-column align-items-center">
+                                    <i class="bx bx-car display-4 text-muted mb-2"></i>
+                                    <span class="text-muted">No dispatches found</span>
+                                    <a href="<?= site_url('dispatches/new') ?>" class="btn btn-sm btn-outline-primary mt-2">
+                                        <i class="bx bx-plus me-1"></i>Create First Dispatch
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     <?php else: ?>

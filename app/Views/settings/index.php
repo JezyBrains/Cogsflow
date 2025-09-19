@@ -2,6 +2,42 @@
 
 <?= $this->section('title') ?><?= $title ?? 'System Settings' ?><?= $this->endSection() ?>
 
+<?= $this->section('head') ?>
+<style>
+/* Fix modal overlay issues for settings page */
+.modal {
+    z-index: 9999 !important;
+}
+.modal-backdrop {
+    z-index: 9998 !important;
+}
+.modal-dialog {
+    z-index: 10000 !important;
+    pointer-events: auto !important;
+    position: relative !important;
+}
+.modal-content {
+    z-index: 10001 !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    background-color: #fff !important;
+    border: 1px solid rgba(0,0,0,.2) !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 0.5rem 1rem rgba(165, 163, 174, 0.15) !important;
+}
+.modal.show {
+    display: block !important;
+}
+.modal .btn-close {
+    z-index: 10002 !important;
+    position: relative !important;
+}
+body.modal-open {
+    overflow: hidden !important;
+}
+</style>
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 <div class="container-fluid">
     <!-- Header Section -->
@@ -179,7 +215,7 @@
                                 </div>
                                 
                                 <div class="text-end">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-success">
                                         <i class="fas fa-save me-2"></i>Update Company Settings
                                     </button>
                                 </div>
@@ -216,10 +252,10 @@
                                         <div class="mb-3">
                                             <label for="default_currency" class="form-label">Default Currency</label>
                                             <select class="form-select" id="default_currency" name="default_currency">
-                                                <option value="KES" <?= ($settings['system']['default_currency']['value'] ?? '') === 'KES' ? 'selected' : '' ?>>KES - Kenyan Shilling</option>
+                                                <option value="TSH" <?= ($settings['system']['default_currency']['value'] ?? '') === 'TSH' ? 'selected' : '' ?>>TSH - Tanzanian Shilling</option>
                                                 <option value="USD" <?= ($settings['system']['default_currency']['value'] ?? '') === 'USD' ? 'selected' : '' ?>>USD - US Dollar</option>
-                                                <option value="EUR" <?= ($settings['system']['default_currency']['value'] ?? '') === 'EUR' ? 'selected' : '' ?>>EUR - Euro</option>
-                                                <option value="GBP" <?= ($settings['system']['default_currency']['value'] ?? '') === 'GBP' ? 'selected' : '' ?>>GBP - British Pound</option>
+                                                <!-- <option value="EUR" <?= ($settings['system']['default_currency']['value'] ?? '') === 'EUR' ? 'selected' : '' ?>>EUR - Euro</option> -->
+                                                <!-- <option value="GBP" <?= ($settings['system']['default_currency']['value'] ?? '') === 'GBP' ? 'selected' : '' ?>>GBP - British Pound</option> -->
                                             </select>
                                             <div class="form-text"><?= $settings['system']['default_currency']['description'] ?? '' ?></div>
                                         </div>
@@ -251,7 +287,7 @@
                                 </div>
                                 
                                 <div class="text-end">
-                                    <button type="submit" class="btn btn-primary">
+                                    <button type="submit" class="btn btn-success">
                                         <i class="fas fa-save me-2"></i>Update System Settings
                                     </button>
                                 </div>
@@ -713,6 +749,163 @@ function hideLoadingToast(toastId) {
         }, 500);
     }
 }
+
+// Fix modal overlay issues for settings modals
+// Wait for jQuery to load
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if jQuery is loaded
+    if (typeof $ === 'undefined') {
+        console.error('jQuery is not loaded!');
+        return;
+    }
+    
+    $(document).ready(function() {
+    // Check if Bootstrap is loaded
+    if (typeof bootstrap === 'undefined') {
+        console.error('Bootstrap JavaScript is not loaded!');
+        return;
+    }
+    
+    // Initialize modals properly - remove backdrop to fix overlay issues
+    const importModal = new bootstrap.Modal(document.getElementById('importModal'), {
+        backdrop: false,
+        keyboard: true,
+        focus: true
+    });
+
+    const cleanLogsModal = new bootstrap.Modal(document.getElementById('cleanLogsModal'), {
+        backdrop: false,
+        keyboard: true,
+        focus: true
+    });
+
+    // Handle close button clicks manually since we removed backdrop
+    $('#importModal .btn-close, #importModal [data-bs-dismiss="modal"]').on('click', function(e) {
+        e.preventDefault();
+        importModal.hide();
+    });
+
+    $('#cleanLogsModal .btn-close, #cleanLogsModal [data-bs-dismiss="modal"]').on('click', function(e) {
+        e.preventDefault();
+        cleanLogsModal.hide();
+    });
+
+    // Handle import button click
+    $('[data-bs-target="#importModal"]').on('click', function(e) {
+        e.preventDefault();
+        console.log('Import button clicked');
+        // Reset form when opening modal
+        $('#importModal form')[0].reset();
+        importModal.show();
+    });
+
+    // Handle import form submission with AJAX
+    $('#importModal form').on('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
+        
+        const fileInput = $('#settings_file')[0];
+        if (!fileInput.files.length) {
+            alert('Please select a JSON file to import.');
+            return false;
+        }
+        
+        const file = fileInput.files[0];
+        if (!file.name.toLowerCase().endsWith('.json')) {
+            alert('Please select a valid JSON file.');
+            return false;
+        }
+        
+        // Show loading state
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalText = submitBtn.html();
+        submitBtn.html('<i class="fas fa-spinner fa-spin me-2"></i>Importing...').prop('disabled', true);
+        
+        // Create FormData for file upload
+        const formData = new FormData(this);
+        
+        // Submit via AJAX
+        $.ajax({
+            url: '<?= site_url('settings/importSettings') ?>',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log('Import response:', response);
+                
+                // Reset button
+                submitBtn.html(originalText).prop('disabled', false);
+                
+                if (response.success) {
+                    showAlert('success', response.message);
+                    importModal.hide();
+                    // Reload page to show updated settings
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showAlert('danger', response.message || 'Import failed');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Import error:', error);
+                console.error('Response:', xhr.responseText);
+                
+                // Reset button
+                submitBtn.html(originalText).prop('disabled', false);
+                
+                let errorMessage = 'Import failed';
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    errorMessage = response.message || errorMessage;
+                } catch (e) {
+                    errorMessage = 'Import failed: ' + error;
+                }
+                
+                showAlert('danger', errorMessage);
+            }
+        });
+    });
+
+    // Handle clean logs button click  
+    $('[data-bs-target="#cleanLogsModal"]').on('click', function(e) {
+        e.preventDefault();
+        console.log('Clean logs button clicked');
+        cleanLogsModal.show();
+    });
+
+    // Handle escape key to close modals
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape') {
+            if ($('#importModal').hasClass('show')) {
+                importModal.hide();
+            }
+            if ($('#cleanLogsModal').hasClass('show')) {
+                cleanLogsModal.hide();
+            }
+        }
+    });
+
+    // Modal event debugging
+    $('#importModal').on('show.bs.modal', function() {
+        console.log('Import modal is about to show');
+    });
+
+    $('#importModal').on('shown.bs.modal', function() {
+        console.log('Import modal is fully shown');
+        $('#settings_file').focus();
+    });
+
+    $('#cleanLogsModal').on('show.bs.modal', function() {
+        console.log('Clean logs modal is about to show');
+    });
+
+    $('#cleanLogsModal').on('shown.bs.modal', function() {
+        console.log('Clean logs modal is fully shown');
+    });
+    
+    }); // End $(document).ready
+}); // End DOMContentLoaded
 </script>
 
 <?= $this->endSection() ?>

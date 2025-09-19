@@ -8,7 +8,7 @@
         <h5>Expense List</h5>
     </div>
     <div class="col-md-6 text-end">
-        <a href="<?= site_url('expenses/new') ?>" class="btn btn-primary">
+        <a href="<?= site_url('expenses/new') ?>" class="btn btn-dark">
             <i class="fas fa-plus"></i> Log New Expense
         </a>
     </div>
@@ -26,7 +26,7 @@
         <div class="card bg-primary text-white">
             <div class="card-body">
                 <h6 class="card-title">Total This Month</h6>
-                <h3>$0.00</h3>
+                <h3>$<?= number_format($stats['this_month_amount'] ?? 0, 2) ?></h3>
             </div>
         </div>
     </div>
@@ -73,9 +73,51 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td colspan="7" class="text-center">No expenses found.</td>
-                    </tr>
+                    <?php if (!empty($expenses)): ?>
+                        <?php foreach ($expenses as $expense): ?>
+                            <tr>
+                                <td><?= date('M d, Y', strtotime($expense['expense_date'])) ?></td>
+                                <td>
+                                    <span class="badge bg-secondary"><?= esc(ucfirst($expense['category'])) ?></span>
+                                </td>
+                                <td><?= esc($expense['description']) ?></td>
+                                <td>$<?= number_format($expense['amount'], 2) ?></td>
+                                <td>
+                                    <div><?= esc($expense['expense_number']) ?></div>
+                                    <?php if (!empty($expense['receipt_number'])): ?>
+                                        <div class="text-muted small">Receipt: <?= esc($expense['receipt_number']) ?></div>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if (!empty($expense['vendor_name'])): ?>
+                                        <?= esc($expense['vendor_name']) ?>
+                                    <?php else: ?>
+                                        <span class="text-muted">-</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="<?= site_url('expenses/show/' . $expense['id']) ?>" 
+                                           class="btn btn-sm btn-outline-primary" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="<?= site_url('expenses/edit/' . $expense['id']) ?>" 
+                                           class="btn btn-sm btn-outline-warning" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger" title="Delete" 
+                                                onclick="deleteExpense(<?= $expense['id'] ?>)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="7" class="text-center">No expenses found.</td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -85,6 +127,23 @@
 
 <?= $this->section('scripts') ?>
 <script>
-    // Expense specific scripts can be added here
+function deleteExpense(id) {
+    if (confirm('Are you sure you want to delete this expense? This action cannot be undone.')) {
+        // Create a form and submit it
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '<?= site_url('expenses/delete/') ?>' + id;
+        
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '<?= csrf_token() ?>';
+        csrfInput.value = '<?= csrf_hash() ?>';
+        form.appendChild(csrfInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
 </script>
 <?= $this->endSection() ?>

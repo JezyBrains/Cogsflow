@@ -33,7 +33,7 @@ class AuthController extends BaseController
         $db = \Config\Database::connect();
         $user = $db->table('users')->where('username', $username)->get()->getRow();
 
-        if ($user && password_verify($password, $user->password)) {
+        if ($user && password_verify($password, $user->password_hash)) {
             // Set session data
             $sessionData = [
                 'user_id' => $user->id,

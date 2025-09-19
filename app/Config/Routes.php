@@ -32,6 +32,10 @@ $routes->group('batches', ['filter' => 'role:admin,warehouse_staff,batches.view'
     $routes->post('delete/(:num)', 'BatchController::delete/$1', ['filter' => 'role:admin,batches.delete']);
     $routes->post('approve/(:num)', 'BatchController::approve/$1');
     $routes->post('reject/(:num)', 'BatchController::reject/$1');
+    $routes->get('po-details/(:num)', 'BatchController::getPODetails/$1');
+    $routes->get('receiving', 'BatchReceivingController::index', ['filter' => 'role:admin,warehouse_staff,batches.view']);
+    $routes->get('receiving/inspection/(:num)', 'BatchReceivingController::inspectionForm/$1', ['filter' => 'role:admin,warehouse_staff,batches.edit']);
+    $routes->post('receiving/process-inspection', 'BatchReceivingController::processInspection', ['filter' => 'role:admin,warehouse_staff,batches.edit']);
 });
 
 // Dispatches Module
@@ -43,6 +47,9 @@ $routes->group('dispatches', ['filter' => 'role:admin,warehouse_staff,dispatches
     $routes->post('updateStatus/(:num)', 'DispatchController::updateStatus/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
     $routes->get('receive/(:num)', 'DispatchController::showReceiveForm/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
     $routes->post('receive', 'DispatchController::receive', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
+    $routes->post('mark-arrived/(:num)', 'DispatchController::markAsArrived/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
+    $routes->get('inspection/(:num)', 'DispatchController::inspectionForm/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
+    $routes->post('perform-inspection/(:num)', 'DispatchController::performInspection/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
 });
 
 // Purchase Orders Module
@@ -50,20 +57,57 @@ $routes->group('purchase-orders', function ($routes) {
     $routes->get('/', 'PurchaseOrderController::index');
     $routes->get('new', 'PurchaseOrderController::new');
     $routes->post('create', 'PurchaseOrderController::create');
+    $routes->get('search', 'PurchaseOrderController::search');
+    $routes->get('testSearch', 'PurchaseOrderController::testSearch');
+    $routes->get('getBatches/(:num)', 'PurchaseOrderController::getBatches/$1');
+    $routes->get('(:num)', 'PurchaseOrderController::show/$1');
+    $routes->get('(:num)/edit', 'PurchaseOrderController::edit/$1');
+    $routes->put('(:num)', 'PurchaseOrderController::update/$1');
+    $routes->delete('(:num)', 'PurchaseOrderController::delete/$1');
+    $routes->post('approve/(:num)', 'PurchaseOrderController::approve/$1');
+    $routes->post('reject/(:num)', 'PurchaseOrderController::reject/$1');
+    $routes->get('fulfillment-progress/(:num)', 'PurchaseOrderController::getFulfillmentProgress/$1');
+    $routes->get('fulfillment-history/(:num)', 'PurchaseOrderController::getFulfillmentHistory/$1');
+    $routes->get('discrepancy-analysis/(:num)', 'PurchaseOrderController::getDiscrepancyAnalysis/$1');
+    $routes->get('completion-timeline/(:num)', 'PurchaseOrderController::getCompletionTimeline/$1');
+    $routes->get('batch-recommendations/(:num)', 'PurchaseOrderController::getBatchRecommendations/$1');
 });
 
 // Inventory Module
-$routes->group('inventory', function ($routes) {
+$routes->group('inventory', ['filter' => 'role:admin,warehouse_staff,inventory.view'], function ($routes) {
     $routes->get('/', 'InventoryController::index');
-    $routes->get('adjust', 'InventoryController::showAdjustForm');
-    $routes->post('adjust', 'InventoryController::adjust');
+    $routes->get('adjust', 'InventoryController::showAdjustForm', ['filter' => 'role:admin,warehouse_staff,inventory.edit']);
+    $routes->post('adjust', 'InventoryController::adjust', ['filter' => 'role:admin,warehouse_staff,inventory.edit']);
 });
+
+// Suppliers Module
+$routes->group('suppliers', ['filter' => 'role:admin,warehouse_staff,suppliers.view'], function ($routes) {
+    $routes->get('/', 'SupplierController::index');
+    $routes->get('new', 'SupplierController::new', ['filter' => 'role:admin,warehouse_staff,suppliers.create']);
+    $routes->post('create', 'SupplierController::create', ['filter' => 'role:admin,warehouse_staff,suppliers.create']);
+    $routes->get('(:num)', 'SupplierController::show/$1');
+    $routes->get('(:num)/edit', 'SupplierController::edit/$1', ['filter' => 'role:admin,warehouse_staff,suppliers.edit']);
+    $routes->put('(:num)/update', 'SupplierController::update/$1', ['filter' => 'role:admin,warehouse_staff,suppliers.edit']);
+    $routes->delete('(:num)/archive', 'SupplierController::archive/$1', ['filter' => 'role:admin,suppliers.delete']);
+    $routes->patch('(:num)/restore', 'SupplierController::restore/$1', ['filter' => 'role:admin,suppliers.delete']);
+    $routes->get('search', 'SupplierController::search', ['filter' => 'auth']);
+    $routes->get('export', 'SupplierController::export', ['filter' => 'role:admin,warehouse_staff,suppliers.export']);
+    $routes->get('(:num)/statistics', 'SupplierController::statistics/$1');
+    $routes->get('(:num)/activity', 'SupplierController::activity/$1');
+});
+
+// Suppliers (AJAX)
+$routes->post('suppliers/create-ajax', 'SupplierController::createAjax', ['filter' => 'auth']);
 
 // Expenses Module
 $routes->group('expenses', function ($routes) {
     $routes->get('/', 'ExpenseController::index');
     $routes->get('new', 'ExpenseController::new');
     $routes->post('log', 'ExpenseController::log');
+    $routes->get('show/(:num)', 'ExpenseController::show/$1');
+    $routes->get('edit/(:num)', 'ExpenseController::edit/$1');
+    $routes->post('update/(:num)', 'ExpenseController::update/$1');
+    $routes->post('delete/(:num)', 'ExpenseController::delete/$1');
 });
 
 // Settings Module
@@ -125,6 +169,23 @@ $routes->group('report-system', ['filter' => 'auth'], function($routes) {
     $routes->get('quick-stats', 'ReportController::quickStats');
     $routes->get('debug', 'ReportController::debug');
     $routes->get('export-all/(:segment)', 'ReportController::exportAll/$1');
+});
+
+// Workflow Dashboard Routes
+$routes->group('workflow', ['filter' => 'auth'], function($routes) {
+    $routes->get('/', 'WorkflowDashboardController::index');
+    $routes->get('dashboard', 'WorkflowDashboardController::index');
+    $routes->get('analytics', 'WorkflowDashboardController::getAnalytics');
+    $routes->get('export-report', 'WorkflowDashboardController::exportReport');
+});
+
+// Batch Receiving Routes
+$routes->group('batch-receiving', ['filter' => 'role:admin,warehouse_staff'], function($routes) {
+    $routes->get('/', 'BatchReceivingController::index');
+    $routes->get('inspection/(:num)', 'BatchReceivingController::inspectionForm/$1');
+    $routes->post('process-inspection', 'BatchReceivingController::processInspection');
+    $routes->get('batch-history/(:num)', 'BatchReceivingController::batchHistory/$1');
+    $routes->get('export-report/(:num)', 'BatchReceivingController::exportInspectionReport/$1');
 });
 
 // Set 404 override

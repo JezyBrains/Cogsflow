@@ -129,12 +129,12 @@
             <!-- Vehicle Details -->
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <label for="trailer_number" class="form-label">Trailer Number</label>
+                    <label for="trailer_number" class="form-label">Trailer Number <span class="text-danger">*</span></label>
                     <input type="text" class="form-control <?= session()->get('errors.trailer_number') ? 'is-invalid' : '' ?>" 
                            id="trailer_number" name="trailer_number" 
                            value="<?= old('trailer_number') ?>" 
-                           placeholder="e.g., TRL-456E (optional)" 
-                           style="text-transform: uppercase;">
+                           placeholder="e.g., TRL-456E" 
+                           style="text-transform: uppercase;" required>
                     <?php if(session()->get('errors.trailer_number')): ?>
                         <div class="invalid-feedback"><?= session()->get('errors.trailer_number') ?></div>
                     <?php endif; ?>
@@ -164,13 +164,27 @@
                     <?php endif; ?>
                 </div>
                 <div class="col-md-6">
-                    <label for="driver_phone" class="form-label">Driver Phone</label>
+                    <label for="driver_phone" class="form-label">Driver Phone <small class="text-muted">(Format: +255### ### ### or leave blank)</small></label>
                     <input type="tel" class="form-control <?= session()->get('errors.driver_phone') ? 'is-invalid' : '' ?>" 
                            id="driver_phone" name="driver_phone" 
                            value="<?= old('driver_phone') ?>" 
-                           placeholder="e.g., +254700123456">
+                           placeholder="e.g., +255712 345 678"
+                           pattern="^\+255\d{3}\s\d{3}\s\d{3}$"
+                           title="Use +255 followed by 9 digits with spaces: +255### ### ###">
                     <?php if(session()->get('errors.driver_phone')): ?>
                         <div class="invalid-feedback"><?= session()->get('errors.driver_phone') ?></div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label for="driver_id_number" class="form-label">Driver ID Number</label>
+                    <input type="text" class="form-control <?= session()->get('errors.driver_id_number') ? 'is-invalid' : '' ?>"
+                           id="driver_id_number" name="driver_id_number"
+                           value="<?= old('driver_id_number') ?>" 
+                           placeholder="Enter driver ID number (license/NID)">
+                    <?php if(session()->get('errors.driver_id_number')): ?>
+                        <div class="invalid-feedback"><?= session()->get('errors.driver_id_number') ?></div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -203,7 +217,7 @@
                 <a href="<?= site_url('dispatches') ?>" class="btn btn-secondary">
                     <i class="bx bx-x"></i> Cancel
                 </a>
-                <button type="submit" class="btn btn-primary" <?= empty($available_batches) ? 'disabled' : '' ?>>
+                <button type="submit" class="btn btn-success" <?= empty($available_batches) ? 'disabled' : '' ?>>
                     <i class="bx bx-check"></i> Create Dispatch
                 </button>
             </div>
@@ -248,7 +262,7 @@
         
         // Form validation
         document.getElementById('dispatchForm').addEventListener('submit', function(e) {
-            const requiredFields = ['batch_id', 'dispatcher_name', 'vehicle_number', 'driver_name', 'destination', 'estimated_arrival'];
+            const requiredFields = ['batch_id', 'dispatcher_name', 'vehicle_number', 'trailer_number', 'driver_name', 'destination', 'estimated_arrival'];
             let isValid = true;
             
             requiredFields.forEach(function(fieldName) {

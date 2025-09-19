@@ -5,18 +5,21 @@ namespace App\Controllers;
 use App\Models\BatchModel;
 use App\Models\BatchBagModel;
 use App\Models\SupplierModel;
+use App\Models\PurchaseOrderModel;
 
 class BatchController extends BaseController
 {
     protected $batchModel;
     protected $batchBagModel;
     protected $supplierModel;
+    protected $purchaseOrderModel;
 
     public function __construct()
     {
         $this->batchModel = new BatchModel();
         $this->batchBagModel = new BatchBagModel();
         $this->supplierModel = new SupplierModel();
+        $this->purchaseOrderModel = new PurchaseOrderModel();
     }
 
     /**
@@ -42,13 +45,28 @@ class BatchController extends BaseController
      */
     public function new()
     {
-        $data = [
-            'title' => 'Create New Batch',
-            'suppliers' => $this->supplierModel->getActiveSuppliers(),
-            'batch_number' => $this->batchModel->generateBatchNumber()
-        ];
-        
-        return view('batches/create', $data);
+        try {
+            $data = [
+                'title' => 'Create New Batch',
+                'approved_pos' => $this->purchaseOrderModel->getApprovedPOsForBatch(),
+                'suppliers' => $this->supplierModel->where('status', 'active')->findAll(),
+                'batch_number' => $this->batchModel->generateBatchNumber()
+            ];
+            
+            return view('batches/create', $data);
+        } catch (\Exception $e) {
+            log_message('error', 'BatchController::new() error: ' . $e->getMessage());
+            
+            // Provide fallback data
+            $data = [
+                'title' => 'Create New Batch',
+                'approved_pos' => [],
+                'suppliers' => [],
+                'batch_number' => 'B' . date('Y') . '0001'
+            ];
+            
+            return view('batches/create', $data);
+        }
     }
     
     /**
@@ -64,9 +82,9 @@ class BatchController extends BaseController
         // Validate basic batch data
         $rules = [
             'batch_number' => 'required|is_unique[batches.batch_number]',
-            'supplier_id' => 'required|integer',
+            'purchase_order_id' => 'required|integer',
             'grain_type' => 'required',
-            'received_date' => 'required|valid_date',
+            'batch_created_date' => 'required|valid_date',
             'bags' => 'required',
             'bags.*.bag_number' => 'required|integer|greater_than[0]',
             'bags.*.weight_kg' => 'required|decimal|greater_than[0]',
@@ -81,6 +99,16 @@ class BatchController extends BaseController
         $db->transStart();
         
         try {
+            // Get PO details and validate
+            $poId = $this->request->getPost('purchase_order_id');
+            $po = $this->purchaseOrderModel->find($poId);
+            
+            // Allow approved, confirmed, pending, transferring, and empty status (legacy data)
+            $allowedStatuses = ['approved', 'confirmed', 'pending', 'transferring', ''];
+            if (!$po || !in_array($po['status'], $allowedStatuses)) {
+                throw new \Exception('Selected purchase order is not available or not approved. Current status: ' . ($po['status'] ?? 'null'));
+            }
+
             // Process bag data
             $bags = $this->request->getPost('bags');
             $totalWeight = 0;
@@ -93,21 +121,29 @@ class BatchController extends BaseController
             }
             
             $averageMoisture = $totalMoisture / $bagCount;
+            $totalWeightMT = round($totalWeight / 1000, 3);
             
-            // Create batch record
+            // Create batch record with PO validation
             $batchData = [
                 'batch_number' => $this->request->getPost('batch_number'),
-                'supplier_id' => $this->request->getPost('supplier_id'),
+                'purchase_order_id' => $poId,
+                'supplier_id' => $po['supplier_id'],
                 'grain_type' => $this->request->getPost('grain_type'),
                 'total_bags' => $bagCount,
                 'total_weight_kg' => $totalWeight,
-                'total_weight_mt' => round($totalWeight / 1000, 3),
+                'total_weight_mt' => $totalWeightMT,
                 'average_moisture' => round($averageMoisture, 2),
                 'quality_grade' => $this->determineQualityGrade($averageMoisture),
                 'status' => 'pending',
                 'notes' => $this->request->getPost('notes'),
-                'received_date' => $this->request->getPost('received_date')
+                'received_date' => $this->request->getPost('batch_created_date')
             ];
+
+            // Validate batch against PO constraints
+            $validation = $this->batchModel->validateBatchAgainstPO($batchData, $poId);
+            if (!$validation['valid']) {
+                throw new \Exception($validation['message']);
+            }
             
             $batchId = $this->batchModel->insert($batchData);
             
@@ -120,6 +156,9 @@ class BatchController extends BaseController
                 throw new \Exception('Failed to create bag records');
             }
             
+            // Update purchase order status based on transfers
+            $this->purchaseOrderModel->updateStatusBasedOnTransfers($poId);
+            
             $db->transComplete();
             
             if ($db->transStatus() === false) {
@@ -127,13 +166,15 @@ class BatchController extends BaseController
             }
             
             // Send notification about new batch
+            helper('notification');
             sendBatchNotification($batchId, $batchData['batch_number'], 'created', [
                 'total_weight' => $batchData['total_weight_mt'],
                 'grain_type' => $batchData['grain_type'],
-                'quality_grade' => $batchData['quality_grade']
+                'quality_grade' => $batchData['quality_grade'],
+                'po_number' => $po['po_number']
             ]);
             
-            session()->setFlashdata('success', 'Batch ' . $batchData['batch_number'] . ' was successfully created with ' . $bagCount . ' bags totaling ' . $batchData['total_weight_mt'] . ' MT.');
+            session()->setFlashdata('success', 'Batch ' . $batchData['batch_number'] . ' was successfully created with ' . $bagCount . ' bags totaling ' . $batchData['total_weight_mt'] . ' MT. Awaiting approval from PO authorizer.');
             
             return redirect()->to('/batches');
             
@@ -175,6 +216,16 @@ class BatchController extends BaseController
      */
     public function approve($id)
     {
+        $session = session();
+        $userId = $session->get('user_id');
+        
+        // Check if user can approve this batch
+        $canApprove = $this->batchModel->canUserApproveBatch($id, $userId);
+        if (!$canApprove['can_approve']) {
+            session()->setFlashdata('error', $canApprove['message']);
+            return redirect()->back();
+        }
+
         $batch = $this->batchModel->find($id);
         
         if (!$batch) {
@@ -187,12 +238,20 @@ class BatchController extends BaseController
             return redirect()->back();
         }
         
-        $this->batchModel->update($id, ['status' => 'approved']);
+        $updateData = [
+            'status' => 'approved',
+            'approved_by' => $userId,
+            'approved_at' => date('Y-m-d H:i:s')
+        ];
+        
+        $this->batchModel->update($id, $updateData);
         
         // Send notification about batch approval
-        sendBatchNotification($id, $batch['batch_number'], 'arrived', [
+        helper('notification');
+        sendBatchNotification($id, $batch['batch_number'], 'approved', [
             'status' => 'approved',
-            'grain_type' => $batch['grain_type']
+            'grain_type' => $batch['grain_type'],
+            'approved_by' => $userId
         ]);
         
         session()->setFlashdata('success', 'Batch ' . $batch['batch_number'] . ' has been approved and is ready for dispatch.');
@@ -208,6 +267,16 @@ class BatchController extends BaseController
      */
     public function reject($id)
     {
+        $session = session();
+        $userId = $session->get('user_id');
+        
+        // Check if user can approve/reject this batch
+        $canApprove = $this->batchModel->canUserApproveBatch($id, $userId);
+        if (!$canApprove['can_approve']) {
+            session()->setFlashdata('error', $canApprove['message']);
+            return redirect()->back();
+        }
+
         $batch = $this->batchModel->find($id);
         
         if (!$batch) {
@@ -219,15 +288,50 @@ class BatchController extends BaseController
             session()->setFlashdata('error', 'Only pending batches can be rejected');
             return redirect()->back();
         }
+
+        $rejectionReason = $this->request->getPost('rejection_reason');
+        if (empty($rejectionReason)) {
+            session()->setFlashdata('error', 'Rejection reason is required');
+            return redirect()->back();
+        }
         
-        $this->batchModel->update($id, [
+        $updateData = [
             'status' => 'rejected',
-            'notes' => $batch['notes'] . '\n[REJECTED] ' . $this->request->getPost('rejection_reason')
-        ]);
+            'approved_by' => $userId,
+            'approved_at' => date('Y-m-d H:i:s'),
+            'rejection_reason' => $rejectionReason
+        ];
+        
+        $this->batchModel->update($id, $updateData);
         
         session()->setFlashdata('success', 'Batch ' . $batch['batch_number'] . ' has been rejected.');
         
         return redirect()->back();
+    }
+
+    /**
+     * Get PO details for batch creation (AJAX endpoint)
+     */
+    public function getPODetails($poId)
+    {
+        try {
+            $po = $this->purchaseOrderModel->find($poId);
+            
+            if (!$po || $po['status'] !== 'approved') {
+                return $this->response->setJSON(['error' => 'Purchase order not found or not approved']);
+            }
+
+            $supplier = $this->supplierModel->find($po['supplier_id']);
+            
+            return $this->response->setJSON([
+                'po' => $po,
+                'supplier' => $supplier,
+                'fulfillment_progress' => $this->purchaseOrderModel->getPOFulfillmentProgress($poId)
+            ]);
+        } catch (\Exception $e) {
+            log_message('error', 'BatchController::getPODetails() error: ' . $e->getMessage());
+            return $this->response->setJSON(['error' => 'Failed to get PO details']);
+        }
     }
     
     /**

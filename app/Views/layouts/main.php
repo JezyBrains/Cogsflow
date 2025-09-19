@@ -18,17 +18,19 @@ helper('notification');
     <link rel="icon" type="image/x-icon" href="<?= base_url('assets/img/favicon.ico') ?>">
     
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('assets/css/fonts-local.css') ?>">
     
     <!-- Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?= base_url('assets/css/boxicons.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/fontawesome.min.css') ?>">
     
     <!-- Core CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= base_url('assets/css/bootstrap.min.css') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/datatables.min.css') ?>">
     <link rel="stylesheet" href="<?= css_asset('custom') ?>">
+    
+    <!-- Chart.js -->
+    <script src="<?= base_url('assets/js/chart.min.js') ?>"></script>
     
     <?= $this->renderSection('head') ?>
 </head>
@@ -72,14 +74,26 @@ helper('notification');
                     <?php endif; ?>
                     
                     <?php if (canAccess('batches', 'view')): ?>
-                    <li class="menu-item <?= strpos(uri_string(), 'batches') === 0 ? 'active' : '' ?>">
-                        <a href="<?= site_url('batches') ?>" class="menu-link">
+                    <li class="menu-item <?= strpos(uri_string(), 'batches') === 0 ? 'active open' : '' ?>">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-package"></i>
                             <div data-i18n="Batch Management">Batch Management</div>
                             <div class="badge badge-center rounded-pill bg-danger w-px-20 h-px-20 ms-auto">
                                 <span class="badge-content">5</span>
                             </div>
                         </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item <?= uri_string() == 'batches' ? 'active' : '' ?>">
+                                <a href="<?= site_url('batches') ?>" class="menu-link">
+                                    <div data-i18n="Batch List">Batch List</div>
+                                </a>
+                            </li>
+                            <li class="menu-item <?= strpos(uri_string(), 'batches/receiving') === 0 ? 'active' : '' ?>">
+                                <a href="<?= site_url('batches/receiving') ?>" class="menu-link">
+                                    <div data-i18n="Batch Receiving">Batch Receiving</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <?php endif; ?>
                     
@@ -96,7 +110,7 @@ helper('notification');
                     <?php endif; ?>
                     
                     <!-- Operations -->
-                    <?php if (canAccess('dispatches', 'view') || canAccess('purchase_orders', 'view') || canAccess('expenses', 'view')): ?>
+                    <?php if (canAccess('dispatches', 'view') || canAccess('purchase_orders', 'view') || canAccess('expenses', 'view') || canAccess('suppliers', 'view')): ?>
                     <li class="menu-header small text-uppercase">
                         <span class="menu-header-text">Operations</span>
                     </li>
@@ -124,6 +138,15 @@ helper('notification');
                             <div data-i18n="Expenses">Expense Tracking</div>
                         </a>
                     </li>
+                    
+                    <?php if (canAccess('suppliers', 'view')): ?>
+                    <li class="menu-item <?= strpos(uri_string(), 'suppliers') === 0 ? 'active' : '' ?>">
+                        <a href="<?= site_url('suppliers') ?>" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-user-plus"></i>
+                            <div data-i18n="Suppliers">Suppliers</div>
+                        </a>
+                    </li>
+                    <?php endif; ?>
                     
                     <li class="menu-item <?= strpos(uri_string(), 'reports') === 0 ? 'active' : '' ?>">
                         <a href="<?= site_url('reports') ?>" class="menu-link">
@@ -283,7 +306,7 @@ helper('notification');
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="<?= base_url('assets/img/avatars/1.png') ?>" alt class="w-px-40 h-auto rounded-circle" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2OTZjZmYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDEgNSAyMUg3QzcgMTguMjM4NiA5LjIzODU4IDE2IDEyIDE2QzE0Ljc2MTQgMTYgMTcgMTguMjM4NiAxNyAyMUgxOUMxOSAxNy4xMzQxIDE1Ljg2NiAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K'">
+                                        <img src="<?= base_url('assets/img/avatars/1.png') ?>" alt class="w-100 h-100 rounded-circle" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2OTZjZmYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDEgNSAyMUg3QzcgMTguMjM4NiA5LjIzODU4IDE2IDEyIDE2QzE0Ljc2MTQgMTYgMTcgMTguMjM4NiAxNyAyMUgxOUMxOSAxNy4xMzQxIDE1Ljg2NiAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K'">
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
@@ -292,7 +315,7 @@ helper('notification');
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0 me-3">
                                                     <div class="avatar avatar-online">
-                                                        <img src="<?= base_url('assets/img/avatars/1.png') ?>" alt class="w-px-40 h-auto rounded-circle" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2OTZjZmYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDEgNSAyMUg3QzcgMTguMjM4NiA5LjIzODU4IDE2IDEyIDE2QzE0Ljc2MTQgMTYgMTcgMTguMjM4NiAxNyAyMUgxOUMxOSAxNy4xMzQxIDE1Ljg2NiAxNCAxMiAxNFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K'">
+                                                        <img src="<?= base_url('assets/img/avatars/1.png') ?>" alt class="w-100 h-100 rounded-circle" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2OTZjZmYiLz4KPHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI4IiB5PSI4Ij4KPHBhdGggZD0iTTEyIDEyQzE0LjIwOTEgMTIgMTYgMTAuMjA5MSAxNiA4QzE2IDUuNzkwODYgMTQuMjA5MSA0IDEyIDRDOS43OTA4NiA0IDggNS43OTA4NiA4IDhDOCAxMC4yMDkxIDkuNzkwODYgMTIgMTIgMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMTRDOC4xMzQwMSAxNCA1IDE3LjEzNDEgNSAyMUg3QzcgMTguMjM4NiA5LjIzODU4IDE2IDEyIDE2QzE0Ljc2MTQgMTYgMTcgMTguMjM4NiAxNyAyMUgxOUMxOSAxNy4xMzQxIDE1Ljg2NiAxNCAxMiAxNFoi IGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo8L3N2Zz4K'">
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1">
@@ -421,7 +444,7 @@ helper('notification');
                     <footer class="content-footer footer bg-footer-theme">
                         <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
                             <div class="mb-2 mb-md-0">
-                                © <?= date('Y') ?> <a href="#" target="_blank" class="footer-link fw-medium">GrainFlow</a>. All rights reserved.
+                                <?= date('Y') ?> <a href="#" target="_blank" class="footer-link fw-medium">GrainFlow</a>. All rights reserved.
                             </div>
                             <div class="d-none d-lg-inline-block">
                                 <a href="#" class="footer-link me-4">License</a>
@@ -445,7 +468,10 @@ helper('notification');
     <!-- / Layout wrapper -->
     
     <!-- Core JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= base_url('assets/js/jquery.min.js') ?>"></script>
+    <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>"></script>
+    <script src="<?= base_url('assets/js/datatables.min.js') ?>"></script>
+    <script src="<?= base_url('assets/js/price-formatter.js') ?>"></script>
     <script src="<?= js_asset('custom') ?>"></script>
     
     <!-- Notification System -->

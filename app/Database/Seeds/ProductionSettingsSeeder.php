@@ -21,7 +21,7 @@ class ProductionSettingsSeeder extends Seeder
             ],
             [
                 'key' => 'base_url',
-                'value' => 'https://nipoagro.com/',
+                'value' => 'http://localhost:8000/',
                 'type' => 'string',
                 'category' => 'system',
                 'description' => 'Base URL of the application',
@@ -30,7 +30,7 @@ class ProductionSettingsSeeder extends Seeder
             ],
             [
                 'key' => 'default_currency',
-                'value' => 'KES',
+                'value' => 'TSH',
                 'type' => 'string',
                 'category' => 'system',
                 'description' => 'Default currency code',
@@ -77,7 +77,7 @@ class ProductionSettingsSeeder extends Seeder
             ],
             [
                 'key' => 'company_email',
-                'value' => 'info@nipoagro.com',
+                'value' => 'info@localhost:8000',
                 'type' => 'string',
                 'category' => 'company',
                 'description' => 'Company email address',

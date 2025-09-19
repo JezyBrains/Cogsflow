@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# CogsFlow Production Deployment Script for nipoagro.com
+# CogsFlow Production Deployment Script for localhost:8000
 # Run this script on the production server
 
 echo "=========================================="
 echo "CogsFlow Production Deployment"
-echo "Domain: nipoagro.com"
+echo "Domain: localhost:8000"
 echo "=========================================="
 
 # Check if running as root
@@ -57,14 +57,14 @@ echo "=========================================="
 echo ""
 echo "IMPORTANT SECURITY NOTES:"
 echo "1. Change the default admin password immediately"
-echo "2. Update database credentials in .env file"
-echo "3. Update email configuration in .env file"
-echo "4. Replace REPLACE_WITH_SECURE_PASSWORD with actual passwords"
+echo "2. Database credentials are pre-configured for johsport_nipo"
+echo "3. Update email configuration in .env file if needed"
+echo "4. Generate encryption key if not already set"
 echo "5. Ensure SSL certificate is properly configured"
 echo ""
 echo "Default Admin Credentials:"
 echo "Username: admin"
-echo "Email: admin@nipoagro.com"
+echo "Email: admin@localhost:8000"
 echo "Password: NipoAgro2025!"
 echo ""
 echo "Please change these credentials after first login!"

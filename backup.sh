@@ -14,7 +14,7 @@ echo "Starting CogsFlow backup - $DATE"
 
 # Database backup
 echo "Backing up database..."
-mysqldump -u nipoagro_user -p nipoagro_cogsflow > $BACKUP_DIR/database_$DATE.sql
+mysqldump -u johsport_jezakh -p johsport_nipo > $BACKUP_DIR/database_$DATE.sql
 
 # Application files backup (excluding vendor and cache)
 echo "Backing up application files..."

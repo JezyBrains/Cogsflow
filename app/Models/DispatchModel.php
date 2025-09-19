@@ -26,6 +26,13 @@ class DispatchModel extends Model
         'actual_arrival',
         'status',
         'notes',
+        'received_by',
+        'inspection_date',
+        'actual_bags',
+        'actual_weight_kg',
+        'actual_weight_mt',
+        'discrepancies',
+        'inspection_notes',
         'created_at',
         'updated_at'
     ];
@@ -41,14 +48,18 @@ class DispatchModel extends Model
         'dispatch_number' => 'permit_empty|min_length[3]|max_length[50]',
         'batch_id' => 'required|integer',
         'vehicle_number' => 'required|min_length[3]|max_length[20]',
-        'trailer_number' => 'permit_empty|min_length[3]|max_length[20]',
+        'trailer_number' => 'required|min_length[3]|max_length[20]',
         'driver_name' => 'required|min_length[3]|max_length[255]',
-        'driver_phone' => 'permit_empty|min_length[10]|max_length[20]',
+        'driver_phone' => 'permit_empty|regex_match[/^\\+255\\d{3}\\s\\d{3}\\s\\d{3}$/]',
         'dispatcher_name' => 'required|min_length[3]|max_length[255]',
         'destination' => 'required|min_length[3]|max_length[255]',
         'estimated_arrival' => 'required|valid_date',
-        'status' => 'required|in_list[pending,in_transit,delivered,cancelled]',
-        'notes' => 'permit_empty|max_length[500]'
+        'status' => 'required|in_list[pending,in_transit,arrived,delivered,cancelled]',
+        'notes' => 'permit_empty|max_length[500]',
+        'actual_bags' => 'permit_empty|integer|greater_than[0]',
+        'actual_weight_kg' => 'permit_empty|decimal|greater_than[0]',
+        'discrepancies' => 'permit_empty|max_length[1000]',
+        'inspection_notes' => 'permit_empty|max_length[1000]'
     ];
 
     protected $validationMessages = [
@@ -82,7 +93,7 @@ class DispatchModel extends Model
         ],
         'status' => [
             'required' => 'Status is required',
-            'in_list' => 'Status must be one of: pending, in_transit, delivered, cancelled'
+            'in_list' => 'Status must be one of: pending, in_transit, arrived, delivered, cancelled'
         ]
     ];
 
@@ -154,22 +165,109 @@ class DispatchModel extends Model
      */
     public function getDispatchStats()
     {
+        // Use fresh queries for each count to avoid query builder state issues
         $stats = [
             'total_dispatches' => $this->countAll(),
-            'pending_dispatches' => $this->where('dispatches.status', 'pending')->countAllResults(false),
-            'in_transit_dispatches' => $this->where('dispatches.status', 'in_transit')->countAllResults(false),
-            'delivered_dispatches' => $this->where('dispatches.status', 'delivered')->countAllResults(false),
-            'cancelled_dispatches' => $this->where('dispatches.status', 'cancelled')->countAllResults(false)
+            'pending_dispatches' => $this->where('status', 'pending')->countAllResults(),
+            'in_transit_dispatches' => $this->where('status', 'in_transit')->countAllResults(),
+            'arrived_dispatches' => $this->where('status', 'arrived')->countAllResults(),
+            'delivered_dispatches' => $this->where('status', 'delivered')->countAllResults(),
+            'cancelled_dispatches' => $this->where('status', 'cancelled')->countAllResults()
         ];
 
-        // Calculate total weight dispatched
-        $totalWeight = $this->select('SUM(batches.total_weight_mt) as total_weight')
-                           ->join('batches', 'batches.id = dispatches.batch_id', 'left')
-                           ->where('dispatches.status !=', 'cancelled')
-                           ->first();
+        // Calculate total weight dispatched using fresh query
+        $builder = $this->db->table('dispatches d');
+        $builder->select('SUM(b.total_weight_mt) as total_weight');
+        $builder->join('batches b', 'b.id = d.batch_id', 'left');
+        $builder->where('d.status !=', 'cancelled');
+        $result = $builder->get()->getRowArray();
         
-        $stats['total_weight_dispatched'] = $totalWeight['total_weight'] ?? 0;
+        $stats['total_weight_dispatched'] = $result['total_weight'] ?? 0;
 
         return $stats;
+    }
+
+    /**
+     * Get dispatches awaiting inspection (arrived status)
+     */
+    public function getDispatchesAwaitingInspection()
+    {
+        return $this->select('dispatches.*, batches.batch_number, batches.grain_type, batches.total_weight_mt, batches.total_bags, suppliers.name as supplier_name')
+                    ->join('batches', 'batches.id = dispatches.batch_id', 'left')
+                    ->join('suppliers', 'suppliers.id = batches.supplier_id', 'left')
+                    ->where('dispatches.status', 'arrived')
+                    ->orderBy('dispatches.actual_arrival', 'ASC')
+                    ->findAll();
+    }
+
+    /**
+     * Calculate discrepancies between sent and received quantities
+     */
+    public function calculateDiscrepancies($dispatchId, $actualBags, $actualWeightKg)
+    {
+        $dispatch = $this->getDispatchWithBatchInfo($dispatchId);
+        if (!$dispatch) {
+            return null;
+        }
+
+        $expectedBags = $dispatch['total_bags'];
+        $expectedWeightKg = $dispatch['total_weight_mt'] * 1000;
+        $actualWeightMt = round($actualWeightKg / 1000, 3);
+
+        $bagDiscrepancy = $actualBags - $expectedBags;
+        $weightDiscrepancyKg = $actualWeightKg - $expectedWeightKg;
+        $weightDiscrepancyMt = round($weightDiscrepancyKg / 1000, 3);
+        $weightDiscrepancyPercentage = round(($weightDiscrepancyKg / $expectedWeightKg) * 100, 2);
+
+        $discrepancies = [];
+        
+        if ($bagDiscrepancy != 0) {
+            $discrepancies[] = "Bag count: Expected {$expectedBags}, Received {$actualBags} (Difference: {$bagDiscrepancy})";
+        }
+        
+        if (abs($weightDiscrepancyPercentage) > 0.5) { // Threshold for significant discrepancy
+            $discrepancies[] = "Weight: Expected {$expectedWeightKg}kg, Received {$actualWeightKg}kg (Difference: {$weightDiscrepancyKg}kg, {$weightDiscrepancyPercentage}%)";
+        }
+
+        return [
+            'has_discrepancies' => !empty($discrepancies),
+            'discrepancy_list' => $discrepancies,
+            'discrepancy_summary' => implode('; ', $discrepancies),
+            'expected_bags' => $expectedBags,
+            'actual_bags' => $actualBags,
+            'bag_difference' => $bagDiscrepancy,
+            'expected_weight_kg' => $expectedWeightKg,
+            'actual_weight_kg' => $actualWeightKg,
+            'actual_weight_mt' => $actualWeightMt,
+            'weight_difference_kg' => $weightDiscrepancyKg,
+            'weight_difference_mt' => $weightDiscrepancyMt,
+            'weight_difference_percentage' => $weightDiscrepancyPercentage
+        ];
+    }
+
+    /**
+     * Check if user can perform receiving inspection (different from batch creator)
+     */
+    public function canUserInspectDispatch($dispatchId, $userId)
+    {
+        $dispatch = $this->select('dispatches.*, batches.created_by as batch_creator')
+                         ->join('batches', 'batches.id = dispatches.batch_id', 'left')
+                         ->where('dispatches.id', $dispatchId)
+                         ->first();
+        
+        if (!$dispatch) {
+            return ['can_inspect' => false, 'message' => 'Dispatch not found'];
+        }
+
+        if ($dispatch['status'] !== 'arrived') {
+            return ['can_inspect' => false, 'message' => 'Only arrived dispatches can be inspected'];
+        }
+
+        // Ensure receiving officer is different from batch creator
+        if ($dispatch['batch_creator'] == $userId) {
+            return ['can_inspect' => false, 'message' => 'Batch creator cannot perform receiving inspection. A different officer must conduct the inspection.'];
+        }
+
+        return ['can_inspect' => true, 'message' => 'User can perform receiving inspection'];
     }
 }

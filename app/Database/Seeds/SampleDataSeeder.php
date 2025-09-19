@@ -102,7 +102,7 @@ class SampleDataSeeder extends Seeder
                 'average_moisture' => 16.8,
                 'quality_grade' => 'B+',
                 'status' => 'dispatched',
-                'notes' => 'Yellow corn batch dispatched to warehouse',
+                'notes' => 'Yellow maize batch dispatched to warehouse',
                 'received_date' => date('Y-m-d H:i:s', strtotime('-3 days')),
                 'created_at' => date('Y-m-d H:i:s', strtotime('-3 days')),
                 'updated_at' => date('Y-m-d H:i:s', strtotime('-1 day'))
@@ -154,7 +154,7 @@ class SampleDataSeeder extends Seeder
             [
                 'item_code' => 'CR003',
                 'grain_type' => 'corn',
-                'description' => 'Yellow Corn Grade B',
+                'description' => 'Yellow Maize Grade B',
                 'current_stock_mt' => 1.200,
                 'minimum_level_mt' => 0.300,
                 'unit_cost' => 4.00,

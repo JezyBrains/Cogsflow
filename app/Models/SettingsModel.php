@@ -196,8 +196,8 @@ class SettingsModel extends Model
             
             // System Settings
             ['key' => 'system_name', 'value' => 'CogsFlow - Grain Management', 'type' => 'string', 'category' => 'system', 'description' => 'System name shown in browser title'],
-            ['key' => 'base_url', 'value' => env('app.baseURL', 'https://nipoagro.com/'), 'type' => 'string', 'category' => 'system', 'description' => 'Base URL of the application'],
-            ['key' => 'default_currency', 'value' => 'KES', 'type' => 'string', 'category' => 'system', 'description' => 'Default currency code'],
+            ['key' => 'base_url', 'value' => env('app.baseURL', 'http://localhost:8000/'), 'type' => 'string', 'category' => 'system', 'description' => 'Base URL of the application'],
+            ['key' => 'default_currency', 'value' => 'TSH', 'type' => 'string', 'category' => 'system', 'description' => 'Default currency code'],
             ['key' => 'default_timezone', 'value' => 'Africa/Nairobi', 'type' => 'string', 'category' => 'system', 'description' => 'Default timezone'],
             ['key' => 'date_format', 'value' => 'Y-m-d', 'type' => 'string', 'category' => 'system', 'description' => 'Default date format'],
             ['key' => 'datetime_format', 'value' => 'Y-m-d H:i:s', 'type' => 'string', 'category' => 'system', 'description' => 'Default datetime format'],

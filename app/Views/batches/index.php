@@ -74,13 +74,13 @@
                             <span class="text-heading">Total Weight</span>
                             <div class="d-flex align-items-center my-2">
                                 <h3 class="mb-0 me-2"><?= number_format($stats['total_weight_mt'], 2) ?></h3>
-                                <small class="text-muted">MT</small>
+                                <p class="text-info mb-0">MT</p>
                             </div>
                             <p class="mb-0">Metric tons</p>
                         </div>
                         <div class="avatar">
-                            <span class="avatar-initial rounded bg-label-info">
-                                <i class="bx bx-weight bx-sm"></i>
+                            <span class="avatar-initial rounded bg-label-warning">
+                                <i class="bx bx-bar-chart bx-sm"></i>
                             </span>
                         </div>
                     </div>
@@ -98,7 +98,7 @@
                         <i class="bx bx-list-ul me-2"></i>
                         Batch List
                     </h5>
-                    <a href="<?= site_url('batches/new') ?>" class="btn btn-primary">
+                    <a href="<?= site_url('batches/new') ?>" class="btn btn-outline-primary">
                         <i class="bx bx-plus me-1"></i>New Batch
                     </a>
                 </div>

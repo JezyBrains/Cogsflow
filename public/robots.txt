@@ -10,4 +10,4 @@ Disallow: /composer.json
 Disallow: /composer.lock
 Disallow: /spark
 
-Sitemap: https://nipoagro.com/sitemap.xml 
+Sitemap: http://localhost:8000/sitemap.xml 

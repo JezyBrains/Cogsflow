@@ -28,7 +28,10 @@ if (!function_exists('css_asset')) {
     {
         $cssAssets = [
             'adminlte' => 'https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css',
-            'fontawesome' => 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+            'fontawesome' => 'assets/css/fontawesome.min.css',
+            'bootstrap' => 'assets/css/bootstrap.min.css',
+            'boxicons' => 'assets/css/boxicons.min.css',
+            'fonts' => 'assets/css/fonts-local.css',
             'custom' => 'assets/css/custom.css'
         ];
         
@@ -43,8 +46,9 @@ if (!function_exists('js_asset')) {
     function js_asset(string $name): string
     {
         $jsAssets = [
-            'jquery' => 'https://code.jquery.com/jquery-3.7.1.min.js',
-            'bootstrap' => 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
+            'jquery' => 'assets/js/jquery.min.js',
+            'bootstrap' => 'assets/js/bootstrap.bundle.min.js',
+            'chart' => 'assets/js/chart.min.js',
             'adminlte' => 'https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js',
             'custom' => 'assets/js/custom.js'
         ];

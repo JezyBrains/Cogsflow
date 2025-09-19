@@ -60,12 +60,12 @@
                                 <td><?= date('M d, Y', strtotime($dispatch['dispatch_date'])) ?></td>
                             </tr>
                             <tr>
-                                <td class="fw-bold">Transporter:</td>
-                                <td><?= esc($dispatch['transporter_name']) ?></td>
+                                <td class="fw-bold">Dispatcher:</td>
+                                <td><?= esc($dispatch['dispatcher_name']) ?></td>
                             </tr>
                             <tr>
-                                <td class="fw-bold">Vehicle Registration:</td>
-                                <td><span class="badge bg-secondary"><?= esc($dispatch['vehicle_registration']) ?></span></td>
+                                <td class="fw-bold">Vehicle Number:</td>
+                                <td><span class="badge bg-secondary"><?= esc($dispatch['vehicle_number']) ?></span></td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Driver Name:</td>

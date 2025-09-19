@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Fix Instructions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 { color: #2c3e50; }
+        h2 { color: #3498db; }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .code {
+            font-family: monospace;
+            background-color: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .success { color: #27ae60; }
+        .warning { color: #e67e22; }
+        .error { color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <h1>🎨 UI Fix Instructions</h1>
+    
+    <h2>1. Add jQuery Fix to Your Layout</h2>
+    <p>Add this script tag to your layout file, just before the closing <span class="code">&lt;/body&gt;</span> tag:</p>
+    <pre>&lt;script src="/assets/js/jquery-fix.js"&gt;&lt;/script&gt;</pre>
+    
+    <h2>2. Add Required CDN Resources</h2>
+    <p>Add these CDN links to your layout file in the <span class="code">&lt;head&gt;</span> section:</p>
+    <pre>&lt;!-- jQuery --&gt;
+&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js" 
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" 
+    crossorigin="anonymous"&gt;&lt;/script&gt;
+
+&lt;!-- Bootstrap CSS --&gt;
+&lt;link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+    rel="stylesheet" 
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
+    crossorigin="anonymous"&gt;
+
+&lt;!-- Bootstrap JS --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+    crossorigin="anonymous"&gt;&lt;/script&gt;
+
+&lt;!-- Boxicons --&gt;
+&lt;link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" 
+    rel="stylesheet"&gt;
+
+&lt;!-- Google Fonts --&gt;
+&lt;link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" 
+    rel="stylesheet"&gt;</pre>
+    
+    <h2>3. Edit Your Layout Files</h2>
+    <p>Common layout files to check:</p>
+    <ul>
+        <li><span class="code">app/Views/layout/default.php</span></li>
+        <li><span class="code">app/Views/layout/main.php</span></li>
+        <li><span class="code">app/Views/templates/header.php</span></li>
+        <li><span class="code">app/Views/dashboard/index.php</span></li>
+    </ul>
+    
+    <h2>4. Create Missing Avatar Directory</h2>
+    <p>For the missing avatar image:</p>
+    <ol>
+        <li>Create directory: <span class="code">/public/assets/img/avatars/</span></li>
+        <li>Upload a default avatar image named <span class="code">1.png</span></li>
+    </ol>
+    
+    <h2>5. Clear Browser Cache</h2>
+    <p>After making these changes:</p>
+    <ol>
+        <li>Clear your browser cache (Ctrl+Shift+R or Cmd+Shift+R)</li>
+        <li>Or try incognito/private mode</li>
+        <li>Try logging in again</li>
+    </ol>
+    
+    <hr>
+    <p><small>Generated: 2025-08-10</small></p>
+</body>
+</html>

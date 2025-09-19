@@ -47,6 +47,68 @@
   box-sizing: border-box;
 }
 
+/* ===== MODAL FIXES ===== */
+/* Completely disable backdrop and fix modal interaction issues */
+.modal {
+  z-index: 99999 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal-backdrop {
+  display: none !important;
+  opacity: 0 !important;
+  z-index: -1 !important;
+}
+
+.modal-dialog {
+  z-index: 100000 !important;
+  pointer-events: auto !important;
+  position: relative !important;
+  margin: 1.75rem auto !important;
+}
+
+.modal-content {
+  z-index: 100001 !important;
+  pointer-events: auto !important;
+  position: relative !important;
+  background-color: #fff !important;
+  border: 1px solid rgba(0,0,0,.2) !important;
+  border-radius: var(--border-radius-lg) !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Force modal inputs to be interactive */
+.modal input,
+.modal textarea,
+.modal select,
+.modal button {
+  z-index: 100002 !important;
+  position: relative !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure modal is always clickable and on top */
+.modal.show {
+  display: block !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal.show .modal-dialog {
+  transform: none !important;
+}
+
+/* Override body modal-open to prevent scroll issues */
+body.modal-open {
+  overflow: auto !important;
+  padding-right: 0 !important;
+}
+
+/* Ensure close button is always clickable */
+.modal .btn-close {
+  z-index: 100003 !important;
+  position: relative !important;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   font-size: var(--font-size-root);
@@ -958,8 +1020,9 @@ body {
     align-items: center;
     justify-content: center;
     vertical-align: middle;
-    width: 2.375rem;
-    height: 2.375rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    overflow: hidden;
 }
 
 .avatar-sm {

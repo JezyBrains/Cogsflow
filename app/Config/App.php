@@ -7,6 +7,23 @@ use CodeIgniter\Config\BaseConfig;
 class App extends BaseConfig
 {
     /**
+     * Constructor to initialize configuration from environment
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        
+        // Set baseURL from environment variable with fallback
+        $this->baseURL = env('app.baseURL', 'https://nipoagro.com/');
+        
+        // Set forceGlobalSecureRequests from environment
+        $this->forceGlobalSecureRequests = env('app.forceGlobalSecureRequests', false);
+        
+        // Set CSPEnabled from environment - Force disable for production
+        $this->CSPEnabled = false;
+    }
+
+    /**
      * --------------------------------------------------------------------------
      * Base Site URL
      * --------------------------------------------------------------------------

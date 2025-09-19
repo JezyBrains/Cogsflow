@@ -13,7 +13,7 @@ class ProductionUserSeeder extends Seeder
             [
                 'id' => 1,
                 'username' => 'admin',
-                'email' => 'admin@nipoagro.com',
+                'email' => 'admin@localhost:8000',
                 'password' => password_hash('NipoAgro2025!', PASSWORD_DEFAULT),
                 'first_name' => 'System',
                 'last_name' => 'Administrator',
@@ -41,7 +41,7 @@ class ProductionUserSeeder extends Seeder
 
         echo "Production admin user created:\n";
         echo "Username: admin\n";
-        echo "Email: admin@nipoagro.com\n";
+        echo "Email: admin@localhost:8000\n";
         echo "Password: NipoAgro2025!\n";
         echo "Please change this password after first login!\n";
     }

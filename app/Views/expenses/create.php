@@ -3,13 +3,29 @@
 <?= $this->section('title') ?>Log New Expense<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
-<div class="row mb-4">
-    <div class="col-md-12">
+<div class="row">
+    <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h5>Expense Details</h5>
+                <h5 class="mb-0">Log New Expense</h5>
             </div>
             <div class="card-body">
+                <?php if(session()->getFlashdata('errors')): ?>
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            <?php foreach(session()->getFlashdata('errors') as $error): ?>
+                                <li><?= esc($error) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if(session()->getFlashdata('error')): ?>
+                    <div class="alert alert-danger">
+                        <?= session()->getFlashdata('error') ?>
+                    </div>
+                <?php endif; ?>
+                
                 <form action="<?= site_url('expenses/log') ?>" method="post">
                     <?= csrf_field() ?>
                     
@@ -38,7 +54,7 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="amount" class="form-label">Amount</label>
-                            <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="0" required>
+                            <input type="text" class="form-control" id="amount" name="amount" placeholder="0.00" required>
                         </div>
                         <div class="col-md-6">
                             <label for="payment_method" class="form-label">Payment Method</label>
@@ -73,18 +89,29 @@
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="recorded_by" class="form-label">Recorded By</label>
-                            <input type="text" class="form-control" id="recorded_by" name="recorded_by" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="approved_by" class="form-label">Approved By</label>
-                            <input type="text" class="form-control" id="approved_by" name="approved_by">
+                            <label for="vendor_supplier" class="form-label">Vendor/Supplier</label>
+                            <input type="text" class="form-control" id="vendor_supplier" name="vendor_supplier" 
+                                   placeholder="Enter vendor or supplier name">
                         </div>
                     </div>
                     
+                    <div class="mb-3">
+                        <label for="receipt_reference" class="form-label">Receipt Reference</label>
+                        <input type="text" class="form-control" id="receipt_reference" name="receipt_reference" 
+                               placeholder="Enter receipt number or reference">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                  placeholder="Additional notes or comments (optional)"></textarea>
+                    </div>
+
                     <div class="d-flex justify-content-between">
                         <a href="<?= site_url('expenses') ?>" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Log Expense</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Log Expense
+                        </button>
                     </div>
                 </form>
             </div>

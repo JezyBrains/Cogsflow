@@ -11,7 +11,18 @@ class InventoryController extends BaseController
      */
     public function index()
     {
-        return view('inventory/index');
+        $inventoryModel = new \App\Models\InventoryModel();
+        $adjustmentModel = new \App\Models\InventoryAdjustmentModel();
+        
+        // Get inventory data
+        $data = [
+            'inventory_summary' => $inventoryModel->getInventorySummary(),
+            'active_inventory' => $inventoryModel->getActiveItems(),
+            'low_stock_items' => $inventoryModel->getLowStockItems(),
+            'recent_adjustments' => $adjustmentModel->getAdjustmentHistory(null, 10)
+        ];
+        
+        return view('inventory/index', $data);
     }
     
     /**
@@ -32,11 +43,47 @@ class InventoryController extends BaseController
      */
     public function adjust()
     {
-        // This is a stub method for adjusting inventory
-        // In Phase 2, we will implement the actual database operations
+        $adjustmentModel = new \App\Models\InventoryAdjustmentModel();
         
-        // Flash a success message
-        session()->setFlashdata('success', 'Inventory was successfully adjusted.');
+        // Validate the form data
+        $rules = [
+            'grain_type' => 'required',
+            'adjustment_type' => 'required|in_list[Stock In,Stock Out,Stock Transfer,Stock Correction,Damage/Loss]',
+            'quantity' => 'required|decimal|greater_than[0]',
+            'adjustment_date' => 'required|valid_date',
+            'adjusted_by' => 'required',
+            'reason' => 'required'
+        ];
+        
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        
+        // Get form data
+        $data = [
+            'grain_type' => $this->request->getPost('grain_type'),
+            'adjustment_type' => $this->request->getPost('adjustment_type'),
+            'quantity' => floatval($this->request->getPost('quantity')),
+            'adjustment_date' => $this->request->getPost('adjustment_date'),
+            'reference' => $this->request->getPost('reference'),
+            'adjusted_by' => $this->request->getPost('adjusted_by'),
+            'reason' => $this->request->getPost('reason')
+        ];
+        
+        try {
+            // Record the adjustment
+            $adjustmentId = $adjustmentModel->recordAdjustment($data);
+            
+            if ($adjustmentId) {
+                session()->setFlashdata('success', 'Inventory was successfully adjusted.');
+            } else {
+                session()->setFlashdata('error', 'Failed to adjust inventory. Please try again.');
+            }
+            
+        } catch (\Exception $e) {
+            log_message('error', 'Inventory adjustment error: ' . $e->getMessage());
+            session()->setFlashdata('error', 'An error occurred while adjusting inventory: ' . $e->getMessage());
+        }
         
         // Redirect to the inventory list
         return redirect()->to('/inventory');

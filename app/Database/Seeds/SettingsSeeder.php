@@ -64,7 +64,7 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'key' => 'base_url',
-                'value' => 'https://nipoagro.com/',
+                'value' => 'http://localhost:8000/',
                 'type' => 'string',
                 'category' => 'system',
                 'description' => 'Base URL of the application',
@@ -74,7 +74,7 @@ class SettingsSeeder extends Seeder
             ],
             [
                 'key' => 'default_currency',
-                'value' => 'KES',
+                'value' => 'TSH',
                 'type' => 'string',
                 'category' => 'system',
                 'description' => 'Default currency code',

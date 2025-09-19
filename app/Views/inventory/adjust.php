@@ -20,7 +20,7 @@
                                 <option value="">Select grain type</option>
                                 <option value="Wheat">Wheat</option>
                                 <option value="Rice">Rice</option>
-                                <option value="Corn">Corn</option>
+                                <option value="Corn">Maize</option>
                                 <option value="Barley">Barley</option>
                                 <option value="Sorghum">Sorghum</option>
                                 <option value="Other">Other</option>
@@ -75,7 +75,7 @@
                     
                     <div class="d-flex justify-content-between">
                         <a href="<?= site_url('inventory') ?>" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Submit Adjustment</button>
+                        <button type="submit" class="btn btn-success">Submit Adjustment</button>
                     </div>
                 </form>
             </div>

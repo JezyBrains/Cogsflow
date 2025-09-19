@@ -71,14 +71,22 @@ class UserRoleModel extends Model
     {
         $db = \Config\Database::connect();
         
-        return $db->table('user_roles ur')
+        // Add error handling to prevent "Call to a member function getResultArray() on false" error
+        $query = $db->table('user_roles ur')
             ->select('ur.*, r.name, r.display_name, r.description')
             ->join('roles r', 'r.id = ur.role_id')
             ->where('ur.user_id', $userId)
             ->where('ur.is_active', 1)
             ->where('r.is_active', 1)
-            ->get()
-            ->getResultArray();
+            ->get();
+            
+        // Check if query was successful
+        if ($query === false) {
+            log_message('error', 'Database error in getUserRoles: ' . $db->error()['message']);
+            return [];
+        }
+        
+        return $query->getResultArray();
     }
 
     /**
@@ -88,7 +96,8 @@ class UserRoleModel extends Model
     {
         $db = \Config\Database::connect();
         
-        return $db->table('user_roles ur')
+        // Add error handling to prevent "Call to a member function getResultArray() on false" error
+        $query = $db->table('user_roles ur')
             ->select('p.name, p.resource, p.action, p.description')
             ->join('roles r', 'r.id = ur.role_id')
             ->join('role_permissions rp', 'rp.role_id = r.id')
@@ -97,8 +106,15 @@ class UserRoleModel extends Model
             ->where('ur.is_active', 1)
             ->where('r.is_active', 1)
             ->groupBy('p.id')
-            ->get()
-            ->getResultArray();
+            ->get();
+            
+        // Check if query was successful
+        if ($query === false) {
+            log_message('error', 'Database error in getUserPermissions: ' . $db->error()['message']);
+            return [];
+        }
+        
+        return $query->getResultArray();
     }
 
     /**
@@ -232,7 +248,8 @@ class UserRoleModel extends Model
     {
         $db = \Config\Database::connect();
         
-        return $db->table('users u')
+        // Add error handling to prevent "Call to a member function getResultArray() on false" error
+        $query = $db->table('users u')
             ->select('u.id, u.username, u.email, u.created_at as user_created_at, 
                      GROUP_CONCAT(r.display_name SEPARATOR ", ") as roles,
                      COUNT(ur.role_id) as role_count')
@@ -240,8 +257,15 @@ class UserRoleModel extends Model
             ->join('roles r', 'r.id = ur.role_id AND ur.is_active = 1 AND r.is_active = 1', 'left')
             ->groupBy('u.id')
             ->orderBy('u.username')
-            ->get()
-            ->getResultArray();
+            ->get();
+            
+        // Check if query was successful
+        if ($query === false) {
+            log_message('error', 'Database error in getUsersWithRoles: ' . $db->error()['message']);
+            return [];
+        }
+        
+        return $query->getResultArray();
     }
 
     /**
@@ -251,15 +275,23 @@ class UserRoleModel extends Model
     {
         $db = \Config\Database::connect();
         
-        return $db->table('user_roles ur')
+        // Add error handling to prevent "Call to a member function getResultArray() on false" error
+        $query = $db->table('user_roles ur')
             ->select('ur.*, r.name, r.display_name, 
                      u_assigned.username as assigned_by_username')
             ->join('roles r', 'r.id = ur.role_id')
             ->join('users u_assigned', 'u_assigned.id = ur.assigned_by', 'left')
             ->where('ur.user_id', $userId)
             ->orderBy('ur.assigned_at', 'DESC')
-            ->get()
-            ->getResultArray();
+            ->get();
+            
+        // Check if query was successful
+        if ($query === false) {
+            log_message('error', 'Database error in getUserRoleHistory: ' . $db->error()['message']);
+            return [];
+        }
+        
+        return $query->getResultArray();
     }
 
     /**
@@ -269,14 +301,22 @@ class UserRoleModel extends Model
     {
         $db = \Config\Database::connect();
         
-        return $db->table('user_roles ur')
+        // Add error handling to prevent "Call to a member function getResultArray() on false" error
+        $query = $db->table('user_roles ur')
             ->select('u.id, u.username, u.email, ur.assigned_at, ur.expires_at')
             ->join('users u', 'u.id = ur.user_id')
             ->where('ur.role_id', $roleId)
             ->where('ur.is_active', 1)
             ->orderBy('u.username')
-            ->get()
-            ->getResultArray();
+            ->get();
+            
+        // Check if query was successful
+        if ($query === false) {
+            log_message('error', 'Database error in getUsersByRole: ' . $db->error()['message']);
+            return [];
+        }
+        
+        return $query->getResultArray();
     }
 
     /**
