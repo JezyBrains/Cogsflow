@@ -63,9 +63,14 @@ stdout_logfile_maxbytes=0\n\
 stderr_logfile=/dev/stderr\n\
 stderr_logfile_maxbytes=0" > /etc/supervisor/conf.d/supervisord.conf
 
-# Set permissions
-RUN chown -R www-data:www-data /app \
-    && chmod -R 755 /app/writable \
+# Create writable directories and set permissions
+RUN mkdir -p /app/writable/cache \
+    /app/writable/logs \
+    /app/writable/session \
+    /app/writable/uploads \
+    /app/public/uploads \
+    && chown -R www-data:www-data /app \
+    && chmod -R 777 /app/writable \
     && chmod -R 755 /app/public
 
 # Expose port 80
