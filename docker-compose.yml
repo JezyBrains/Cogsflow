@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cogsflow-app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - CI_ENVIRONMENT=production
+      - database.default.hostname=db
+      - database.default.database=${DB_DATABASE}
+      - database.default.username=${DB_USERNAME}
+      - database.default.password=${DB_PASSWORD}
+      - database.default.DBDriver=MySQLi
+      - database.default.port=3306
+      - app.baseURL=${APP_URL}
+      - encryption.key=${ENCRYPTION_KEY}
+    volumes:
+      - ./writable:/var/www/html/writable
+      - ./public/uploads:/var/www/html/public/uploads
+    depends_on:
+      - db
+    networks:
+      - cogsflow-network
+
+  db:
+    image: mysql:8.0
+    container_name: cogsflow-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - cogsflow-network
+
+volumes:
+  db-data:
+    driver: local
+
+networks:
+  cogsflow-network:
+    driver: bridge
