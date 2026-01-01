@@ -73,10 +73,10 @@
                         <div class="content-left">
                             <span class="text-heading">Total Weight</span>
                             <div class="d-flex align-items-center my-2">
-                                <h3 class="mb-0 me-2"><?= number_format($stats['total_weight_mt'], 2) ?></h3>
-                                <p class="text-info mb-0">MT</p>
+                                <h3 class="mb-0 me-2"><?= format_weight($stats['total_weight_kg'] ?? ($stats['total_weight_mt'] * 1000), null, 2, false) ?></h3>
+                                <p class="text-info mb-0"><?= strtoupper(get_weight_unit()) ?></p>
                             </div>
-                            <p class="mb-0">Metric tons</p>
+                            <p class="mb-0"><?= get_weight_unit_display() ?></p>
                         </div>
                         <div class="avatar">
                             <span class="avatar-initial rounded bg-label-warning">
@@ -145,7 +145,7 @@
                                         </td>
                                         <td>
                                             <div class="d-flex flex-column">
-                                                <span class="fw-medium"><?= number_format($batch['total_weight_mt'], 3) ?> MT</span>
+                                                <span class="fw-medium"><?= format_weight($batch['total_weight_kg'] ?? ($batch['total_weight_mt'] * 1000), null, 3, true) ?></span>
                                                 <small class="text-muted"><?= $batch['total_bags'] ?> bags</small>
                                             </div>
                                         </td>

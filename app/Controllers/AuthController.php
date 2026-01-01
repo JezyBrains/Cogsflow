@@ -24,6 +24,13 @@ class AuthController extends BaseController
         ];
 
         if (!$this->validate($rules)) {
+            // Handle AJAX requests
+            if ($this->request->isAJAX()) {
+                return $this->response->setStatusCode(400)->setJSON([
+                    'success' => false,
+                    'message' => 'Please fill in all fields.'
+                ]);
+            }
             return redirect()->back()->withInput()->with('error', 'Please fill in all fields.');
         }
 
@@ -39,13 +46,30 @@ class AuthController extends BaseController
                 'user_id' => $user->id,
                 'username' => $user->username,
                 'email' => $user->email,
+                'role' => $user->role ?? 'standard_user',
                 'isLoggedIn' => true
             ];
             
             session()->set($sessionData);
             
+            // Handle AJAX requests
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'success' => true,
+                    'message' => 'Authentication successful',
+                    'redirect' => site_url('dashboard')
+                ]);
+            }
+            
             return redirect()->to('/dashboard')->with('success', 'Welcome back, ' . $user->username . '!');
         } else {
+            // Handle AJAX requests
+            if ($this->request->isAJAX()) {
+                return $this->response->setStatusCode(401)->setJSON([
+                    'success' => false,
+                    'message' => 'Invalid username or password.'
+                ]);
+            }
             return redirect()->back()->withInput()->with('error', 'Invalid username or password.');
         }
     }

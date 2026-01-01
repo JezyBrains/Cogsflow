@@ -60,7 +60,8 @@ class DispatchController extends BaseController
             'vehicle_number' => 'required|min_length[3]|max_length[20]',
             'trailer_number' => 'required|min_length[3]|max_length[20]',
             'driver_name' => 'required|min_length[3]|max_length[255]',
-            'driver_phone' => 'permit_empty|regex_match[/^\\+255\\d{3}\\s\\d{3}\\s\\d{3}$/]',
+            'driver_phone' => 'required|regex_match[/^[0-9]{9,10}$/]',
+            'driver_id_number' => 'required|min_length[5]|max_length[50]',
             'dispatcher_name' => 'required|min_length[3]|max_length[255]',
             'estimated_arrival' => 'required|valid_date',
             'destination' => 'required|min_length[3]|max_length[255]',
@@ -92,34 +93,34 @@ class DispatchController extends BaseController
             // Generate dispatch number
             $dispatchNumber = 'DSP-' . date('Y') . '-' . str_pad($this->dispatchModel->countAll() + 1, 4, '0', STR_PAD_LEFT);
             
+            // Normalize phone number to international format (+255)
+            $driverPhone = $this->normalizePhoneNumber($this->request->getPost('driver_phone'));
+            
             $dispatchData = [
                 'dispatch_number' => $dispatchNumber,
                 'batch_id' => $this->request->getPost('batch_id'),
                 'vehicle_number' => strtoupper($this->request->getPost('vehicle_number')),
                 'trailer_number' => $this->request->getPost('trailer_number') ? strtoupper($this->request->getPost('trailer_number')) : null,
                 'driver_name' => $this->request->getPost('driver_name'),
-                'driver_phone' => $this->request->getPost('driver_phone'),
+                'driver_phone' => $driverPhone,
+                'driver_id_number' => $this->request->getPost('driver_id_number'),
                 'dispatcher_name' => $this->request->getPost('dispatcher_name'),
                 'destination' => $this->request->getPost('destination'),
                 'estimated_arrival' => $this->request->getPost('estimated_arrival'),
-                'quantity_mt' => $batch['total_weight_mt'],
-                'dispatch_date' => date('Y-m-d H:i:s'),
                 'status' => 'pending',
                 'notes' => $this->request->getPost('notes')
+                // Note: quantity_mt removed - use batch.total_weight_mt instead
+                // Note: dispatch_date removed - created_at is auto-set by timestamps
             ];
-
-            // Append Driver ID Number to notes if provided (temporary until DB migration adds dedicated field)
-            $driverId = trim((string)$this->request->getPost('driver_id_number'));
-            if (!empty($driverId)) {
-                $existingNotes = (string)($dispatchData['notes'] ?? '');
-                $prefix = $existingNotes ? "\n" : '';
-                $dispatchData['notes'] = $existingNotes . $prefix . 'Driver ID: ' . $driverId;
-            }
             
             $dispatchId = $this->dispatchModel->insert($dispatchData);
             
             if (!$dispatchId) {
-                throw new \Exception('Failed to create dispatch record');
+                // Get the actual database error
+                $errors = $this->dispatchModel->errors();
+                $dbError = $db->error();
+                log_message('error', 'Dispatch insert failed. Model errors: ' . json_encode($errors) . ', DB error: ' . json_encode($dbError));
+                throw new \Exception('Failed to create dispatch record. Error: ' . json_encode($errors ?: $dbError));
             }
             
             // Update batch status to dispatched
@@ -129,6 +130,32 @@ class DispatchController extends BaseController
             
             if ($db->transStatus() === false) {
                 throw new \Exception('Transaction failed');
+            }
+            
+            // Log dispatch creation in history (after transaction completes)
+            try {
+                $session = session();
+                $historyModel = new \App\Models\BatchHistoryModel();
+                $historyModel->logBatchEvent(
+                    $batch['id'],
+                    'dispatched',
+                    $session->get('username') ?? $dispatchData['dispatcher_name'],
+                    [
+                        'dispatch_number' => $dispatchData['dispatch_number'],
+                        'vehicle_number' => $dispatchData['vehicle_number'],
+                        'driver_name' => $dispatchData['driver_name'],
+                        'destination' => $dispatchData['destination'],
+                        'estimated_arrival' => $dispatchData['estimated_arrival']
+                    ],
+                    $dispatchData['notes'],
+                    $dispatchId,
+                    $batch['purchase_order_id'],
+                    'approved',
+                    'dispatched'
+                );
+            } catch (\Exception $e) {
+                // Log error but don't fail the dispatch
+                log_message('error', 'Failed to log batch history: ' . $e->getMessage());
             }
             
             // Send notification about new dispatch
@@ -164,9 +191,135 @@ class DispatchController extends BaseController
             session()->setFlashdata('error', 'Dispatch not found');
             return redirect()->to('/dispatches');
         }
+
+        // Load document data for the widget
+        $documentModel = new \App\Models\DocumentModel();
+        $documentTypeModel = new \App\Models\DocumentTypeModel();
         
-        $data = ['dispatch' => $dispatch];
+        $documentTypes = $documentTypeModel->getDocumentTypesForStage('dispatch_transit');
+        $existingDocuments = $documentModel->getDocumentsByReference('dispatch', $id);
+        $requiredDocuments = $documentModel->getRequiredDocumentsForStage('dispatch_transit', $id, 'dispatch');
+        
+        $data = [
+            'dispatch' => $dispatch,
+            'document_types' => $documentTypes,
+            'existing_documents' => $existingDocuments,
+            'required_documents' => $requiredDocuments
+        ];
+        
         return view('dispatches/view', $data);
+    }
+    
+    /**
+     * Display edit form for dispatch
+     * 
+     * @param int $id The dispatch ID
+     * @return string
+     */
+    public function edit($id)
+    {
+        $dispatch = $this->dispatchModel->getDispatchWithBatchInfo($id);
+        
+        if (!$dispatch) {
+            session()->setFlashdata('error', 'Dispatch not found');
+            return redirect()->to('/dispatches');
+        }
+        
+        // Only allow editing for pending, in_transit, and arrived dispatches (before inspection)
+        if (!in_array($dispatch['status'], ['pending', 'in_transit', 'arrived'])) {
+            session()->setFlashdata('error', 'Cannot edit dispatch with status: ' . $dispatch['status'] . '. Dispatches can only be edited before inspection is completed.');
+            return redirect()->to('/dispatches/view/' . $id);
+        }
+        
+        // If arrived, check if inspection has started
+        if ($dispatch['status'] === 'arrived' && !empty($dispatch['received_by'])) {
+            session()->setFlashdata('error', 'Cannot edit dispatch - inspection has already been performed.');
+            return redirect()->to('/dispatches/view/' . $id);
+        }
+        
+        $data = [
+            'dispatch' => $dispatch,
+            'available_batches' => [$dispatch] // Include current batch
+        ];
+        
+        return view('dispatches/edit', $data);
+    }
+    
+    /**
+     * Process dispatch update
+     * 
+     * @param int $id The dispatch ID
+     * @return \CodeIgniter\HTTP\RedirectResponse
+     */
+    public function update($id)
+    {
+        $dispatch = $this->dispatchModel->find($id);
+        
+        if (!$dispatch) {
+            session()->setFlashdata('error', 'Dispatch not found');
+            return redirect()->to('/dispatches');
+        }
+        
+        // Only allow editing for pending, in_transit, and arrived dispatches (before inspection)
+        if (!in_array($dispatch['status'], ['pending', 'in_transit', 'arrived'])) {
+            session()->setFlashdata('error', 'Cannot edit dispatch with status: ' . $dispatch['status'] . '. Dispatches can only be edited before inspection is completed.');
+            return redirect()->to('/dispatches/view/' . $id);
+        }
+        
+        // If arrived, check if inspection has started
+        if ($dispatch['status'] === 'arrived' && !empty($dispatch['received_by'])) {
+            session()->setFlashdata('error', 'Cannot edit dispatch - inspection has already been performed.');
+            return redirect()->to('/dispatches/view/' . $id);
+        }
+        
+        $validation = \Config\Services::validation();
+        
+        $rules = [
+            'vehicle_number' => 'required|min_length[3]|max_length[20]',
+            'trailer_number' => 'required|min_length[3]|max_length[20]',
+            'driver_name' => 'required|min_length[3]|max_length[255]',
+            'driver_phone' => 'permit_empty|regex_match[/^\\+255\\d{3}\\s\\d{3}\\s\\d{3}$/]',
+            'dispatcher_name' => 'required|min_length[3]|max_length[255]',
+            'estimated_arrival' => 'required|valid_date',
+            'destination' => 'required|min_length[3]|max_length[255]',
+            'notes' => 'permit_empty|max_length[500]'
+        ];
+        
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        
+        try {
+            $updateData = [
+                'vehicle_number' => strtoupper($this->request->getPost('vehicle_number')),
+                'trailer_number' => strtoupper($this->request->getPost('trailer_number')),
+                'driver_name' => $this->request->getPost('driver_name'),
+                'driver_phone' => $this->request->getPost('driver_phone'),
+                'driver_id_number' => $this->request->getPost('driver_id_number'),
+                'dispatcher_name' => $this->request->getPost('dispatcher_name'),
+                'destination' => $this->request->getPost('destination'),
+                'estimated_arrival' => $this->request->getPost('estimated_arrival'),
+                'notes' => $this->request->getPost('notes')
+            ];
+            
+            $this->dispatchModel->update($id, $updateData);
+            
+            // Send notification about dispatch update
+            helper('notification');
+            sendDispatchNotification(
+                $id,
+                $dispatch['dispatch_number'],
+                'dispatch_updated',
+                ['updated_fields' => array_keys($updateData)]
+            );
+            
+            session()->setFlashdata('success', 'Dispatch updated successfully');
+            return redirect()->to('/dispatches/view/' . $id);
+            
+        } catch (\Exception $e) {
+            session()->setFlashdata('error', 'Failed to update dispatch: ' . $e->getMessage());
+            return redirect()->back()->withInput();
+        }
     }
     
     /**
@@ -192,6 +345,31 @@ class DispatchController extends BaseController
             return redirect()->back();
         }
         
+        // Validate status transitions
+        $validTransitions = [
+            'pending' => ['in_transit', 'cancelled'],
+            'in_transit' => ['arrived', 'cancelled'],
+            'arrived' => [], // Cannot manually change from arrived - must go through inspection
+            'delivered' => [],
+            'cancelled' => []
+        ];
+        
+        if (!in_array($newStatus, $validTransitions[$dispatch['status']] ?? [])) {
+            session()->setFlashdata('error', 'Invalid status transition from ' . $dispatch['status'] . ' to ' . $newStatus . '. Arrived dispatches must go through the inspection process.');
+            return redirect()->back();
+        }
+
+        // DOCUMENT VALIDATION: Check if required documents are uploaded before marking as in_transit
+        if ($newStatus === 'in_transit') {
+            $documentModel = new \App\Models\DocumentModel();
+            $documentCheck = $documentModel->areRequiredDocumentsUploaded('dispatch_transit', 'dispatch', $id);
+            
+            if (!$documentCheck['satisfied']) {
+                session()->setFlashdata('error', 'Cannot mark dispatch as in transit: ' . $documentCheck['message'] . '. Please upload all required documents before dispatch.');
+                return redirect()->back();
+            }
+        }
+        
         $db = \Config\Database::connect();
         $db->transStart();
         
@@ -200,6 +378,11 @@ class DispatchController extends BaseController
             
             // Add arrival time for arrived status
             if ($newStatus === 'arrived') {
+                $updateData['actual_arrival'] = date('Y-m-d H:i:s');
+            }
+            
+            // When marking as delivered, add arrival time if not already set
+            if ($newStatus === 'delivered' && empty($dispatch['actual_arrival'])) {
                 $updateData['actual_arrival'] = date('Y-m-d H:i:s');
             }
             
@@ -220,8 +403,8 @@ class DispatchController extends BaseController
             $statusMessages = [
                 'pending' => 'Dispatch status updated to pending',
                 'in_transit' => 'Dispatch marked as in transit',
-                'arrived' => 'Dispatch has arrived and is awaiting inspection',
-                'delivered' => 'Dispatch marked as delivered',
+                'arrived' => 'Dispatch has arrived and is ready for receiving inspection',
+                'delivered' => 'Dispatch marked as delivered. Inspection completed successfully.',
                 'cancelled' => 'Dispatch cancelled and batch returned to available pool'
             ];
             
@@ -472,5 +655,32 @@ class DispatchController extends BaseController
             log_message('error', 'Dispatch Inspection Form Error: ' . $e->getMessage());
             return redirect()->to('/dispatches')->with('error', 'Failed to load inspection form');
         }
+    }
+    
+    /**
+     * Normalize phone number to international format (+255)
+     * Accepts: 0686479877, 686479877, +255686479877
+     * Returns: +255686479877
+     * 
+     * @param string $phone
+     * @return string
+     */
+    private function normalizePhoneNumber($phone)
+    {
+        // Remove all spaces, dashes, and special characters except +
+        $phone = preg_replace('/[^\d+]/', '', $phone);
+        
+        // Remove leading zeros
+        $phone = ltrim($phone, '0');
+        
+        // Remove existing +255 if present
+        if (strpos($phone, '+255') === 0) {
+            $phone = substr($phone, 4);
+        } elseif (strpos($phone, '255') === 0) {
+            $phone = substr($phone, 3);
+        }
+        
+        // Add +255 prefix
+        return '+255' . $phone;
     }
 }

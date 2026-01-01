@@ -50,3 +50,14 @@ Options -Indexes
 # Disable server signature start
 ServerSignature Off
 # Disable server signature end
+
+# Content Security Policy Override for Landing Page
+<IfModule mod_headers.c>
+    # Remove any existing CSP headers
+    Header unset Content-Security-Policy
+    Header unset X-Content-Security-Policy
+    Header unset X-WebKit-CSP
+    
+    # Set permissive CSP for external resources
+    Header always set Content-Security-Policy "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; font-src * data:; img-src * data: blob:; connect-src *;"
+</IfModule>

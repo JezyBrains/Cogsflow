@@ -12,8 +12,19 @@ class AdminUtilities
 
     public function __construct()
     {
-        $this->logModel = new SystemLogModel();
-        $this->db = \Config\Database::connect();
+        try {
+            $this->logModel = new SystemLogModel();
+        } catch (\Exception $e) {
+            log_message('warning', 'Failed to initialize SystemLogModel: ' . $e->getMessage());
+            $this->logModel = null;
+        }
+        
+        try {
+            $this->db = \Config\Database::connect();
+        } catch (\Exception $e) {
+            log_message('error', 'Failed to connect to database: ' . $e->getMessage());
+            throw $e; // Database connection is critical
+        }
     }
 
     /**
@@ -36,11 +47,15 @@ class AdminUtilities
                 $this->deleteDirectory($cacheDir, false);
             }
             
-            $this->logModel->addLog('info', 'Cache cleared successfully', ['user' => session('user_id')]);
+            if ($this->logModel) {
+                $this->logModel->addLog('info', 'Cache cleared successfully', ['user' => session('user_id')]);
+            }
             return ['success' => true, 'message' => 'Cache cleared successfully'];
             
         } catch (\Exception $e) {
-            $this->logModel->addLog('error', 'Failed to clear cache: ' . $e->getMessage());
+            if ($this->logModel) {
+                $this->logModel->addLog('error', 'Failed to clear cache: ' . $e->getMessage());
+            }
             return ['success' => false, 'message' => 'Failed to clear cache: ' . $e->getMessage()];
         }
     }
@@ -376,6 +391,266 @@ class AdminUtilities
         } catch (\Exception $e) {
             $this->logModel->addLog('error', 'Failed to retrieve logs: ' . $e->getMessage());
             throw $e;
+        }
+    }
+
+    /**
+     * Reset database to fresh state
+     * WARNING: This will delete ALL data and recreate tables
+     */
+    public function resetDatabase($confirmation = false)
+    {
+        try {
+            if (!$confirmation) {
+                return [
+                    'success' => false, 
+                    'message' => 'Database reset requires confirmation. This action cannot be undone.'
+                ];
+            }
+
+            // Create backup before reset
+            $backupResult = $this->triggerBackup();
+            if (!$backupResult['success']) {
+                return [
+                    'success' => false,
+                    'message' => 'Failed to create backup before reset: ' . $backupResult['message']
+                ];
+            }
+
+            // Get all table names
+            $tables = $this->db->listTables();
+            
+            // Disable foreign key checks
+            $this->db->query('SET FOREIGN_KEY_CHECKS = 0');
+            
+            // Drop all tables except migrations
+            $droppedTables = 0;
+            foreach ($tables as $table) {
+                if ($table !== 'migrations') {
+                    $this->db->query("DROP TABLE IF EXISTS `{$table}`");
+                    $droppedTables++;
+                }
+            }
+            
+            // Re-enable foreign key checks
+            $this->db->query('SET FOREIGN_KEY_CHECKS = 1');
+            
+            // Run migrations to recreate tables
+            $migrate = \Config\Services::migrations();
+            $migrate->setNamespace(null);
+            
+            try {
+                $migrate->latest();
+            } catch (\Exception $e) {
+                $this->logModel->addLog('error', 'Migration failed during database reset: ' . $e->getMessage());
+                return [
+                    'success' => false,
+                    'message' => 'Failed to run migrations after reset: ' . $e->getMessage()
+                ];
+            }
+            
+            // Run essential seeders
+            $this->runEssentialSeeders();
+            
+            $this->logModel->addLog('critical', 'Database reset completed', [
+                'tables_dropped' => $droppedTables,
+                'backup_file' => $backupResult['filename'] ?? 'unknown',
+                'user' => session('user_id'),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+            
+            return [
+                'success' => true,
+                'message' => "Database reset completed successfully. {$droppedTables} tables recreated. Backup saved as: " . ($backupResult['filename'] ?? 'unknown')
+            ];
+            
+        } catch (\Exception $e) {
+            $this->logModel->addLog('error', 'Database reset failed: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Database reset failed: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Run essential seeders after database reset
+     */
+    private function runEssentialSeeders()
+    {
+        try {
+            $seeder = \Config\Database::seeder();
+            
+            // Run essential seeders in order - only use existing seeders
+            $seeders = [
+                'App\Database\Seeds\DefaultSettingsSeeder',
+                'App\Database\Seeds\DefaultUserSeeder',
+                'App\Database\Seeds\SettingsSeeder',  // Fallback if DefaultSettingsSeeder doesn't exist
+                'App\Database\Seeds\UserSeeder',      // Fallback if DefaultUserSeeder doesn't exist
+                'App\Database\Seeds\ProductionSeeder' // Production seeder if available
+            ];
+            
+            $successfulSeeders = 0;
+            foreach ($seeders as $seederClass) {
+                try {
+                    if (class_exists($seederClass)) {
+                        $seeder->call($seederClass);
+                        $successfulSeeders++;
+                        $this->logModel->addLog('info', "Successfully ran seeder: {$seederClass}");
+                    } else {
+                        $this->logModel->addLog('info', "Seeder class not found: {$seederClass}");
+                    }
+                } catch (\Exception $e) {
+                    // Log but don't fail - some seeders might not exist
+                    $this->logModel->addLog('warning', "Seeder {$seederClass} failed: " . $e->getMessage());
+                }
+            }
+            
+            $this->logModel->addLog('info', "Ran {$successfulSeeders} seeders successfully");
+            
+        } catch (\Exception $e) {
+            $this->logModel->addLog('error', 'Failed to run seeders: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Clear all data but keep table structure
+     */
+    public function clearAllData($confirmation = false)
+    {
+        try {
+            if (!$confirmation) {
+                return [
+                    'success' => false, 
+                    'message' => 'Data clearing requires confirmation. This action cannot be undone.'
+                ];
+            }
+
+            // Create backup before clearing
+            $backupResult = $this->triggerBackup();
+            if (!$backupResult['success']) {
+                return [
+                    'success' => false,
+                    'message' => 'Failed to create backup before clearing data: ' . $backupResult['message']
+                ];
+            }
+
+            // Get all table names except system tables
+            $tables = $this->db->listTables();
+            
+            // Define system tables that should be preserved (only core system tables)
+            $systemTables = ['migrations'];
+            
+            // Define business data tables that should be cleared
+            $businessTables = [
+                'suppliers', 'batches', 'batch_bags', 'dispatches', 'inventory', 
+                'purchase_orders', 'expenses', 'notifications', 'system_logs',
+                'batch_history', 'bag_inspections', 'inventory_adjustments',
+                'reports', 'cache_entries', 'notification_settings'
+            ];
+            
+            // Disable foreign key checks
+            $this->db->query('SET FOREIGN_KEY_CHECKS = 0');
+            
+            // Clear business data tables specifically
+            $clearedTables = 0;
+            foreach ($businessTables as $table) {
+                if (in_array($table, $tables)) {
+                    try {
+                        $this->db->table($table)->truncate();
+                        $clearedTables++;
+                        $this->logModel->addLog('info', "Cleared table: {$table}");
+                    } catch (\Exception $e) {
+                        $this->logModel->addLog('warning', "Failed to clear table {$table}: " . $e->getMessage());
+                    }
+                }
+            }
+            
+            // Also clear any remaining tables that aren't system tables
+            $preservedTables = ['migrations', 'settings', 'users', 'roles', 'permissions', 'role_permissions', 'user_roles'];
+            foreach ($tables as $table) {
+                if (!in_array($table, $preservedTables) && !in_array($table, $businessTables)) {
+                    try {
+                        $this->db->table($table)->truncate();
+                        $clearedTables++;
+                        $this->logModel->addLog('info', "Cleared additional table: {$table}");
+                    } catch (\Exception $e) {
+                        $this->logModel->addLog('warning', "Failed to clear additional table {$table}: " . $e->getMessage());
+                    }
+                }
+            }
+            
+            // Re-enable foreign key checks
+            $this->db->query('SET FOREIGN_KEY_CHECKS = 1');
+            
+            $this->logModel->addLog('warning', 'All data cleared from database', [
+                'tables_cleared' => $clearedTables,
+                'backup_file' => $backupResult['filename'] ?? 'unknown',
+                'user' => session('user_id'),
+                'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
+            ]);
+            
+            return [
+                'success' => true,
+                'message' => "Data cleared successfully from {$clearedTables} tables. Backup saved as: " . ($backupResult['filename'] ?? 'unknown')
+            ];
+            
+        } catch (\Exception $e) {
+            $this->logModel->addLog('error', 'Data clearing failed: ' . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Data clearing failed: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Get database table information for debugging
+     */
+    public function getDatabaseInfo()
+    {
+        try {
+            // Check if database connection exists
+            if (!$this->db) {
+                return [
+                    'success' => false,
+                    'message' => 'Database connection not available'
+                ];
+            }
+
+            $tables = $this->db->listTables();
+            $tableInfo = [];
+            
+            foreach ($tables as $table) {
+                try {
+                    $count = $this->db->table($table)->countAllResults();
+                    $tableInfo[$table] = [
+                        'row_count' => $count,
+                        'has_data' => $count > 0
+                    ];
+                } catch (\Exception $e) {
+                    $tableInfo[$table] = [
+                        'row_count' => 'Error',
+                        'has_data' => false,
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+            
+            return [
+                'success' => true,
+                'tables' => $tableInfo,
+                'total_tables' => count($tables)
+            ];
+            
+        } catch (\Exception $e) {
+            // Log error but don't depend on logModel
+            log_message('error', 'getDatabaseInfo failed: ' . $e->getMessage());
+            
+            return [
+                'success' => false,
+                'message' => 'Failed to get database info: ' . $e->getMessage()
+            ];
         }
     }
 }

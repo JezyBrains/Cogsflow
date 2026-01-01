@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nipo Agro - Webfront Test</title>
+    <link rel="stylesheet" href="./index.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .page-link {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px 25px;
+            background: #2ACC32;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .page-link:hover {
+            background: #218225;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(42, 204, 50, 0.3);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo img {
+            max-width: 150px;
+            height: auto;
+        }
+        .description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            text-align: center;
+        }
+        .status {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2ACC32;
+        }
+        .status h3 {
+            margin: 0 0 10px 0;
+            color: #218225;
+        }
+        .status ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .status li {
+            margin: 5px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="logo">
+            <img src="./images/Nipo Agro Logo@4x 2.png" alt="Nipo Agro Logo" onerror="this.style.display='none'">
+            <h1>Nipo Agro Webfront</h1>
+        </div>
+        
+        <div class="status">
+            <h3>✅ Implementation Status</h3>
+            <ul>
+                <li><strong>Responsive Design:</strong> Mobile-first CSS with breakpoints</li>
+                <li><strong>Images & Assets:</strong> All images linked from webfront directories</li>
+                <li><strong>Navigation:</strong> JavaScript-powered navigation between pages</li>
+                <li><strong>Interactive Elements:</strong> Hover effects and button functionality</li>
+                <li><strong>Cross-browser Compatibility:</strong> Modern CSS and JavaScript</li>
+            </ul>
+        </div>
+        
+        <div class="description">
+            <p>Welcome to the Nipo Agro webfront test page. All pages have been updated with:</p>
+            <p><strong>✓ Responsive design</strong> | <strong>✓ Proper image paths</strong> | <strong>✓ Working navigation</strong> | <strong>✓ Interactive functionality</strong></p>
+        </div>
+        
+        <div class="links-grid">
+            <a href="./home.html" class="page-link">🏠 Home Page</a>
+            <a href="./aboutus.html" class="page-link">ℹ️ About Us</a>
+            <a href="./service.html" class="page-link">🛠️ Services</a>
+            <a href="./products.html" class="page-link">📦 Products</a>
+            <a href="./contactus.html" class="page-link">📞 Contact Us</a>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px; text-align: center;">
+            <h3>Integration with CodeIgniter</h3>
+            <p>To integrate these pages with your CodeIgniter application:</p>
+            <ol style="text-align: left; max-width: 600px; margin: 0 auto;">
+                <li>Copy the CSS files to <code>public/webfront-assets/</code></li>
+                <li>Copy the images to <code>public/webfront-images/</code></li>
+                <li>Copy the JavaScript to <code>public/webfront-assets/</code></li>
+                <li>Update your CodeIgniter views to use the HTML structure</li>
+                <li>Update image paths to use <code>base_url()</code></li>
+            </ol>
+        </div>
+    </div>
+    
+    <script src="./navigation.js"></script>
+</body>
+</html>

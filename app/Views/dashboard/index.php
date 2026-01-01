@@ -232,7 +232,7 @@
                                                 <tr>
                                                     <th>Grain Type</th>
                                                     <th>Items</th>
-                                                    <th>Stock (MT)</th>
+                                                    <th>Stock (<?= strtoupper(get_weight_unit()) ?>)</th>
                                                     <th>Status</th>
                                                 </tr>
                                             </thead>
@@ -272,7 +272,7 @@
                                             <h6 class="mb-3">Stock Summary</h6>
                                             <div class="mb-3">
                                                 <div class="h4 text-primary"><?= number_format($inventory_summary['total_stock_mt'], 2) ?></div>
-                                                <small class="text-muted">Total Stock (MT)</small>
+                                                <small class="text-muted">Total Stock (<?= strtoupper(get_weight_unit()) ?>)</small>
                                             </div>
                                             <div class="mb-3">
                                                 <div class="h5 text-info"><?= $inventory_summary['total_items'] ?></div>
@@ -726,7 +726,7 @@ function initializeCharts(data) {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Stock (MT)',
+                    label: 'Stock (<?= strtoupper(get_weight_unit()) ?>)',
                     data: stockData,
                     backgroundColor: colors[0],
                     borderColor: colors[0],
@@ -748,7 +748,7 @@ function initializeCharts(data) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Stock (MT)'
+                            text: 'Stock (<?= strtoupper(get_weight_unit()) ?>)'
                         }
                     },
                     x: {
@@ -861,7 +861,7 @@ function initializeCharts(data) {
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Stock (MT)'
+                            text: 'Stock (<?= strtoupper(get_weight_unit()) ?>)'
                         }
                     },
                     x: {

@@ -139,6 +139,7 @@
                                     $statusClasses = [
                                         'pending' => 'bg-warning',
                                         'in_transit' => 'bg-info',
+                                        'arrived' => 'bg-primary',
                                         'delivered' => 'bg-success',
                                         'cancelled' => 'bg-danger'
                                     ];
@@ -153,6 +154,9 @@
                                         </button>
                                         <ul class="dropdown-menu">
                                             <li><a class="dropdown-item" href="<?= site_url('dispatches/view/' . $dispatch['id']) ?>"><i class="bx bx-show me-2"></i>View Details</a></li>
+                                            <?php if (in_array($dispatch['status'], ['pending', 'in_transit', 'arrived']) && empty($dispatch['received_by'])): ?>
+                                                <li><a class="dropdown-item" href="<?= site_url('dispatches/edit/' . $dispatch['id']) ?>"><i class="bx bx-edit me-2"></i>Edit Dispatch</a></li>
+                                            <?php endif; ?>
                                             <?php if ($dispatch['status'] === 'pending'): ?>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li>
@@ -165,10 +169,13 @@
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li>
                                                     <form method="post" action="<?= site_url('dispatches/updateStatus/' . $dispatch['id']) ?>" class="d-inline">
-                                                        <input type="hidden" name="status" value="delivered">
-                                                        <button type="submit" class="dropdown-item text-success"><i class="bx bx-check-circle me-2"></i>Mark Delivered</button>
+                                                        <input type="hidden" name="status" value="arrived">
+                                                        <button type="submit" class="dropdown-item text-primary"><i class="bx bx-map-pin me-2"></i>Mark Arrived</button>
                                                     </form>
                                                 </li>
+                                            <?php elseif ($dispatch['status'] === 'arrived'): ?>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item text-success" href="<?= site_url('batch-receiving/inspection/' . $dispatch['id']) ?>"><i class="bx bx-check-square me-2"></i>Perform Inspection</a></li>
                                             <?php endif; ?>
                                             <?php if (in_array($dispatch['status'], ['pending', 'in_transit'])): ?>
                                                 <li><hr class="dropdown-divider"></li>

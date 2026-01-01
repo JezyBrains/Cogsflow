@@ -151,6 +151,22 @@
         </div>
     </div>
 
+    <!-- Document Management -->
+    <?php if ($batch['status'] === 'pending'): ?>
+    <div class="row mb-4">
+        <div class="col-12">
+            <?= view('documents/upload_widget', [
+                'workflow_stage' => 'batch_approval',
+                'reference_type' => 'batch',
+                'reference_id' => $batch['id'],
+                'document_types' => $document_types,
+                'existing_documents' => $existing_documents,
+                'required_documents' => $required_documents
+            ]) ?>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- Bag Details -->
     <div class="row">
         <div class="col-12">
@@ -161,12 +177,16 @@
                         Individual Bag Details (<?= count($bags) ?> bags)
                     </h6>
                     <div class="btn-group">
+                        <a href="<?= base_url('batch-receiving/print-labels-from-batch/' . $batch['id']) ?>" 
+                           class="btn btn-primary btn-sm" target="_blank">
+                            <i class="bx bx-printer me-1"></i>Print Bag Labels
+                        </a>
                         <button type="button" class="btn btn-outline-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="bx bx-download me-1"></i>Export
+                            <i class="bx bx-export me-1"></i>Export
                         </button>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#"><i class="bx bx-file-blank me-2"></i>PDF</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bx bx-spreadsheet me-2"></i>Excel</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bx bx-file-pdf me-2"></i>Export PDF</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bx bx-file-excel me-2"></i>Export Excel</a></li>
                         </ul>
                     </div>
                 </div>

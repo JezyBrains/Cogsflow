@@ -1,0 +1,827 @@
+.home-page {
+    width: 100%;
+    height: 4893.5px;
+    position: relative;
+    background-color: #fff;
+    overflow: hidden;
+    text-align: left;
+    font-size: 26.35px;
+    color: #191819;
+    font-family: Montserrat;
+}
+.contact-us-wrapper {
+    position: absolute;
+    top: 54.17px;
+    left: 1152.89px;
+    border-radius: 24.7px;
+    border: 1.2px solid #8ac653;
+    display: flex;
+    align-items: flex-start;
+    padding: 11.2px 29.4px;
+    cursor: pointer;
+    font-size: 19.13px;
+}
+.contact-us {
+    position: relative;
+    line-height: 19.58px;
+    font-weight: 600;
+}
+.about-parent {
+    position: absolute;
+    top: 64px;
+    left: 742.13px;
+    width: 304.4px;
+    height: 22.1px;
+    font-size: 13.41px;
+}
+.about {
+    position: absolute;
+    top: 0%;
+    left: 25.99%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.services {
+    position: absolute;
+    top: 0%;
+    left: 51.98%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.product {
+    position: absolute;
+    top: 0%;
+    left: 82.16%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.home {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    line-height: 20.6px;
+    color: #2acc32;
+}
+.instance-child {
+    position: absolute;
+    height: 15.38%;
+    width: 1.12%;
+    top: 84.95%;
+    right: 92.5%;
+    bottom: -0.33%;
+    left: 6.39%;
+    border-radius: 50%;
+    background-color: #2acc32;
+}
+.global-agri-traders {
+    position: absolute;
+    top: 243.87px;
+    left: 404.32px;
+    font-size: 89.27px;
+    line-height: 95.92px;
+    font-weight: 800;
+    text-align: center;
+}
+.global {
+    margin: 0;
+}
+.we-connect-farmers {
+    position: absolute;
+    top: 481px;
+    left: 269px;
+    font-size: 26.55px;
+    line-height: 40.79px;
+    text-align: center;
+    display: inline-block;
+    width: 861px;
+}
+.contact-us-container {
+    position: absolute;
+    top: 665px;
+    left: 747px;
+    border-radius: 10px;
+    background-color: #218225;
+    width: 185px;
+    height: 53px;
+    cursor: pointer;
+    text-align: center;
+    color: #fff;
+}
+.home-page-contact-us {
+    position: absolute;
+    top: calc(50% - 12.5px);
+    left: calc(50% - 75.5px);
+    line-height: 24px;
+    font-weight: 600;
+}
+.explore-products-wrapper {
+    position: absolute;
+    top: 665px;
+    left: 468px;
+    border-radius: 10px;
+    background-color: #218225;
+    width: 252px;
+    height: 53px;
+    cursor: pointer;
+    color: #fff;
+}
+.explore-products {
+    position: absolute;
+    top: calc(50% - 13.43px);
+    left: calc(50% - 116px);
+    line-height: 24px;
+    font-weight: 600;
+}
+.vector-icon {
+    position: absolute;
+    height: 2.65%;
+    width: 24.96%;
+    top: 6.62%;
+    right: 51.89%;
+    bottom: 90.73%;
+    left: 23.15%;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+    object-fit: contain;
+}
+.home-page-child {
+    position: absolute;
+    top: 614.93px;
+    left: 141.97px;
+    border-radius: 19.35px;
+    width: 165.3px;
+    height: 177.3px;
+    object-fit: cover;
+}
+.home-page-item {
+    position: absolute;
+    top: 737.87px;
+    left: 954.17px;
+    border-radius: 21.61px;
+    width: 184.5px;
+    height: 197.9px;
+    object-fit: cover;
+}
+.home-page-inner {
+    position: absolute;
+    top: 324.07px;
+    left: 1130.21px;
+    border-radius: 18.57px;
+    width: 158.6px;
+    height: 170.1px;
+    object-fit: cover;
+}
+.rectangle-icon {
+    position: absolute;
+    top: 243.87px;
+    left: -12.96px;
+    border-radius: 31.02px;
+    width: 264.9px;
+    height: 284.2px;
+    object-fit: cover;
+}
+.home-page-home-page-child {
+    position: absolute;
+    top: 458.56px;
+    left: 1216.09px;
+    border-radius: 31.02px;
+    width: 264.9px;
+    height: 284.2px;
+    object-fit: cover;
+}
+.home-page-about {
+    position: absolute;
+    top: 1183.68px;
+    left: 742.13px;
+    font-size: 36.41px;
+    line-height: 39.12px;
+    font-weight: 800;
+    color: #2acc32;
+}
+.we-are-an {
+    position: absolute;
+    top: 1237.83px;
+    left: 742.13px;
+    font-size: 22.9px;
+    line-height: 35.19px;
+    display: inline-block;
+    width: 487.7px;
+}
+.lean-more-wrapper {
+    position: absolute;
+    top: 1498.84px;
+    left: 742.13px;
+    border-radius: 10px;
+    background-color: #218225;
+    display: flex;
+    align-items: flex-start;
+    padding: 15.4px 40.5px;
+    cursor: pointer;
+    color: #fff;
+}
+.lean-more {
+    position: relative;
+    line-height: 26.97px;
+    font-weight: 600;
+}
+.line-div {
+    position: absolute;
+    top: 1202.72px;
+    left: 886.75px;
+    border-top: 0.8px solid #000;
+    box-sizing: border-box;
+    width: 69.7px;
+    height: 0.8px;
+}
+.rectangle-div {
+    position: absolute;
+    top: 1026.5px;
+    left: 239.81px;
+    border-radius: 198.5px;
+    background-color: #2acc32;
+    width: 397px;
+    height: 684.6px;
+}
+.nipo-agro-man {
+    position: absolute;
+    top: 1085px;
+    left: 128px;
+    width: 655px;
+    height: 886px;
+    object-fit: cover;
+}
+.home-page-child2 {
+    position: absolute;
+    top: 1855px;
+    left: 194px;
+    background: linear-gradient(179.47deg, rgba(255, 255, 255, 0), #fff);
+    width: 526px;
+    height: 234px;
+}
+.home-page-child3 {
+    position: absolute;
+    top: 2516px;
+    left: 0px;
+    background-color: #eee;
+    width: 1728px;
+    height: 1624px;
+}
+.home-page-child4 {
+    position: absolute;
+    top: 4140px;
+    left: 0px;
+    background-color: #eee;
+    width: 1400px;
+    height: 422px;
+}
+.home-page-child5 {
+    position: absolute;
+    top: 2285.53px;
+    left: 160.42px;
+    border-radius: 34.03px;
+    background-color: #fff;
+    width: 487.7px;
+    height: 449.7px;
+}
+.home-page-child6 {
+    position: absolute;
+    top: 2097px;
+    left: 751px;
+    border-radius: 34.03px;
+    background-color: #fff;
+    width: 488px;
+    height: 501px;
+}
+.home-page-child7 {
+    position: absolute;
+    top: 2817.01px;
+    left: 160.42px;
+    border-radius: 34.03px;
+    background-color: #fff;
+    width: 487.7px;
+    height: 449.7px;
+}
+.home-page-child8 {
+    position: absolute;
+    top: 2654px;
+    left: 751px;
+    border-radius: 34.03px;
+    background-color: #fff;
+    width: 488px;
+    height: 556px;
+}
+.international {
+    position: absolute;
+    top: 2447.29px;
+    left: 230.09px;
+    font-size: 36.41px;
+    line-height: 39.12px;
+    font-weight: 500;
+    color: #2acc32;
+}
+.warehousing-storage-container {
+    position: absolute;
+    top: 2254.44px;
+    left: 820.72px;
+    font-size: 36.41px;
+    line-height: 39.12px;
+    font-weight: 500;
+    color: #2acc32;
+}
+.consultation {
+    position: absolute;
+    top: 2988.77px;
+    left: 230.09px;
+    font-size: 36.41px;
+    line-height: 39.12px;
+    font-weight: 500;
+    color: #2acc32;
+}
+.service-maintenance {
+    position: absolute;
+    top: 2825.93px;
+    left: 820.72px;
+    font-size: 36.41px;
+    line-height: 39.12px;
+    font-weight: 500;
+    color: #2acc32;
+}
+.services-we-render-container {
+    position: absolute;
+    top: 2142.94px;
+    left: 160.42px;
+    font-size: 51.57px;
+    line-height: 50.15px;
+    color: #218225;
+}
+.we-manage-sourcing {
+    position: absolute;
+    top: 2502px;
+    left: 203px;
+    font-size: 22.9px;
+    line-height: 35.19px;
+    display: inline-block;
+    width: 414px;
+}
+.our-facilities-provide {
+    position: absolute;
+    top: 2348.73px;
+    left: 820.72px;
+    font-size: 22.9px;
+    line-height: 35.19px;
+    display: inline-block;
+    width: 359.7px;
+}
+.we-build-resourceful {
+    position: absolute;
+    top: 3043.06px;
+    left: 230.09px;
+    font-size: 22.9px;
+    line-height: 35.19px;
+    display: inline-block;
+    width: 359.7px;
+}
+.we-provide-professional {
+    position: absolute;
+    top: 2920.21px;
+    left: 820.72px;
+    font-size: 22.9px;
+    line-height: 35.19px;
+    display: inline-block;
+    width: 359.7px;
+}
+.see-more-wrapper {
+    position: absolute;
+    top: 3240.51px;
+    left: 750.23px;
+    border-radius: 10px;
+    background-color: #218225;
+    display: flex;
+    align-items: flex-start;
+    padding: 15.4px 40.5px;
+    color: #fff;
+}
+.home-page-child9 {
+    position: absolute;
+    top: 2224.13px;
+    left: 480.61px;
+    border-top: 1.3px solid #000;
+    box-sizing: border-box;
+    width: 79.9px;
+    height: 1.3px;
+}
+.group-icon {
+    position: absolute;
+    top: 2711px;
+    left: 817px;
+    width: 89.9px;
+    height: 89.9px;
+}
+.ellipse-div {
+    position: absolute;
+    top: 2342.24px;
+    left: 226.85px;
+    border-radius: 50%;
+    background-color: rgba(33, 130, 37, 0.13);
+    width: 89.9px;
+    height: 89.9px;
+}
+.outlines-icon {
+    position: absolute;
+    height: 1.56%;
+    width: 5.5%;
+    top: 48%;
+    right: 77.86%;
+    bottom: 50.44%;
+    left: 16.64%;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+}
+.home-page-child10 {
+    position: absolute;
+    top: 2139.4px;
+    left: 817.48px;
+    width: 89.9px;
+    height: 89.9px;
+    object-fit: contain;
+}
+.home-page-child11 {
+    position: absolute;
+    top: 2873.73px;
+    left: 226.85px;
+    width: 89.9px;
+    height: 89.9px;
+    object-fit: contain;
+}
+.home-page-child12 {
+    position: absolute;
+    top: 3526.83px;
+    left: 130.44px;
+    border-radius: 21.56px;
+    background-color: #f5f5f5;
+    width: 251.5px;
+    height: 324.4px;
+}
+.home-page-child13 {
+    position: absolute;
+    top: 3526.83px;
+    left: 430.09px;
+    border-radius: 21.56px;
+    background-color: #f5f5f5;
+    width: 251.5px;
+    height: 324.4px;
+}
+.home-page-child14 {
+    position: absolute;
+    top: 3526.83px;
+    left: 729.74px;
+    border-radius: 21.56px;
+    background-color: #f5f5f5;
+    width: 251.5px;
+    height: 324.4px;
+}
+.home-page-child15 {
+    position: absolute;
+    top: 3526.83px;
+    left: 1029.4px;
+    border-radius: 21.56px;
+    background-color: #f5f5f5;
+    width: 251.5px;
+    height: 324.4px;
+}
+.home-page-child16 {
+    position: absolute;
+    top: 3538.64px;
+    left: 143.79px;
+    border-radius: 11.29px;
+    width: 224.3px;
+    height: 123.7px;
+    object-fit: cover;
+}
+.home-page-child17 {
+    position: absolute;
+    top: 3538.64px;
+    left: 443.44px;
+    border-radius: 11.29px;
+    width: 224.3px;
+    height: 123.7px;
+    object-fit: cover;
+}
+.home-page-child18 {
+    position: absolute;
+    top: 3538.64px;
+    left: 743.09px;
+    border-radius: 11.29px;
+    width: 224.3px;
+    height: 123.7px;
+    object-fit: cover;
+}
+.home-page-child19 {
+    position: absolute;
+    top: 3538.64px;
+    left: 1042.74px;
+    border-radius: 11.29px;
+    width: 224.3px;
+    height: 123.7px;
+    object-fit: cover;
+}
+.customer-satisfaction {
+    position: absolute;
+    top: 3673.12px;
+    left: 152.51px;
+    font-size: 23.07px;
+    line-height: 24.79px;
+    font-weight: 500;
+    color: #2acc32;
+}
+.loyalty {
+    position: absolute;
+    top: 3673.12px;
+    left: 452.16px;
+    font-size: 23.07px;
+    line-height: 24.79px;
+    font-weight: 500;
+    color: #2acc32;
+}
+.quality {
+    position: absolute;
+    top: 3673.12px;
+    left: 751.81px;
+    font-size: 23.07px;
+    line-height: 24.79px;
+    font-weight: 500;
+    color: #2acc32;
+}
+.feedback {
+    position: absolute;
+    top: 3673.12px;
+    left: 1051.47px;
+    font-size: 23.07px;
+    line-height: 24.79px;
+    font-weight: 500;
+    color: #2acc32;
+}
+.this-is-the {
+    position: absolute;
+    top: 3729.12px;
+    left: 152.51px;
+    font-size: 14.51px;
+    line-height: 22.29px;
+    display: inline-block;
+    width: 198.6px;
+}
+.we-do-not {
+    position: absolute;
+    top: 3723.71px;
+    left: 452.08px;
+    font-size: 14.51px;
+    line-height: 22.29px;
+    display: inline-block;
+    width: 209px;
+}
+.we-provide-only {
+    position: absolute;
+    top: 3723.71px;
+    left: 751.81px;
+    font-size: 14.51px;
+    line-height: 22.29px;
+    display: inline-block;
+    width: 198.6px;
+}
+.we-consider-feedback {
+    position: absolute;
+    top: 3723.71px;
+    left: 1051.47px;
+    font-size: 14.51px;
+    line-height: 22.29px;
+    display: inline-block;
+    width: 198.6px;
+}
+.get-started-wrapper {
+    position: absolute;
+    top: 3919.77px;
+    left: 586.57px;
+    border-radius: 10px;
+    background-color: #218225;
+    display: flex;
+    align-items: flex-start;
+    padding: 15.4px 40.5px;
+    cursor: pointer;
+    color: #fff;
+}
+.why-choose-fooding {
+    position: absolute;
+    top: 3447.34px;
+    left: 130.44px;
+    font-size: 35.14px;
+    line-height: 34.17px;
+    font-weight: 500;
+    color: #2acc32;
+}
+.subscribe-wrapper {
+    position: absolute;
+    top: 4421.99px;
+    left: 593.06px;
+    border-radius: 10px;
+    background-color: #218225;
+    display: flex;
+    align-items: flex-start;
+    padding: 15.4px 40.5px;
+    color: #fff;
+}
+.subscribe-to-out {
+    position: absolute;
+    top: 4241.32px;
+    left: 454.51px;
+    font-size: 35.14px;
+    line-height: 34.17px;
+    font-weight: 500;
+    color: #2acc32;
+}
+.group-div {
+    position: absolute;
+    top: 4310.18px;
+    left: 416.44px;
+    width: 567.9px;
+    height: 61px;
+    font-size: 22.15px;
+    color: rgba(86, 86, 86, 0.42);
+}
+.johndoegmailcom-wrapper {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-radius: 15px;
+    background-color: #fff;
+    width: 567.9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0px 60px;
+    box-sizing: border-box;
+}
+.johndoegmailcom {
+    position: relative;
+    line-height: 60.48px;
+    font-weight: 300;
+}
+.nipoagroltd-parent {
+    position: absolute;
+    top: 4767.45px;
+    left: 131px;
+    width: 110.3px;
+    height: 14px;
+    font-size: 12.04px;
+}
+.nipoagroltd {
+    position: absolute;
+    top: 0px;
+    left: 13.31px;
+    letter-spacing: -0.03em;
+    line-height: 13.4px;
+    font-weight: 500;
+}
+.icon-park-outlinehandle-c {
+    position: absolute;
+    top: 0.53px;
+    left: 0px;
+    width: 12.8px;
+    height: 12.8px;
+}
+.home-page-vector-icon {
+    position: absolute;
+    top: 2726px;
+    left: 832px;
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+.vector-icon2 {
+    position: absolute;
+    top: 2726px;
+    left: 832px;
+    border-radius: 1px;
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+.nipo-agro-logo4x-2 {
+    position: absolute;
+    top: 60px;
+    left: 94px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+.nipo-agro-logo4x-3 {
+    position: absolute;
+    top: 4640px;
+    left: 126px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+.kisasa-street-kisasa-road-do-parent {
+    position: absolute;
+    top: 4641px;
+    left: 572px;
+    width: 700.3px;
+    height: 126.4px;
+    font-size: 18.7px;
+}
+.kisasa-street-kisasa-container {
+    position: absolute;
+    top: 0.81px;
+    left: 0px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.div {
+    position: absolute;
+    top: 99.41px;
+    left: 0px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.infonipoagrocom {
+    position: absolute;
+    top: 0px;
+    left: 511.33px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.salesnipoagrocom {
+    position: absolute;
+    top: 30px;
+    left: 511.33px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.nipoagroinsights-wrapper {
+    position: absolute;
+    top: 99.72px;
+    left: 511.48px;
+    width: 150px;
+    height: 20px;
+    font-size: 17.95px;
+}
+.nipoagroinsights {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    letter-spacing: -0.03em;
+    line-height: 19.97px;
+    font-weight: 500;
+}
+.mask-group {
+    position: absolute;
+    top: 68.57px;
+    left: 483.47px;
+    width: 99.7px;
+    height: 24.9px;
+}
+.mask-group-child {
+    position: absolute;
+    top: -5px;
+    left: 50px;
+    background-color: #2acc32;
+    width: 25px;
+    height: 35px;
+}
+.home-page-mask-group {
+    position: absolute;
+    top: 68.57px;
+    left: 532.47px;
+    width: 99.7px;
+    height: 24.9px;
+}
+.mask-group-item {
+    position: absolute;
+    top: -5px;
+    left: 25px;
+    background-color: #2acc32;
+    width: 26px;
+    height: 35px;
+}
+.mask-group2 {
+    position: absolute;
+    top: 68.57px;
+    left: 508.47px;
+    width: 26px;
+    height: 25px;
+}
+.mask-group-inner {
+    position: absolute;
+    top: -5.38px;
+    left: -4.41px;
+    background-color: #2acc32;
+    width: 113.4px;
+    height: 35.6px;
+}
+

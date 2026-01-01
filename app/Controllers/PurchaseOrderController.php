@@ -455,11 +455,10 @@ class PurchaseOrderController extends BaseController
         try {
             $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
             
-            // Search purchase orders with supplier information and transferred quantities
+            // Search purchase orders with supplier information and delivered quantities
             $builder = $purchaseOrderModel->db->table('purchase_orders po');
-            $builder->select('po.id, po.po_number, po.grain_type, po.quantity_mt, po.delivered_quantity_mt, po.status, s.name as supplier_name, COALESCE(SUM(b.total_weight_mt), 0) as transferred_quantity_mt');
+            $builder->select('po.id, po.po_number, po.grain_type, po.quantity_mt, po.delivered_quantity_mt, po.remaining_quantity_mt, po.status, s.name as supplier_name');
             $builder->join('suppliers s', 's.id = po.supplier_id', 'left');
-            $builder->join('batches b', 'b.purchase_order_id = po.id', 'left');
             
             // Allow multiple statuses for search - include approved, confirmed, pending, transferring, and empty
             $allowedStatuses = ['approved', 'confirmed', 'pending', 'transferring', ''];
@@ -480,24 +479,25 @@ class PurchaseOrderController extends BaseController
             $builder->orLike('s.name', $query);
             $builder->groupEnd();
             
-            $builder->groupBy('po.id');
             $builder->orderBy('po.order_date', 'DESC');
             $builder->limit(20); // Increased limit to account for filtering
             
             $results = $builder->get()->getResultArray();
             
-            // Filter out completed POs and calculate remaining quantity
+            // Filter out completed POs - use delivered_quantity_mt from database
             $filteredResults = [];
             foreach ($results as $po) {
-                $transferredQty = (float)$po['transferred_quantity_mt'];
+                $deliveredQty = (float)$po['delivered_quantity_mt'];
                 $totalQty = (float)$po['quantity_mt'];
+                $remainingQty = (float)$po['remaining_quantity_mt'];
                 
-                // Skip if PO is completed (transferred quantity >= total quantity)
-                if ($transferredQty >= $totalQty) {
+                // Skip if PO is completed (delivered quantity >= total quantity)
+                if ($deliveredQty >= $totalQty || $remainingQty <= 0) {
                     continue;
                 }
                 
-                $po['remaining_quantity_mt'] = max(0, $totalQty - $transferredQty);
+                // Use the remaining_quantity_mt from database (updated by inspection process)
+                $po['remaining_quantity_mt'] = $remainingQty;
                 $filteredResults[] = $po;
             }
             

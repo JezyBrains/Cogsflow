@@ -19,6 +19,7 @@ class DispatchModel extends Model
         'trailer_number',
         'driver_name',
         'driver_phone',
+        'driver_id_number',
         'dispatcher_name',
         'destination',
         'estimated_arrival',
@@ -48,9 +49,10 @@ class DispatchModel extends Model
         'dispatch_number' => 'permit_empty|min_length[3]|max_length[50]',
         'batch_id' => 'required|integer',
         'vehicle_number' => 'required|min_length[3]|max_length[20]',
-        'trailer_number' => 'required|min_length[3]|max_length[20]',
+        'trailer_number' => 'permit_empty|min_length[3]|max_length[20]',
         'driver_name' => 'required|min_length[3]|max_length[255]',
-        'driver_phone' => 'permit_empty|regex_match[/^\\+255\\d{3}\\s\\d{3}\\s\\d{3}$/]',
+        'driver_phone' => 'permit_empty|regex_match[/^(\\+255|0)?\\s?[67]\\d{2}\\s?\\d{3}\\s?\\d{3}$/]',
+        'driver_id_number' => 'permit_empty|min_length[3]|max_length[50]',
         'dispatcher_name' => 'required|min_length[3]|max_length[255]',
         'destination' => 'required|min_length[3]|max_length[255]',
         'estimated_arrival' => 'required|valid_date',
@@ -219,13 +221,17 @@ class DispatchModel extends Model
         $weightDiscrepancyMt = round($weightDiscrepancyKg / 1000, 3);
         $weightDiscrepancyPercentage = round(($weightDiscrepancyKg / $expectedWeightKg) * 100, 2);
 
+        // Standardized tolerance thresholds (matching BatchReceivingController)
+        $bagsTolerance = 0; // No tolerance for bag count
+        $weightTolerancePercent = 2.0; // 2% tolerance for weight
+
         $discrepancies = [];
         
-        if ($bagDiscrepancy != 0) {
+        if (abs($bagDiscrepancy) > $bagsTolerance) {
             $discrepancies[] = "Bag count: Expected {$expectedBags}, Received {$actualBags} (Difference: {$bagDiscrepancy})";
         }
         
-        if (abs($weightDiscrepancyPercentage) > 0.5) { // Threshold for significant discrepancy
+        if (abs($weightDiscrepancyPercentage) > $weightTolerancePercent) {
             $discrepancies[] = "Weight: Expected {$expectedWeightKg}kg, Received {$actualWeightKg}kg (Difference: {$weightDiscrepancyKg}kg, {$weightDiscrepancyPercentage}%)";
         }
 

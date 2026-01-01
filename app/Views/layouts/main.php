@@ -74,7 +74,7 @@ helper('notification');
                     <?php endif; ?>
                     
                     <?php if (canAccess('batches', 'view')): ?>
-                    <li class="menu-item <?= strpos(uri_string(), 'batches') === 0 ? 'active open' : '' ?>">
+                    <li class="menu-item <?= strpos(uri_string(), 'batches') === 0 ? 'active' : '' ?>">
                         <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-package"></i>
                             <div data-i18n="Batch Management">Batch Management</div>
@@ -133,10 +133,32 @@ helper('notification');
                     </li>
                     
                     <li class="menu-item <?= strpos(uri_string(), 'expenses') === 0 ? 'active' : '' ?>">
-                        <a href="<?= site_url('expenses') ?>" class="menu-link">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
                             <i class="menu-icon tf-icons bx bx-wallet"></i>
-                            <div data-i18n="Expenses">Expense Tracking</div>
+                            <div data-i18n="Expenses">Expense Management</div>
                         </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item <?= uri_string() == 'expenses' ? 'active' : '' ?>">
+                                <a href="<?= site_url('expenses') ?>" class="menu-link">
+                                    <div data-i18n="Expense List">Expense List</div>
+                                </a>
+                            </li>
+                            <li class="menu-item <?= uri_string() == 'expenses/new' ? 'active' : '' ?>">
+                                <a href="<?= site_url('expenses/new') ?>" class="menu-link">
+                                    <div data-i18n="Add Expense">Add New Expense</div>
+                                </a>
+                            </li>
+                            <li class="menu-item <?= strpos(uri_string(), 'expenses/categories') === 0 ? 'active' : '' ?>">
+                                <a href="<?= site_url('expenses/categories') ?>" class="menu-link">
+                                    <div data-i18n="Categories">Expense Categories</div>
+                                </a>
+                            </li>
+                            <li class="menu-item <?= uri_string() == 'expenses/analytics' ? 'active' : '' ?>">
+                                <a href="<?= site_url('expenses/analytics') ?>" class="menu-link">
+                                    <div data-i18n="Analytics">Expense Analytics</div>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     
                     <?php if (canAccess('suppliers', 'view')): ?>
@@ -487,6 +509,35 @@ helper('notification');
         $('.dropdown-notifications').on('show.bs.dropdown', function() {
             loadNotifications();
         });
+        
+        // Ensure submenus are collapsed by default (don't auto-expand)
+        // Remove 'open' class from all menu items on page load
+        $('.menu-item.active').removeClass('open');
+        
+        // Only add 'open' class when user clicks the menu toggle
+        $('.menu-toggle').on('click', function(e) {
+            const parentItem = $(this).closest('.menu-item');
+            
+            // Toggle open class only on click
+            if (parentItem.hasClass('open')) {
+                parentItem.removeClass('open');
+            } else {
+                // Close other open menus (optional - for accordion behavior)
+                // $('.menu-item.open').removeClass('open');
+                parentItem.addClass('open');
+            }
+        });
+        
+        // Fix sidebar overlay issue - ensure it's in fixed mode on desktop
+        if ($(window).width() >= 1200) {
+            // Remove mobile/overlay classes
+            $('.layout-menu').removeClass('layout-menu-hover layout-menu-overlay');
+            $('body').removeClass('layout-menu-overlay');
+            $('.layout-wrapper').removeClass('layout-menu-overlay');
+            
+            // Ensure fixed layout
+            $('html').addClass('layout-menu-fixed');
+        }
     });
     
     function loadNotifications() {

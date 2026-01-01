@@ -1,0 +1,783 @@
+.products {
+    width: 100%;
+    height: 5027.9px;
+    position: relative;
+    background-color: #fff;
+    overflow: hidden;
+    text-align: left;
+    font-size: 20px;
+    color: #191819;
+    font-family: Montserrat;
+}
+.contact-us-wrapper {
+    position: absolute;
+    top: 53.67px;
+    left: 1142.19px;
+    border-radius: 24.47px;
+    border: 1.2px solid #8ac653;
+    display: flex;
+    align-items: flex-start;
+    padding: 11.1px 29.1px;
+    cursor: pointer;
+    font-size: 18.95px;
+}
+.contact-us {
+    position: relative;
+    line-height: 19.4px;
+    font-weight: 600;
+}
+.about-parent {
+    position: absolute;
+    top: 63.41px;
+    left: 735.24px;
+    width: 301.6px;
+    height: 21.9px;
+    font-size: 13.28px;
+}
+.about {
+    position: absolute;
+    top: 0%;
+    left: 25.99%;
+    line-height: 20.41px;
+    cursor: pointer;
+}
+.services {
+    position: absolute;
+    top: 0%;
+    left: 51.98%;
+    line-height: 20.41px;
+    cursor: pointer;
+}
+.product {
+    position: absolute;
+    top: 0%;
+    left: 82.15%;
+    line-height: 20.41px;
+    color: #2acc32;
+}
+.home {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    line-height: 20.41px;
+    cursor: pointer;
+}
+.instance-child {
+    position: absolute;
+    height: 15.07%;
+    width: 1.09%;
+    top: 84.93%;
+    right: 7.94%;
+    bottom: 0%;
+    left: 90.96%;
+    border-radius: 50%;
+    background-color: #2acc32;
+}
+.product-components-group {
+    position: absolute;
+    top: 682.26px;
+    left: 99px;
+    width: 1167.7px;
+    height: 3447.7px;
+    display: none;
+    font-size: 41.89px;
+    color: #2acc32;
+}
+.product-components-group-child {
+    position: absolute;
+    top: 120.1px;
+    left: 0px;
+    border-radius: 40.92px;
+    background-color: #f5f5f5;
+    width: 456.5px;
+    height: 542.9px;
+}
+.product-components-group-item {
+    position: absolute;
+    top: 1696.13px;
+    left: 0px;
+    border-radius: 40.92px;
+    background-color: #f5f5f5;
+    width: 456.5px;
+    height: 549.2px;
+}
+.product-components-group-inner {
+    position: absolute;
+    top: 2597.92px;
+    left: 711px;
+    border-radius: 40.92px;
+    background-color: #f5f5f5;
+    width: 456.5px;
+    height: 849.8px;
+}
+.rectangle-div {
+    position: absolute;
+    top: 120.1px;
+    left: 711px;
+    border-radius: 40.92px;
+    background-color: rgba(138, 198, 83, 0.19);
+    width: 456.5px;
+    height: 689px;
+}
+.products-product-components-group-child {
+    position: absolute;
+    top: 1757.93px;
+    left: 711px;
+    border-radius: 40.92px;
+    background-color: rgba(138, 198, 83, 0.19);
+    width: 456.5px;
+    height: 652.5px;
+}
+.product-components-group-child2 {
+    position: absolute;
+    top: 852.63px;
+    left: 0px;
+    border-radius: 40.92px;
+    background-color: rgba(138, 198, 83, 0.19);
+    width: 456.5px;
+    height: 649.7px;
+}
+.product-components-group-child3 {
+    position: absolute;
+    top: 2439.4px;
+    left: 0px;
+    border-radius: 40.92px;
+    background-color: rgba(138, 198, 83, 0.19);
+    width: 456.7px;
+    height: 589px;
+}
+.beans {
+    position: absolute;
+    top: 424.05px;
+    left: 40.1px;
+    line-height: 45px;
+    font-weight: 500;
+}
+.groundnut {
+    position: absolute;
+    top: 2000.08px;
+    left: 40.1px;
+    line-height: 45px;
+    font-weight: 500;
+}
+.sesame-seeds {
+    position: absolute;
+    top: 2901.87px;
+    left: 751.1px;
+    line-height: 45px;
+    font-weight: 500;
+}
+.dried-hibiscus-flower-container {
+    position: absolute;
+    top: 424.05px;
+    left: 751.1px;
+    line-height: 45px;
+    font-weight: 500;
+}
+.dried-hibiscus {
+    margin: 0;
+}
+.raw-cashew-nuts {
+    position: absolute;
+    top: 2061.88px;
+    left: 751.1px;
+    line-height: 45px;
+    font-weight: 500;
+}
+.fresh-dry-ginger-container {
+    position: absolute;
+    top: 1156.58px;
+    left: 40.1px;
+    line-height: 45px;
+    font-weight: 500;
+}
+.rice {
+    position: absolute;
+    top: 2743.14px;
+    left: 40.1px;
+    line-height: 45px;
+    font-weight: 500;
+}
+.produce-origin-nigeria-container {
+    position: absolute;
+    top: 496.72px;
+    left: 40.07px;
+    font-size: 26.34px;
+    line-height: 25.71px;
+    color: #191819;
+    display: inline-block;
+    width: 360.7px;
+}
+.products-produce-origin-nigeria-container {
+    position: absolute;
+    top: 1278.24px;
+    left: 40.07px;
+    font-size: 26.34px;
+    line-height: 25.71px;
+    color: #191819;
+    display: inline-block;
+    width: 360.7px;
+}
+.produce-origin-nigeria-container2 {
+    position: absolute;
+    top: 535.88px;
+    left: 754.55px;
+    font-size: 26.34px;
+    line-height: 25.71px;
+    color: #191819;
+    display: inline-block;
+    width: 360.7px;
+}
+.rectangle-icon {
+    position: absolute;
+    top: 0px;
+    left: 43.37px;
+    border-radius: 42.26px;
+    width: 360.9px;
+    height: 387.1px;
+    object-fit: cover;
+}
+.product-components-group-child4 {
+    position: absolute;
+    top: 1576.03px;
+    left: 43.37px;
+    border-radius: 42.26px;
+    width: 360.9px;
+    height: 387.1px;
+    object-fit: cover;
+}
+.product-components-group-child5 {
+    position: absolute;
+    top: 2477.82px;
+    left: 754.38px;
+    border-radius: 42.26px;
+    width: 360.9px;
+    height: 387.1px;
+    object-fit: cover;
+}
+.product-components-group-child6 {
+    position: absolute;
+    top: 0px;
+    left: 754.38px;
+    border-radius: 42.26px;
+    width: 360.9px;
+    height: 387.1px;
+    object-fit: cover;
+}
+.product-components-group-child7 {
+    position: absolute;
+    top: 1637.83px;
+    left: 754.38px;
+    border-radius: 42.26px;
+    width: 360.9px;
+    height: 387.1px;
+    object-fit: cover;
+}
+.product-components-group-child8 {
+    position: absolute;
+    top: 732.53px;
+    left: 43.37px;
+    border-radius: 42.26px;
+    width: 360.9px;
+    height: 387.1px;
+    object-fit: cover;
+}
+.product-components-group-child9 {
+    position: absolute;
+    top: 2319.09px;
+    left: 43.37px;
+    border-radius: 42.26px;
+    width: 360.9px;
+    height: 387.1px;
+    object-fit: cover;
+}
+.product-components-group-child10 {
+    position: absolute;
+    top: 1004.54px;
+    left: 711px;
+    border-radius: 40.92px;
+    background-color: #f5f5f5;
+    width: 456.7px;
+    height: 589px;
+}
+.garri {
+    position: absolute;
+    top: 1308.28px;
+    left: 751.1px;
+    line-height: 45px;
+    font-weight: 500;
+}
+.product-components-group-child11 {
+    position: absolute;
+    top: 884.23px;
+    left: 754.38px;
+    border-radius: 42.26px;
+    width: 360.9px;
+    height: 387.1px;
+    object-fit: cover;
+}
+.produce-origin-nigeria-container3 {
+    position: absolute;
+    top: 1380.78px;
+    left: 754.55px;
+    font-size: 26.34px;
+    line-height: 25.71px;
+    color: #191819;
+    display: inline-block;
+    width: 360.7px;
+}
+.produce-origin-nigeria-container4 {
+    position: absolute;
+    top: 2130.87px;
+    left: 754.55px;
+    font-size: 26.34px;
+    line-height: 25.71px;
+    color: #191819;
+    display: inline-block;
+    width: 360.7px;
+}
+.produce-origin-nigeria-container5 {
+    position: absolute;
+    top: 2079.6px;
+    left: 45.65px;
+    font-size: 26.34px;
+    line-height: 25.71px;
+    color: #191819;
+    display: inline-block;
+    width: 360.7px;
+}
+.produce-origin-nigeria-container6 {
+    position: absolute;
+    top: 2812.13px;
+    left: 45.65px;
+    font-size: 26.34px;
+    line-height: 25.71px;
+    color: #191819;
+    display: inline-block;
+    width: 360.7px;
+}
+.produce-origin-africa-container {
+    position: absolute;
+    top: 2970.86px;
+    left: 754.55px;
+    font-size: 26.34px;
+    line-height: 25.71px;
+    color: #191819;
+    display: inline-block;
+    width: 360.7px;
+}
+.free-from-water-damage {
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    padding-left: 35px;
+}
+.free-from-water {
+    margin-bottom: 0px;
+}
+.footer {
+    position: absolute;
+    top: 4739.72px;
+    left: 0px;
+    background-color: #fff;
+    width: 1387px;
+    height: 288.2px;
+    overflow: hidden;
+    font-size: 12.04px;
+}
+.footer-inner {
+    position: absolute;
+    top: 184.73px;
+    left: 136px;
+    width: 110.3px;
+    height: 14px;
+}
+.nipoagroltd-parent {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 110.3px;
+    height: 14px;
+}
+.nipoagroltd {
+    position: absolute;
+    top: 0px;
+    left: 13.31px;
+    letter-spacing: -0.03em;
+    line-height: 13.4px;
+    font-weight: 500;
+}
+.icon-park-outlinehandle-c {
+    position: absolute;
+    top: 0.53px;
+    left: 0px;
+    width: 12.8px;
+    height: 12.8px;
+}
+.nipo-agro-logo4x-3 {
+    position: absolute;
+    top: 57.28px;
+    left: 131px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+.kisasa-street-kisasa-road-do-parent {
+    position: absolute;
+    top: 82.28px;
+    left: 532px;
+    width: 700.3px;
+    height: 126.4px;
+    font-size: 18.7px;
+}
+.kisasa-street-kisasa-container {
+    position: absolute;
+    top: 0.81px;
+    left: 0px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.div {
+    position: absolute;
+    top: 99.41px;
+    left: 0px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.infonipoagrocom {
+    position: absolute;
+    top: 0px;
+    left: 511.33px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.salesnipoagrocom {
+    position: absolute;
+    top: 30px;
+    left: 511.33px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.nipoagroinsights-wrapper {
+    position: absolute;
+    top: 99.72px;
+    left: 511.48px;
+    width: 150px;
+    height: 20px;
+    font-size: 17.95px;
+}
+.nipoagroinsights {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    letter-spacing: -0.03em;
+    line-height: 19.97px;
+    font-weight: 500;
+}
+.mask-group {
+    position: absolute;
+    top: 68.57px;
+    left: 483.47px;
+    width: 99.7px;
+    height: 24.9px;
+}
+.mask-group-child {
+    position: absolute;
+    top: -5px;
+    left: 50px;
+    background-color: #2acc32;
+    width: 25px;
+    height: 35px;
+}
+.products-mask-group {
+    position: absolute;
+    top: 68.57px;
+    left: 532.47px;
+    width: 99.7px;
+    height: 24.9px;
+}
+.mask-group-item {
+    position: absolute;
+    top: -5px;
+    left: 25px;
+    background-color: #2acc32;
+    width: 26px;
+    height: 35px;
+}
+.mask-group2 {
+    position: absolute;
+    top: 68.57px;
+    left: 508.47px;
+    width: 26px;
+    height: 25px;
+}
+.mask-group-inner {
+    position: absolute;
+    top: -5.38px;
+    left: -4.41px;
+    background-color: #2acc32;
+    width: 113.4px;
+    height: 35.6px;
+}
+.rectangle-parent {
+    position: absolute;
+    top: 209.49px;
+    left: 98.73px;
+    width: 1177.5px;
+    height: 344.3px;
+}
+.group-child {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-radius: 28.09px;
+    width: 1177.5px;
+    height: 344.3px;
+    object-fit: cover;
+}
+.group-item {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-radius: 28.09px;
+    background: linear-gradient(89.15deg, #191819, rgba(248, 248, 248, 0));
+    width: 1177.5px;
+    height: 344.3px;
+}
+.our-products {
+    position: absolute;
+    top: 326.06px;
+    left: calc(50% - 520.93px);
+    font-size: 67.23px;
+    line-height: 72.24px;
+    font-weight: 800;
+    color: #fff;
+    white-space: pre-wrap;
+}
+.white-rice {
+    position: absolute;
+    top: 1350px;
+    left: calc(50% - 573.5px);
+    font-size: 32px;
+    line-height: 72.24px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    width: 188px;
+    height: 47px;
+}
+.sorghum-millet {
+    position: absolute;
+    top: 1853px;
+    left: calc(50% - 44.5px);
+    font-size: 32px;
+    line-height: 72.24px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    width: 455px;
+    height: 47px;
+}
+.oilseeds-oil-container {
+    position: absolute;
+    top: 2474px;
+    left: calc(50% - 584.5px);
+    font-size: 30px;
+    line-height: 40px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    width: 605px;
+    height: 69px;
+}
+.products-oilseeds-oil-container {
+    width: 100%;
+}
+.white-maize {
+    position: absolute;
+    top: 843px;
+    left: calc(50% - 133.5px);
+    font-size: 32px;
+    line-height: 72.24px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    width: 237px;
+    height: 47px;
+}
+.vector-icon {
+    position: absolute;
+    height: 4.02%;
+    width: 30.48%;
+    top: 4.92%;
+    right: 48.5%;
+    bottom: 91.06%;
+    left: 21.02%;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+    object-fit: contain;
+}
+.premium-export-grade-cereals {
+    position: absolute;
+    top: 628px;
+    left: calc(50% - 554.5px);
+    font-size: 22px;
+    line-height: 40.79px;
+    text-align: center;
+    display: inline-block;
+    width: 1109px;
+}
+.each-shipment-includes {
+    position: absolute;
+    top: 2986px;
+    left: calc(50% - 554.5px);
+    line-height: 30px;
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    width: 1109px;
+}
+.product-focus-food-grade-container {
+    position: absolute;
+    top: 906px;
+    left: calc(50% - 113.5px);
+    line-height: 35.8px;
+    display: flex;
+    align-items: center;
+    width: 668px;
+    height: 355px;
+}
+.product-focus {
+    font-family: Montserrat;
+}
+.product-focus-long-grain-container {
+    position: absolute;
+    top: 1410px;
+    left: calc(50% - 573.5px);
+    line-height: 35.8px;
+    display: flex;
+    align-items: center;
+    width: 642px;
+    height: 321px;
+}
+.product-focus-drought-toleran-container {
+    position: absolute;
+    top: 1925px;
+    left: calc(50% - 48.5px);
+    line-height: 35.8px;
+    display: flex;
+    align-items: center;
+    width: 649px;
+    height: 289px;
+}
+.product-focus-high-oil-container {
+    position: absolute;
+    top: 2568px;
+    left: calc(50% - 587.5px);
+    line-height: 35.8px;
+    display: flex;
+    align-items: center;
+    width: 591px;
+    height: 321px;
+}
+.image-10-icon {
+    position: absolute;
+    top: 843px;
+    left: 120px;
+    border-radius: 23px;
+    width: 413px;
+    height: 409px;
+    object-fit: cover;
+}
+.image-23-icon {
+    position: absolute;
+    top: 1368px;
+    left: 772px;
+    border-radius: 23px;
+    width: 522px;
+    height: 348px;
+    object-fit: cover;
+}
+.image-13-icon {
+    position: absolute;
+    top: 1853px;
+    left: 106px;
+    width: 503px;
+    height: 438px;
+    object-fit: cover;
+}
+.image-20-icon {
+    position: absolute;
+    top: 2474px;
+    left: 744px;
+    width: 503px;
+    height: 438px;
+    object-fit: cover;
+}
+.image-14-icon {
+    position: absolute;
+    top: 1953px;
+    left: 214px;
+    width: 395px;
+    height: 338px;
+    object-fit: cover;
+}
+.image-21-icon {
+    position: absolute;
+    top: 2578px;
+    left: 859px;
+    width: 389px;
+    height: 334px;
+    object-fit: cover;
+}
+.image-15-icon {
+    position: absolute;
+    top: 2072px;
+    left: 357px;
+    width: 252px;
+    height: 219px;
+    object-fit: cover;
+}
+.image-22-icon {
+    position: absolute;
+    top: 2703px;
+    left: 1004px;
+    width: 244px;
+    height: 209px;
+    object-fit: cover;
+}
+.products-child {
+    position: absolute;
+    top: 1848px;
+    left: 101px;
+    border-radius: 23px;
+    border: 10px solid #2acc32;
+    box-sizing: border-box;
+    width: 513px;
+    height: 448px;
+}
+.products-item {
+    position: absolute;
+    top: 2469px;
+    left: 739px;
+    border-radius: 23px;
+    border: 10px solid #2acc32;
+    box-sizing: border-box;
+    width: 513px;
+    height: 448px;
+}
+.nipo-agro-logo4x-2 {
+    position: absolute;
+    top: 60px;
+    left: 122px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    cursor: pointer;
+}
+

@@ -3,6 +3,10 @@
 <?= $this->section('title') ?>Create New Batch<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
+<?php 
+// Get configured weight unit
+$weightUnit = strtoupper(get_weight_unit());
+?>
 <div class="container-xxl flex-grow-1 container-p-y">
     <div class="row">
         <div class="col-12">
@@ -114,19 +118,19 @@
                                     <div class="col-md-3">
                                         <div class="text-center">
                                             <div class="h5 mb-1" id="po_quantity">0.00</div>
-                                            <small class="text-muted">Total Quantity (MT)</small>
+                                            <small class="text-muted">Total Quantity (<?= strtoupper(get_weight_unit()) ?>)</small>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="text-center">
                                             <div class="h5 mb-1" id="po_remaining">0.00</div>
-                                            <small class="text-muted">Remaining (MT)</small>
+                                            <small class="text-muted">Remaining (<?= strtoupper(get_weight_unit()) ?>)</small>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="text-center">
                                             <div class="h5 mb-1" id="po_delivered">0.00</div>
-                                            <small class="text-muted">Delivered (MT)</small>
+                                            <small class="text-muted">Delivered (<?= strtoupper(get_weight_unit()) ?>)</small>
                                         </div>
                                     </div>
                                 </div>
@@ -175,7 +179,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="mb-3">
-                                        <label class="form-label">Weight (kg) *</label>
+                                        <label class="form-label"><?= get_weight_label('Weight') ?> *</label>
                                         <input type="number" class="form-control bag-weight" name="bags[1][weight_kg]" 
                                                step="0.01" min="0.01" required>
                                     </div>
@@ -218,13 +222,13 @@
                                             <div class="col-md-3">
                                                 <div class="text-center">
                                                     <div class="h4 mb-1" id="totalWeight">0.00</div>
-                                                    <small class="text-muted">Total Weight (kg)</small>
+                                                    <small class="text-muted"><?= get_weight_label('Total Weight') ?></small>
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
                                                 <div class="text-center">
                                                     <div class="h4 mb-1" id="totalMT">0.000</div>
-                                                    <small class="text-muted">Total Weight (MT)</small>
+                                                    <small class="text-muted">Total Weight (<?= strtoupper(get_weight_unit()) ?>)</small>
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
@@ -324,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="col-md-3">
                 <div class="mb-3">
-                    <label class="form-label">Weight (kg) *</label>
+                    <label class="form-label"><?= get_weight_label('Weight') ?> *</label>
                     <input type="number" class="form-control bag-weight" name="bags[${index}][weight_kg]" 
                            step="0.01" min="0.01" required>
                 </div>
@@ -454,7 +458,7 @@ document.addEventListener('DOMContentLoaded', function() {
                      data-grain-type="${po.grain_type}" data-quantity="${po.quantity_mt}" 
                      data-remaining="${po.remaining_quantity_mt}">
                     <div class="fw-bold">${po.po_number} - ${po.supplier_name}</div>
-                    <small class="text-muted">Grain: ${po.grain_type} | Remaining: ${po.remaining_quantity_mt} MT</small>
+                    <small class="text-muted">Grain: ${po.grain_type} | Remaining: ${po.remaining_quantity_mt} <?= $weightUnit ?></small>
                 </div>
             `).join('');
         }
@@ -534,7 +538,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <small class="text-muted">Status: <span class="badge bg-${batch.status === 'approved' ? 'success' : batch.status === 'pending' ? 'warning' : 'danger'}">${batch.status}</span></small>
                         </div>
                         <div class="col-md-3">
-                            <strong>${batch.total_weight_mt} MT</strong><br>
+                            <strong>${batch.total_weight_mt} <?= $weightUnit ?></strong><br>
                             <small class="text-muted">${batch.total_bags} bags</small>
                         </div>
                         <div class="col-md-3">
@@ -550,7 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 existingBatchesList.innerHTML = `
                     <div class="mb-3">
-                        <strong>Total Transferred: ${data.total_transferred_mt.toFixed(2)} MT</strong>
+                        <strong>Total Transferred: ${data.total_transferred_mt.toFixed(2)} <?= $weightUnit ?></strong>
                     </div>
                     ${batchesHtml}
                 `;

@@ -49,11 +49,15 @@
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="quantity" class="form-label">Quantity (kg)</label>
+                            <label for="quantity" class="form-label"><?= get_weight_label('Quantity') ?></label>
                             <input type="number" class="form-control" id="quantity" name="quantity" step="0.01" min="0" required>
+                            <div class="form-text">
+                                <i class="bx bx-info-circle me-1"></i>
+                                Enter quantity in <?= get_weight_unit_display() ?>
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label for="unit_price" class="form-label">Unit Price</label>
+                            <label for="unit_price" class="form-label">Unit Price (per <?= strtoupper(get_weight_unit()) ?>)</label>
                             <input type="text" class="form-control" id="unit_price" name="unit_price" placeholder="0.00" required>
                         </div>
                     </div>

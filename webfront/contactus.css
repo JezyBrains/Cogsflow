@@ -1,0 +1,401 @@
+.contact-us {
+    width: 100%;
+    height: 1578.2px;
+    position: relative;
+    background-color: #fff;
+    overflow: hidden;
+    text-align: left;
+    font-size: 22.15px;
+    color: rgba(86, 86, 86, 0.42);
+    font-family: Montserrat;
+}
+.contact-us-wrapper {
+    position: absolute;
+    top: 54.17px;
+    left: 1152.89px;
+    border-radius: 24.7px;
+    background-color: #8ac653;
+    display: flex;
+    align-items: flex-start;
+    padding: 11.2px 29.4px;
+    font-size: 19.13px;
+    color: #fff;
+}
+.contact-us-contact-us {
+    position: relative;
+    line-height: 19.58px;
+    font-weight: 600;
+}
+.about-parent {
+    position: absolute;
+    top: 64px;
+    left: 742.13px;
+    width: 304.4px;
+    height: 22.1px;
+    font-size: 13.41px;
+    color: #191819;
+}
+.about {
+    position: absolute;
+    top: 0%;
+    left: 25.99%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.services {
+    position: absolute;
+    top: 0%;
+    left: 51.98%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.product {
+    position: absolute;
+    top: 0%;
+    left: 82.16%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.home {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.rectangle-parent {
+    position: absolute;
+    top: 211.46px;
+    left: 99.65px;
+    width: 1188.5px;
+    height: 347.6px;
+}
+.group-child {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-radius: 28.36px;
+    background-color: #f8f8f8;
+    width: 1188.5px;
+    height: 347.6px;
+}
+.group-item {
+    position: absolute;
+    top: 0px;
+    left: 718.63px;
+    border-radius: 28.36px;
+    width: 469.9px;
+    height: 347.6px;
+    object-fit: cover;
+}
+.frame-parent {
+    position: absolute;
+    top: 651.39px;
+    left: 100.46px;
+    width: 567.9px;
+    height: 116.1px;
+}
+.john-doe-wrapper {
+    position: absolute;
+    top: 55.09px;
+    left: 0px;
+    border-radius: 11.34px;
+    background-color: #f6f6f6;
+    width: 567.9px;
+    display: flex;
+    align-items: flex-start;
+    padding: 0px 226.9px 0px 25.9px;
+    box-sizing: border-box;
+}
+.john-doe {
+    position: relative;
+    line-height: 60.48px;
+    font-weight: 300;
+}
+.full-name {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    line-height: 60.48px;
+    font-weight: 300;
+    color: #191819;
+    display: inline-block;
+    width: 138.9px;
+}
+.frame-group {
+    position: absolute;
+    top: 791.55px;
+    left: 100.46px;
+    width: 567.9px;
+    height: 116.1px;
+}
+.phone-number {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    line-height: 60.48px;
+    font-weight: 300;
+    color: #191819;
+    display: inline-block;
+    width: 207.4px;
+}
+.frame-container {
+    position: absolute;
+    top: 931.71px;
+    left: 100.46px;
+    width: 567.9px;
+    height: 116.1px;
+}
+.email {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    line-height: 60.48px;
+    font-weight: 300;
+    color: #191819;
+    display: inline-block;
+    width: 74.2px;
+}
+.group-div {
+    position: absolute;
+    top: 651.39px;
+    left: 719.44px;
+    width: 567.9px;
+    height: 116.1px;
+}
+.subject {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    line-height: 60.48px;
+    font-weight: 300;
+    color: #191819;
+    display: inline-block;
+    width: 98.9px;
+}
+.contact-us-frame-parent {
+    position: absolute;
+    top: 791.55px;
+    left: 719.44px;
+    width: 567.9px;
+    height: 256px;
+}
+.re-wrapper {
+    position: absolute;
+    top: 55.09px;
+    left: 0px;
+    border-radius: 11.34px;
+    background-color: #f6f6f6;
+    width: 567.9px;
+    height: 200.9px;
+    display: flex;
+    align-items: flex-start;
+    padding: 0px 226.9px 0px 25.9px;
+    box-sizing: border-box;
+}
+.enquiry-body {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    line-height: 60.48px;
+    font-weight: 300;
+    color: #191819;
+}
+.send-wrapper {
+    position: absolute;
+    top: 1116.43px;
+    left: 458.56px;
+    border-radius: 10px;
+    background-color: #218225;
+    width: 482.1px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15.4px 40.5px;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: 26.35px;
+    color: #f6f6f6;
+}
+.send {
+    position: relative;
+    line-height: 26.97px;
+    font-weight: 600;
+}
+.contact-us-parent {
+    position: absolute;
+    top: 314.35px;
+    left: 160.42px;
+    width: 632.7px;
+    height: 142.2px;
+    font-size: 89.27px;
+    color: #191819;
+}
+.contact-us2 {
+    position: absolute;
+    top: 27.26px;
+    left: 92.71px;
+    line-height: 95.92px;
+    font-weight: 800;
+    white-space: pre-wrap;
+}
+.vector-icon {
+    position: absolute;
+    height: 100%;
+    width: 81.93%;
+    top: 0%;
+    right: 18.07%;
+    bottom: 0%;
+    left: 0%;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+    object-fit: contain;
+}
+.group-parent {
+    position: absolute;
+    top: 1352px;
+    left: 123.15px;
+    width: 1108.7px;
+    height: 126.4px;
+    font-size: 18.7px;
+    color: #191819;
+}
+.nipoagroltd-parent {
+    position: absolute;
+    top: 104.03px;
+    left: 0px;
+    width: 109.3px;
+    height: 14px;
+    font-size: 12.04px;
+}
+.nipoagroltd {
+    position: absolute;
+    top: 0px;
+    left: 13.31px;
+    letter-spacing: -0.03em;
+    line-height: 13.4px;
+    font-weight: 500;
+}
+.icon-park-outlinehandle-c {
+    position: absolute;
+    top: 0.53px;
+    left: 0px;
+    width: 12.8px;
+    height: 12.8px;
+}
+.kisasa-street-kisasa-container {
+    position: absolute;
+    top: 0.81px;
+    left: 408.38px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.kisasa-street-kisasa {
+    margin: 0;
+}
+.contact-us-div {
+    position: absolute;
+    top: 99.41px;
+    left: 408.38px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.infonipoagrocom {
+    position: absolute;
+    top: 0px;
+    left: 919.71px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.salesnipoagrocom {
+    position: absolute;
+    top: 30px;
+    left: 919.71px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.nipoagroinsights-wrapper {
+    position: absolute;
+    top: 99.72px;
+    left: 919.86px;
+    width: 150px;
+    height: 20px;
+    font-size: 17.95px;
+}
+.nipoagroinsights {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    letter-spacing: -0.03em;
+    line-height: 19.97px;
+    font-weight: 500;
+}
+.mask-group {
+    position: absolute;
+    top: 68.57px;
+    left: 891.85px;
+    width: 99.7px;
+    height: 24.9px;
+}
+.mask-group-child {
+    position: absolute;
+    top: -5px;
+    left: 50px;
+    background-color: #2acc32;
+    width: 25px;
+    height: 35px;
+}
+.contact-us-mask-group {
+    position: absolute;
+    top: 68.57px;
+    left: 940.85px;
+    width: 99.7px;
+    height: 24.9px;
+}
+.mask-group-item {
+    position: absolute;
+    top: -5px;
+    left: 25px;
+    background-color: #2acc32;
+    width: 26px;
+    height: 35px;
+}
+.mask-group2 {
+    position: absolute;
+    top: 68.57px;
+    left: 916.85px;
+    width: 26px;
+    height: 25px;
+}
+.mask-group-inner {
+    position: absolute;
+    top: -5.38px;
+    left: -4.41px;
+    background-color: #2acc32;
+    width: 113.4px;
+    height: 35.6px;
+}
+.nipo-agro-logo4x-1 {
+    position: absolute;
+    top: 1326px;
+    left: 112px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+.nipo-agro-logo4x-2 {
+    position: absolute;
+    top: 60px;
+    left: 104px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    cursor: pointer;
+}
+

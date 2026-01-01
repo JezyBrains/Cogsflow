@@ -26,7 +26,7 @@
                     </div>
                 <?php endif; ?>
                 
-                <form action="<?= site_url('expenses/log') ?>" method="post">
+                <form action="<?= site_url('expenses/store') ?>" method="post">
                     <?= csrf_field() ?>
                     
                     <div class="row mb-3">
@@ -35,26 +35,32 @@
                             <input type="date" class="form-control" id="expense_date" name="expense_date" value="<?= date('Y-m-d') ?>" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="category" class="form-label">Category</label>
-                            <select class="form-select" id="category" name="category" required>
+                            <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                            <select class="form-select" id="category_id" name="category_id" required>
                                 <option value="">Select category</option>
-                                <option value="Transportation">Transportation</option>
-                                <option value="Storage">Storage</option>
-                                <option value="Labor">Labor</option>
-                                <option value="Equipment">Equipment</option>
-                                <option value="Maintenance">Maintenance</option>
-                                <option value="Utilities">Utilities</option>
-                                <option value="Insurance">Insurance</option>
-                                <option value="Administrative">Administrative</option>
-                                <option value="Other">Other</option>
+                                <?php if (!empty($categories)): ?>
+                                    <?php foreach ($categories as $category): ?>
+                                        <option value="<?= $category['id'] ?>" <?= old('category_id') == $category['id'] ? 'selected' : '' ?>>
+                                            <?= esc($category['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </select>
+                            <small class="text-muted">
+                                <a href="<?= site_url('expenses/categories') ?>" target="_blank">Manage categories</a>
+                            </small>
                         </div>
                     </div>
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="amount" class="form-label">Amount</label>
-                            <input type="text" class="form-control" id="amount" name="amount" placeholder="0.00" required>
+                            <label for="amount" class="form-label">Amount (TZS) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">TZS</span>
+                                <input type="text" class="form-control" id="amount" name="amount" 
+                                       placeholder="1,500,000.00" value="<?= old('amount') ?>" required>
+                            </div>
+                            <small class="text-muted">Enter amount with thousands separators</small>
                         </div>
                         <div class="col-md-6">
                             <label for="payment_method" class="form-label">Payment Method</label>
@@ -71,46 +77,35 @@
                     
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="vendor" class="form-label">Vendor/Payee</label>
-                            <input type="text" class="form-control" id="vendor" name="vendor" required>
+                            <label for="vendor_name" class="form-label">Vendor/Payee</label>
+                            <input type="text" class="form-control" id="vendor_name" name="vendor_name" 
+                                   placeholder="Enter vendor or supplier name" value="<?= old('vendor_name') ?>">
                         </div>
                         <div class="col-md-6">
-                            <label for="reference" class="form-label">Reference/Receipt No.</label>
-                            <input type="text" class="form-control" id="reference" name="reference">
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label for="description" class="form-label">Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="vendor_supplier" class="form-label">Vendor/Supplier</label>
-                            <input type="text" class="form-control" id="vendor_supplier" name="vendor_supplier" 
-                                   placeholder="Enter vendor or supplier name">
+                            <label for="receipt_number" class="form-label">Receipt Number</label>
+                            <input type="text" class="form-control" id="receipt_number" name="receipt_number" 
+                                   placeholder="Enter receipt number" value="<?= old('receipt_number') ?>">
                         </div>
                     </div>
                     
                     <div class="mb-3">
-                        <label for="receipt_reference" class="form-label">Receipt Reference</label>
-                        <input type="text" class="form-control" id="receipt_reference" name="receipt_reference" 
-                               placeholder="Enter receipt number or reference">
+                        <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="description" name="description" rows="3" 
+                                  placeholder="Describe the expense..." required><?= old('description') ?></textarea>
                     </div>
 
                     <div class="mb-3">
-                        <label for="notes" class="form-label">Notes</label>
-                        <textarea class="form-control" id="notes" name="notes" rows="3" 
-                                  placeholder="Additional notes or comments (optional)"></textarea>
+                        <label for="notes" class="form-label">Additional Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="2" 
+                                  placeholder="Additional notes or comments (optional)"><?= old('notes') ?></textarea>
                     </div>
 
                     <div class="d-flex justify-content-between">
-                        <a href="<?= site_url('expenses') ?>" class="btn btn-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-save"></i> Log Expense
+                        <a href="<?= site_url('expenses') ?>" class="btn btn-secondary">
+                            <i class="bx bx-x"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bx bx-save"></i> Save Expense
                         </button>
                     </div>
                 </form>

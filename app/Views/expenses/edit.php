@@ -45,15 +45,21 @@
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <label for="category" class="form-label">Category <span class="text-danger">*</span></label>
-                        <select class="form-select" id="category" name="category" required>
+                        <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                        <select class="form-select" id="category_id" name="category_id" required>
                             <option value="">Select Category</option>
-                            <option value="transport" <?= $expense['category'] == 'transport' ? 'selected' : '' ?>>Transportation</option>
-                            <option value="storage" <?= $expense['category'] == 'storage' ? 'selected' : '' ?>>Storage</option>
-                            <option value="handling" <?= $expense['category'] == 'handling' ? 'selected' : '' ?>>Handling</option>
-                            <option value="inspection" <?= $expense['category'] == 'inspection' ? 'selected' : '' ?>>Inspection</option>
-                            <option value="other" <?= $expense['category'] == 'other' ? 'selected' : '' ?>>Other</option>
+                            <?php if (!empty($categories)): ?>
+                                <?php foreach ($categories as $category): ?>
+                                    <option value="<?= $category['id'] ?>" 
+                                            <?= ($expense['category_id'] ?? '') == $category['id'] ? 'selected' : '' ?>>
+                                        <?= esc($category['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </select>
+                        <small class="text-muted">
+                            <a href="<?= site_url('expenses/categories') ?>" target="_blank">Manage categories</a>
+                        </small>
                     </div>
                 </div>
             </div>

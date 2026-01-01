@@ -35,6 +35,150 @@
 body.modal-open {
     overflow: hidden !important;
 }
+
+/* Enhanced visual feedback styles */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: inherit;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 0.7; }
+    100% { opacity: 0.3; }
+}
+
+.progress-bar-animated {
+    animation: progress-bar-stripes 1s linear infinite;
+}
+
+@keyframes progress-bar-stripes {
+    0% { background-position: 1rem 0; }
+    100% { background-position: 0 0; }
+}
+
+.alert-enhanced {
+    border-left: 4px solid;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.alert-success.alert-enhanced {
+    border-left-color: #28a745;
+}
+
+.alert-danger.alert-enhanced {
+    border-left-color: #dc3545;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.075);
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+.card-stats {
+    transition: transform 0.2s;
+}
+
+.card-stats:hover {
+    transform: translateY(-2px);
+}
+
+/* Loading toast styles */
+.toast {
+    min-width: 300px;
+}
+
+.toast .toast-body {
+    font-weight: 500;
+}
+
+/* Modal enhancements */
+.modal-xl {
+    max-width: 1200px;
+}
+
+.modal-header.bg-info {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-header.bg-danger {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Progress section styling */
+#resetProgressSection {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-top: 2px solid #dee2e6;
+}
+
+#resetProgressSection .progress {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#resetProgressSection .card-body {
+    padding: 1rem;
+}
+
+/* Debug modal enhancements */
+#debugModal .table th {
+    border-top: none;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
+}
+
+#debugModal .table-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+/* Button success animation */
+.btn-success {
+    transition: all 0.3s ease;
+    transform: scale(1.05);
+}
+
+/* Detailed log styling */
+#detailedLog pre {
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+#detailedLog .card-body {
+    padding: 1rem;
+}
+
+/* Status message animations */
+.alert {
+    animation: slideInDown 0.3s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
 </style>
 <?= $this->endSection() ?>
 
@@ -286,6 +430,65 @@ body.modal-open {
                                     </div>
                                 </div>
                                 
+                                <!-- Unit of Measure Settings -->
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <h6 class="text-muted mb-3">
+                                            <i class="bx bx-ruler me-2"></i>Unit of Measure Settings
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="default_weight_unit" class="form-label">Default Weight Unit *</label>
+                                            <select class="form-select" id="default_weight_unit" name="default_weight_unit" required>
+                                                <option value="kg" <?= ($settings['system']['default_weight_unit']['value'] ?? 'kg') === 'kg' ? 'selected' : '' ?>>Kilograms (kg)</option>
+                                                <option value="mt" <?= ($settings['system']['default_weight_unit']['value'] ?? '') === 'mt' ? 'selected' : '' ?>>Metric Tonnes (MT)</option>
+                                                <option value="ton" <?= ($settings['system']['default_weight_unit']['value'] ?? '') === 'ton' ? 'selected' : '' ?>>Tonnes (ton)</option>
+                                                <option value="lbs" <?= ($settings['system']['default_weight_unit']['value'] ?? '') === 'lbs' ? 'selected' : '' ?>>Pounds (lbs)</option>
+                                                <option value="g" <?= ($settings['system']['default_weight_unit']['value'] ?? '') === 'g' ? 'selected' : '' ?>>Grams (g)</option>
+                                            </select>
+                                            <div class="form-text">
+                                                <i class="bx bx-info-circle me-1"></i>
+                                                This unit will be used throughout the system for all weight measurements (Purchase Orders, Batches, Inventory, etc.)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="show_secondary_unit" class="form-label">Show Secondary Unit</label>
+                                            <select class="form-select" id="show_secondary_unit" name="show_secondary_unit">
+                                                <option value="1" <?= ($settings['system']['show_secondary_unit']['value'] ?? '1') === '1' ? 'selected' : '' ?>>Yes - Show conversion (e.g., 1000 kg = 1 MT)</option>
+                                                <option value="0" <?= ($settings['system']['show_secondary_unit']['value'] ?? '') === '0' ? 'selected' : '' ?>>No - Show primary unit only</option>
+                                            </select>
+                                            <div class="form-text">
+                                                <i class="bx bx-info-circle me-1"></i>
+                                                Display weight in both primary and secondary units for clarity
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Unit Conversion Preview -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="alert alert-info">
+                                            <h6 class="alert-heading">
+                                                <i class="bx bx-calculator me-2"></i>Unit Conversion Preview
+                                            </h6>
+                                            <div id="unit-preview">
+                                                <p class="mb-1"><strong>Example conversions with selected unit:</strong></p>
+                                                <ul class="mb-0">
+                                                    <li>1 kg = 0.001 MT</li>
+                                                    <li>1000 kg = 1 MT</li>
+                                                    <li>1 MT = 1000 kg</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="text-end">
                                     <button type="submit" class="btn btn-success">
                                         <i class="fas fa-save me-2"></i>Update System Settings
@@ -450,6 +653,52 @@ body.modal-open {
                                 </div>
                             </div>
 
+                            <!-- Database Management -->
+                            <div class="row mt-4">
+                                <div class="col-12">
+                                    <div class="card border-danger bg-light">
+                                        <div class="card-header bg-transparent border-danger">
+                                            <h6 class="mb-0 text-danger">
+                                                <i class="fas fa-exclamation-triangle text-danger me-2"></i>Database Management
+                                                <small class="text-muted">(Dangerous Operations)</small>
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="alert alert-danger mb-3">
+                                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                                <strong>Warning:</strong> These operations will permanently delete data. A backup will be created automatically before any operation.
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="d-grid gap-2">
+                                                        <button type="button" class="btn btn-outline-warning" onclick="showDatabaseResetModal('clear_data')">
+                                                            <i class="fas fa-eraser me-2"></i>Clear All Data
+                                                        </button>
+                                                        <small class="text-muted">Removes all data but keeps table structure and system settings</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="d-grid gap-2">
+                                                        <button type="button" class="btn btn-outline-danger" onclick="showDatabaseResetModal('reset_database')">
+                                                            <i class="fas fa-database me-2"></i>Reset Database
+                                                        </button>
+                                                        <small class="text-muted">Completely resets database to fresh installation state</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-12">
+                                                    <button type="button" class="btn btn-outline-info btn-sm" onclick="debugDatabase()">
+                                                        <i class="fas fa-bug me-2"></i>Debug Database Tables
+                                                    </button>
+                                                    <small class="text-muted ms-2">Show table information for troubleshooting</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- System Information -->
                             <div class="row mt-4">
                                 <div class="col-12">
@@ -537,6 +786,97 @@ body.modal-open {
     </div>
 </div>
 
+<!-- Database Reset Confirmation Modal -->
+<div class="modal fade" id="databaseResetModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <span id="resetModalTitle">Confirm Database Operation</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-exclamation-triangle me-2"></i>DANGER: This action cannot be undone!
+                    </h6>
+                    <p class="mb-0" id="resetModalDescription">This operation will permanently delete data from your database.</p>
+                </div>
+                
+                <div class="mb-3">
+                    <h6>What will happen:</h6>
+                    <ul id="resetModalSteps">
+                        <li>A backup will be created automatically</li>
+                        <li>Selected data will be permanently deleted</li>
+                        <li>The operation cannot be reversed</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">
+                        <strong>Type "CONFIRM" to proceed:</strong>
+                    </label>
+                    <input type="text" class="form-control" id="confirmationText" placeholder="Type CONFIRM here">
+                    <div class="form-text">This confirmation is required to prevent accidental data loss.</div>
+                </div>
+                
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="acknowledgeRisk">
+                    <label class="form-check-label" for="acknowledgeRisk">
+                        I understand that this action will permanently delete data and cannot be undone
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelResetBtn">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmResetBtn" onclick="confirmDatabaseReset()" disabled>
+                    <i class="fas fa-exclamation-triangle me-2"></i>Proceed with Operation
+                </button>
+            </div>
+            
+            <!-- Progress Section (Hidden by default) -->
+            <div id="resetProgressSection" class="modal-body border-top" style="display: none;">
+                <div class="text-center">
+                    <h6 class="mb-3">
+                        <i class="fas fa-cog fa-spin me-2"></i>
+                        <span id="progressTitle">Processing Database Reset...</span>
+                    </h6>
+                    
+                    <!-- Progress Bar -->
+                    <div class="progress mb-3" style="height: 25px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             id="resetProgressBar" role="progressbar" style="width: 0%">
+                            <span id="progressText">0%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Messages -->
+                    <div id="statusMessages" class="text-start">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <span id="currentStatus">Initializing...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Detailed Log -->
+                    <div class="mt-3">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#detailedLog">
+                            <i class="fas fa-list me-1"></i>Show Detailed Log
+                        </button>
+                        <div class="collapse mt-2" id="detailedLog">
+                            <div class="card card-body bg-dark text-light" style="max-height: 200px; overflow-y: auto;">
+                                <pre id="logContent" class="mb-0 text-light"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 // Form validation
 (function() {
@@ -557,14 +897,31 @@ body.modal-open {
 
 // Admin utilities
 function adminUtility(action) {
-    if (!confirm('Are you sure you want to perform this action?')) {
+    // Get action description for better UX
+    const actionDescriptions = {
+        'clear_cache': 'Clear System Cache',
+        'reset_queue': 'Reset Queue Jobs',
+        'optimize_database': 'Optimize Database',
+        'trigger_backup': 'Create Database Backup',
+        'clean_logs': 'Clean System Logs'
+    };
+    
+    const actionName = actionDescriptions[action] || action;
+    
+    if (!confirm(`Are you sure you want to perform this action: ${actionName}?`)) {
         return;
     }
     
     const btn = event.target;
     const originalText = btn.innerHTML;
+    
+    // Show enhanced loading state
     btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
     btn.disabled = true;
+    btn.classList.add('btn-loading');
+    
+    // Show loading toast
+    const loadingToast = showLoadingToast(`Executing ${actionName}...`);
     
     fetch('<?= site_url('settings/adminUtility') ?>', {
         method: 'POST',
@@ -576,20 +933,68 @@ function adminUtility(action) {
     })
     .then(response => response.json())
     .then(data => {
+        // Hide loading toast
+        hideLoadingToast(loadingToast);
+        
+        // Reset button state
         btn.innerHTML = originalText;
         btn.disabled = false;
+        btn.classList.remove('btn-loading');
         
         if (data.success) {
-            showAlert('success', data.message);
+            // Show success with enhanced feedback
+            showEnhancedAlert('success', actionName + ' Completed', data.message);
+            
+            // Add success animation
+            btn.classList.add('btn-success');
+            setTimeout(() => {
+                btn.classList.remove('btn-success');
+            }, 2000);
+            
         } else {
-            showAlert('danger', data.message);
+            showEnhancedAlert('danger', actionName + ' Failed', data.message);
         }
     })
     .catch(error => {
+        hideLoadingToast(loadingToast);
+        
+        // Reset button state
         btn.innerHTML = originalText;
         btn.disabled = false;
-        showAlert('danger', 'An error occurred: ' + error.message);
+        btn.classList.remove('btn-loading');
+        
+        showEnhancedAlert('danger', 'Network Error', 'An error occurred: ' + error.message);
     });
+}
+
+// Enhanced alert function
+function showEnhancedAlert(type, title, message) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show shadow-sm" role="alert">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} fa-2x"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="alert-heading mb-1">${title}</h6>
+                    <p class="mb-0">${message}</p>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    const container = document.querySelector('.container-fluid');
+    container.insertAdjacentHTML('afterbegin', alertHtml);
+    
+    // Auto-dismiss after 8 seconds for enhanced alerts
+    setTimeout(() => {
+        const alert = container.querySelector('.alert');
+        if (alert) {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        }
+    }, 8000);
 }
 
 // Load system information
@@ -689,6 +1094,455 @@ function refreshHealthStatus() {
     
     // Reload the page to refresh health status
     window.location.reload();
+}
+
+// Database reset modal functions
+let currentResetAction = '';
+
+function showDatabaseResetModal(action) {
+    currentResetAction = action;
+    
+    const modal = new bootstrap.Modal(document.getElementById('databaseResetModal'));
+    const title = document.getElementById('resetModalTitle');
+    const description = document.getElementById('resetModalDescription');
+    const steps = document.getElementById('resetModalSteps');
+    
+    // Reset form
+    document.getElementById('confirmationText').value = '';
+    document.getElementById('acknowledgeRisk').checked = false;
+    document.getElementById('confirmResetBtn').disabled = true;
+    
+    if (action === 'clear_data') {
+        title.textContent = 'Clear All Data';
+        description.textContent = 'This will remove all business data (batches, dispatches, inventory, etc.) but keep system settings, users, and table structure intact.';
+        steps.innerHTML = `
+            <li>A complete database backup will be created</li>
+            <li>All business data will be permanently deleted</li>
+            <li>System settings and users will be preserved</li>
+            <li>Table structure will remain intact</li>
+            <li>You can start fresh with clean data</li>
+        `;
+    } else if (action === 'reset_database') {
+        title.textContent = 'Reset Database Completely';
+        description.textContent = 'This will completely reset the database to a fresh installation state. ALL data including users and settings will be lost.';
+        steps.innerHTML = `
+            <li>A complete database backup will be created</li>
+            <li>All tables will be dropped and recreated</li>
+            <li>All data including users will be permanently deleted</li>
+            <li>Essential system data will be restored</li>
+            <li>You will need to log in with default admin credentials</li>
+        `;
+    }
+    
+    modal.show();
+}
+
+function confirmDatabaseReset() {
+    const confirmText = document.getElementById('confirmationText').value;
+    const acknowledged = document.getElementById('acknowledgeRisk').checked;
+    
+    if (confirmText !== 'CONFIRM' || !acknowledged) {
+        showAlert('danger', 'Please complete all confirmation requirements.');
+        return;
+    }
+    
+    // Show progress section and hide confirmation
+    showResetProgress();
+    
+    const actionMap = {
+        'clear_data': 'clear_all_data',
+        'reset_database': 'reset_database'
+    };
+    
+    // Start the reset process with visual feedback
+    performDatabaseReset(actionMap[currentResetAction]);
+}
+
+function showResetProgress() {
+    // Hide confirmation section
+    document.querySelector('#databaseResetModal .modal-body').style.display = 'none';
+    document.querySelector('#databaseResetModal .modal-footer').style.display = 'none';
+    
+    // Show progress section
+    document.getElementById('resetProgressSection').style.display = 'block';
+    
+    // Disable close button during operation
+    document.getElementById('cancelResetBtn').disabled = true;
+    document.querySelector('#databaseResetModal .btn-close').disabled = true;
+    
+    // Update modal title
+    const modalTitle = document.getElementById('resetModalTitle');
+    modalTitle.innerHTML = '<i class="fas fa-cog fa-spin me-2"></i>Processing Database Operation...';
+    
+    // Initialize progress
+    updateProgress(0, 'Starting database operation...');
+    addLogEntry('=== Database Reset Operation Started ===');
+}
+
+function updateProgress(percentage, status, logMessage = null) {
+    const progressBar = document.getElementById('resetProgressBar');
+    const progressText = document.getElementById('progressText');
+    const currentStatus = document.getElementById('currentStatus');
+    
+    progressBar.style.width = percentage + '%';
+    progressText.textContent = Math.round(percentage) + '%';
+    currentStatus.textContent = status;
+    
+    if (logMessage) {
+        addLogEntry(logMessage);
+    }
+    
+    // Change progress bar color based on percentage
+    progressBar.className = 'progress-bar progress-bar-striped progress-bar-animated';
+    if (percentage >= 100) {
+        progressBar.classList.add('bg-success');
+    } else if (percentage >= 50) {
+        progressBar.classList.add('bg-warning');
+    } else {
+        progressBar.classList.add('bg-info');
+    }
+}
+
+function addLogEntry(message) {
+    const logContent = document.getElementById('logContent');
+    const timestamp = new Date().toLocaleTimeString();
+    logContent.textContent += `[${timestamp}] ${message}\n`;
+    
+    // Auto-scroll to bottom
+    const logContainer = logContent.parentElement;
+    logContainer.scrollTop = logContainer.scrollHeight;
+}
+
+function performDatabaseReset(action) {
+    // Simulate progress steps
+    updateProgress(10, 'Validating operation...', 'Checking user permissions and confirmation');
+    
+    setTimeout(() => {
+        updateProgress(20, 'Creating backup...', 'Starting database backup process');
+        
+        setTimeout(() => {
+            updateProgress(40, 'Processing database operation...', 'Executing ' + action + ' operation');
+            
+            // Actual API call
+            fetch('<?= site_url('settings/adminUtility') ?>', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: 'action=' + action + '&confirmation=true&<?= csrf_token() ?>=' + '<?= csrf_hash() ?>'
+            })
+            .then(response => {
+                updateProgress(70, 'Processing server response...', 'Received response from server');
+                return response.json();
+            })
+            .then(data => {
+                updateProgress(90, 'Finalizing operation...', 'Processing operation results');
+                
+                setTimeout(() => {
+                    if (data.success) {
+                        updateProgress(100, 'Operation completed successfully!', 'SUCCESS: ' + data.message);
+                        
+                        // Show success state
+                        document.getElementById('statusMessages').innerHTML = `
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <strong>Success!</strong> ${data.message}
+                            </div>
+                        `;
+                        
+                        // Show completion actions
+                        showCompletionActions(action === 'reset_database');
+                        
+                    } else {
+                        updateProgress(100, 'Operation failed!', 'ERROR: ' + data.message);
+                        
+                        // Show error state
+                        document.getElementById('statusMessages').innerHTML = `
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <strong>Error!</strong> ${data.message}
+                            </div>
+                        `;
+                        
+                        showCompletionActions(false);
+                    }
+                }, 500);
+            })
+            .catch(error => {
+                updateProgress(100, 'Operation failed!', 'NETWORK ERROR: ' + error.message);
+                
+                document.getElementById('statusMessages').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Network Error!</strong> ${error.message}
+                    </div>
+                `;
+                
+                showCompletionActions(false);
+            });
+        }, 1000);
+    }, 500);
+}
+
+function showCompletionActions(isFullReset) {
+    const progressSection = document.getElementById('resetProgressSection');
+    
+    const actionsHtml = `
+        <div class="mt-4 text-center">
+            <h6>What's Next?</h6>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-info" onclick="debugDatabase()">
+                    <i class="fas fa-bug me-1"></i>Check Database Status
+                </button>
+                ${isFullReset ? 
+                    '<button type="button" class="btn btn-outline-primary" onclick="redirectToLogin()"><i class="fas fa-sign-in-alt me-1"></i>Go to Login</button>' :
+                    '<button type="button" class="btn btn-outline-success" onclick="reloadPage()"><i class="fas fa-refresh me-1"></i>Reload Page</button>'
+                }
+                <button type="button" class="btn btn-secondary" onclick="closeResetModal()">
+                    <i class="fas fa-times me-1"></i>Close
+                </button>
+            </div>
+        </div>
+    `;
+    
+    progressSection.insertAdjacentHTML('beforeend', actionsHtml);
+}
+
+function redirectToLogin() {
+    addLogEntry('Redirecting to login page...');
+    setTimeout(() => {
+        window.location.href = '<?= site_url('auth/login') ?>';
+    }, 1000);
+}
+
+function reloadPage() {
+    addLogEntry('Reloading page...');
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+}
+
+function closeResetModal() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('databaseResetModal'));
+    modal.hide();
+    
+    // Reset modal state
+    setTimeout(() => {
+        resetModalState();
+    }, 500);
+}
+
+function resetModalState() {
+    // Show confirmation section
+    document.querySelector('#databaseResetModal .modal-body').style.display = 'block';
+    document.querySelector('#databaseResetModal .modal-footer').style.display = 'block';
+    
+    // Hide progress section
+    document.getElementById('resetProgressSection').style.display = 'none';
+    
+    // Reset form
+    document.getElementById('confirmationText').value = '';
+    document.getElementById('acknowledgeRisk').checked = false;
+    document.getElementById('confirmResetBtn').disabled = true;
+    
+    // Reset progress
+    updateProgress(0, 'Initializing...');
+    document.getElementById('logContent').textContent = '';
+    
+    // Re-enable buttons
+    document.getElementById('cancelResetBtn').disabled = false;
+    document.querySelector('#databaseResetModal .btn-close').disabled = false;
+}
+
+// Enable/disable confirm button based on form completion
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmText = document.getElementById('confirmationText');
+    const acknowledgeRisk = document.getElementById('acknowledgeRisk');
+    const confirmBtn = document.getElementById('confirmResetBtn');
+    
+    function updateConfirmButton() {
+        const textValid = confirmText.value === 'CONFIRM';
+        const riskAcknowledged = acknowledgeRisk.checked;
+        confirmBtn.disabled = !(textValid && riskAcknowledged);
+    }
+    
+    confirmText.addEventListener('input', updateConfirmButton);
+    acknowledgeRisk.addEventListener('change', updateConfirmButton);
+});
+
+// Debug database function
+function debugDatabase() {
+    // Show loading state
+    const loadingToast = showLoadingToast('Analyzing database tables...');
+    
+    fetch('<?= site_url('settings/adminUtility') ?>', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: 'action=debug_database&<?= csrf_token() ?>=' + '<?= csrf_hash() ?>'
+    })
+    .then(response => response.json())
+    .then(data => {
+        hideLoadingToast(loadingToast);
+        
+        if (data.success) {
+            // Calculate statistics
+            let totalRows = 0;
+            let tablesWithData = 0;
+            let emptyTables = 0;
+            
+            Object.keys(data.tables).forEach(tableName => {
+                const table = data.tables[tableName];
+                if (typeof table.row_count === 'number') {
+                    totalRows += table.row_count;
+                    if (table.has_data) {
+                        tablesWithData++;
+                    } else {
+                        emptyTables++;
+                    }
+                }
+            });
+            
+            // Create enhanced table info with visual indicators
+            let tableInfo = `
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h5>${data.total_tables}</h5>
+                                <small>Total Tables</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <h5>${tablesWithData}</h5>
+                                <small>Tables with Data</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <h5>${emptyTables}</h5>
+                                <small>Empty Tables</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h6>Detailed Table Information:</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Table Name</th>
+                                <th>Row Count</th>
+                                <th>Status</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            // Sort tables by row count (descending)
+            const sortedTables = Object.keys(data.tables).sort((a, b) => {
+                const aCount = typeof data.tables[a].row_count === 'number' ? data.tables[a].row_count : 0;
+                const bCount = typeof data.tables[b].row_count === 'number' ? data.tables[b].row_count : 0;
+                return bCount - aCount;
+            });
+            
+            sortedTables.forEach(tableName => {
+                const table = data.tables[tableName];
+                const hasDataBadge = table.has_data ? 
+                    '<span class="badge bg-warning">Has Data</span>' : 
+                    '<span class="badge bg-success">Empty</span>';
+                
+                // Determine table type
+                const systemTables = ['migrations', 'settings', 'users', 'roles', 'permissions'];
+                const tableType = systemTables.includes(tableName) ? 
+                    '<span class="badge bg-info">System</span>' : 
+                    '<span class="badge bg-secondary">Business</span>';
+                
+                const rowClass = table.has_data ? 'table-warning' : '';
+                
+                tableInfo += `
+                    <tr class="${rowClass}">
+                        <td><strong>${tableName}</strong></td>
+                        <td>${table.row_count}</td>
+                        <td>${hasDataBadge}</td>
+                        <td>${tableType}</td>
+                    </tr>
+                `;
+            });
+            
+            tableInfo += `
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Total Records:</strong> ${totalRows.toLocaleString()} rows across all tables
+                </div>
+            `;
+            
+            // Show in enhanced modal
+            const modalHtml = `
+                <div class="modal fade" id="debugModal" tabindex="-1">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header bg-info text-white">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-database me-2"></i>Database Analysis Report
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                ${tableInfo}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-primary" onclick="refreshDebugInfo()">
+                                    <i class="fas fa-sync-alt me-1"></i>Refresh
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing debug modal if any
+            const existingModal = document.getElementById('debugModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add new modal
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            const debugModal = new bootstrap.Modal(document.getElementById('debugModal'));
+            debugModal.show();
+            
+        } else {
+            showAlert('danger', 'Failed to get database info: ' + data.message);
+        }
+    })
+    .catch(error => {
+        hideLoadingToast(loadingToast);
+        showAlert('danger', 'Error getting database info: ' + error.message);
+    });
+}
+
+function refreshDebugInfo() {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('debugModal'));
+    modal.hide();
+    setTimeout(() => {
+        debugDatabase();
+    }, 300);
 }
 
 // Show alert
@@ -903,6 +1757,66 @@ document.addEventListener('DOMContentLoaded', function() {
     $('#cleanLogsModal').on('shown.bs.modal', function() {
         console.log('Clean logs modal is fully shown');
     });
+    
+    // Unit conversion preview updater
+    function updateUnitPreview() {
+        const selectedUnit = $('#default_weight_unit').val();
+        const conversions = {
+            'kg': [
+                '1 kg = 0.001 MT',
+                '1000 kg = 1 MT',
+                '1 kg = 2.20462 lbs',
+                '1 kg = 1000 g'
+            ],
+            'mt': [
+                '1 MT = 1000 kg',
+                '1 MT = 2204.62 lbs',
+                '1 MT = 1,000,000 g',
+                '0.001 MT = 1 kg'
+            ],
+            'ton': [
+                '1 ton = 1000 kg',
+                '1 ton = 2204.62 lbs',
+                '1 ton = 1,000,000 g',
+                '0.001 ton = 1 kg'
+            ],
+            'lbs': [
+                '1 lb = 0.453592 kg',
+                '1 lb = 0.000453592 MT',
+                '1 lb = 453.592 g',
+                '2.20462 lbs = 1 kg'
+            ],
+            'g': [
+                '1 g = 0.001 kg',
+                '1 g = 0.000001 MT',
+                '1000 g = 1 kg',
+                '1,000,000 g = 1 MT'
+            ]
+        };
+        
+        const unitNames = {
+            'kg': 'Kilograms',
+            'mt': 'Metric Tonnes',
+            'ton': 'Tonnes',
+            'lbs': 'Pounds',
+            'g': 'Grams'
+        };
+        
+        let html = '<p class="mb-1"><strong>Example conversions with ' + unitNames[selectedUnit] + ':</strong></p>';
+        html += '<ul class="mb-0">';
+        conversions[selectedUnit].forEach(function(conversion) {
+            html += '<li>' + conversion + '</li>';
+        });
+        html += '</ul>';
+        
+        $('#unit-preview').html(html);
+    }
+    
+    // Update preview when unit changes
+    $('#default_weight_unit').on('change', updateUnitPreview);
+    
+    // Initialize preview on page load
+    updateUnitPreview();
     
     }); // End $(document).ready
 }); // End DOMContentLoaded

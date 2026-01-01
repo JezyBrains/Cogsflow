@@ -150,7 +150,7 @@
                                     </span>
                                 </div>
                                 <div>
-                                    <div class="small text-muted">Current Stock (MT)</div>
+                                    <div class="small text-muted">Current Stock (<?= strtoupper(get_weight_unit()) ?>)</div>
                                     <div class="fw-medium" id="currentStock">Loading...</div>
                                 </div>
                             </div>

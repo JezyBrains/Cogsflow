@@ -5,56 +5,135 @@
 <?= $this->section('content') ?>
 <div class="row mb-4">
     <div class="col-md-6">
-        <h5>Expense List</h5>
+        <h4 class="fw-bold">Expense Management</h4>
+        <p class="text-muted mb-0">Track and manage all business expenses</p>
     </div>
     <div class="col-md-6 text-end">
-        <a href="<?= site_url('expenses/new') ?>" class="btn btn-dark">
-            <i class="fas fa-plus"></i> Log New Expense
+        <a href="<?= site_url('expenses/export') ?>" class="btn btn-outline-secondary me-2">
+            <i class="bx bx-download"></i> Export CSV
+        </a>
+        <a href="<?= site_url('expenses/new') ?>" class="btn btn-primary">
+            <i class="bx bx-plus"></i> Add New Expense
         </a>
     </div>
 </div>
 
-<?php if(session()->getFlashdata('success')): ?>
-    <div class="alert alert-success">
-        <?= session()->getFlashdata('success') ?>
-    </div>
-<?php endif; ?>
-
-<!-- Expense Summary Cards -->
+<!-- Statistics Cards -->
 <div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card bg-primary text-white">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card">
             <div class="card-body">
-                <h6 class="card-title">Total This Month</h6>
-                <h3>$<?= number_format($stats['this_month_amount'] ?? 0, 2) ?></h3>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block mb-1 text-muted">This Month</span>
+                        <h3 class="card-title mb-1"><?= format_currency($stats['this_month_amount'] ?? 0) ?></h3>
+                        <small class="text-success fw-semibold">
+                            <i class="bx bx-up-arrow-alt"></i> <?= $stats['this_month_expenses'] ?? 0 ?> expenses
+                        </small>
+                    </div>
+                    <div class="avatar flex-shrink-0">
+                        <span class="avatar-initial rounded bg-label-primary">
+                            <i class="bx bx-calendar-alt bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-success text-white">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card">
             <div class="card-body">
-                <h6 class="card-title">Transportation</h6>
-                <h3>$0.00</h3>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block mb-1 text-muted">This Year</span>
+                        <h3 class="card-title mb-1"><?= format_currency($stats['this_year_amount'] ?? 0) ?></h3>
+                        <small class="text-info fw-semibold">
+                            <i class="bx bx-trending-up"></i> <?= $stats['this_year_expenses'] ?? 0 ?> expenses
+                        </small>
+                    </div>
+                    <div class="avatar flex-shrink-0">
+                        <span class="avatar-initial rounded bg-label-success">
+                            <i class="bx bx-line-chart bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-info text-white">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card">
             <div class="card-body">
-                <h6 class="card-title">Storage</h6>
-                <h3>$0.00</h3>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block mb-1 text-muted">Total Expenses</span>
+                        <h3 class="card-title mb-1"><?= format_currency($stats['total_amount'] ?? 0) ?></h3>
+                        <small class="text-muted fw-semibold">
+                            <?= $stats['total_expenses'] ?? 0 ?> total
+                        </small>
+                    </div>
+                    <div class="avatar flex-shrink-0">
+                        <span class="avatar-initial rounded bg-label-info">
+                            <i class="bx bx-wallet bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-warning text-white">
+    <div class="col-md-3 col-sm-6 mb-3">
+        <div class="card">
             <div class="card-body">
-                <h6 class="card-title">Other</h6>
-                <h3>$0.00</h3>
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <span class="d-block mb-1 text-muted">Pending Approval</span>
+                        <h3 class="card-title mb-1"><?= $stats['pending_approval'] ?? 0 ?></h3>
+                        <small class="text-warning fw-semibold">
+                            <i class="bx bx-time"></i> Awaiting review
+                        </small>
+                    </div>
+                    <div class="avatar flex-shrink-0">
+                        <span class="avatar-initial rounded bg-label-warning">
+                            <i class="bx bx-hourglass bx-sm"></i>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Category Breakdown -->
+<?php if (!empty($categoryBreakdown)): ?>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">This Month's Expenses by Category</h5>
+                <a href="<?= site_url('expenses/analytics') ?>" class="btn btn-sm btn-outline-primary">
+                    <i class="bx bx-bar-chart-alt-2"></i> View Analytics
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <?php foreach (array_slice($categoryBreakdown, 0, 4) as $cat): ?>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="badge badge-center rounded-pill bg-label-primary me-3 p-2">
+                                <i class="bx bx-category bx-sm"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0"><?= esc($cat['category'] ?? 'Uncategorized') ?></h6>
+                                <small class="text-muted"><?= format_currency($cat['total_amount']) ?></small>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <!-- Expenses Table -->
 <div class="card">
@@ -81,7 +160,7 @@
                                     <span class="badge bg-secondary"><?= esc(ucfirst($expense['category'])) ?></span>
                                 </td>
                                 <td><?= esc($expense['description']) ?></td>
-                                <td>$<?= number_format($expense['amount'], 2) ?></td>
+                                <td><strong><?= format_currency($expense['amount']) ?></strong></td>
                                 <td>
                                     <div><?= esc($expense['expense_number']) ?></div>
                                     <?php if (!empty($expense['receipt_number'])): ?>
@@ -105,10 +184,12 @@
                                            class="btn btn-sm btn-outline-warning" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <button class="btn btn-sm btn-outline-danger" title="Delete" 
-                                                onclick="deleteExpense(<?= $expense['id'] ?>)">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <form action="<?= site_url('expenses/delete/' . $expense['id']) ?>" method="post" class="d-inline">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -123,27 +204,4 @@
         </div>
     </div>
 </div>
-<?= $this->endSection() ?>
-
-<?= $this->section('scripts') ?>
-<script>
-function deleteExpense(id) {
-    if (confirm('Are you sure you want to delete this expense? This action cannot be undone.')) {
-        // Create a form and submit it
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '<?= site_url('expenses/delete/') ?>' + id;
-        
-        // Add CSRF token
-        const csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '<?= csrf_token() ?>';
-        csrfInput.value = '<?= csrf_hash() ?>';
-        form.appendChild(csrfInput);
-        
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-</script>
 <?= $this->endSection() ?>

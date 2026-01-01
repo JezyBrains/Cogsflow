@@ -164,13 +164,14 @@
                     <?php endif; ?>
                 </div>
                 <div class="col-md-6">
-                    <label for="driver_phone" class="form-label">Driver Phone <small class="text-muted">(Format: +255### ### ### or leave blank)</small></label>
+                    <label for="driver_phone" class="form-label">Driver Phone <span class="text-danger">*</span> <small class="text-muted">(10 digits, auto-converts to +255)</small></label>
                     <input type="tel" class="form-control <?= session()->get('errors.driver_phone') ? 'is-invalid' : '' ?>" 
                            id="driver_phone" name="driver_phone" 
                            value="<?= old('driver_phone') ?>" 
-                           placeholder="e.g., +255712 345 678"
-                           pattern="^\+255\d{3}\s\d{3}\s\d{3}$"
-                           title="Use +255 followed by 9 digits with spaces: +255### ### ###">
+                           placeholder="e.g., 0686479877 or 686479877"
+                           pattern="^[0-9]{9,10}$"
+                           title="Enter 9 or 10 digits (with or without leading 0)" required>
+                    <small class="text-muted">Examples: 0686479877, 686479877 → Stored as +255686479877</small>
                     <?php if(session()->get('errors.driver_phone')): ?>
                         <div class="invalid-feedback"><?= session()->get('errors.driver_phone') ?></div>
                     <?php endif; ?>
@@ -178,11 +179,11 @@
             </div>
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <label for="driver_id_number" class="form-label">Driver ID Number</label>
+                    <label for="driver_id_number" class="form-label">Driver ID Number <span class="text-danger">*</span></label>
                     <input type="text" class="form-control <?= session()->get('errors.driver_id_number') ? 'is-invalid' : '' ?>"
                            id="driver_id_number" name="driver_id_number"
                            value="<?= old('driver_id_number') ?>" 
-                           placeholder="Enter driver ID number (license/NID)">
+                           placeholder="Enter driver ID number (license/NID)" required>
                     <?php if(session()->get('errors.driver_id_number')): ?>
                         <div class="invalid-feedback"><?= session()->get('errors.driver_id_number') ?></div>
                     <?php endif; ?>
@@ -262,7 +263,7 @@
         
         // Form validation
         document.getElementById('dispatchForm').addEventListener('submit', function(e) {
-            const requiredFields = ['batch_id', 'dispatcher_name', 'vehicle_number', 'trailer_number', 'driver_name', 'destination', 'estimated_arrival'];
+            const requiredFields = ['batch_id', 'dispatcher_name', 'vehicle_number', 'driver_name', 'destination', 'estimated_arrival'];
             let isValid = true;
             
             requiredFields.forEach(function(fieldName) {

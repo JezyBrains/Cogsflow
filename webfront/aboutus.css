@@ -1,0 +1,305 @@
+.about-us {
+    width: 100%;
+    height: 2369px;
+    position: relative;
+    background-color: #fff;
+    overflow: hidden;
+    text-align: left;
+    font-size: 20.5px;
+    color: #191819;
+    font-family: Montserrat;
+}
+.about-us-about-us {
+    position: absolute;
+    top: 350px;
+    left: 174.19px;
+    font-size: 89.27px;
+    line-height: 95.92px;
+    font-weight: 800;
+    white-space: pre-wrap;
+}
+.we-are-a-container {
+    position: absolute;
+    top: 644.91px;
+    left: 136.11px;
+    line-height: 31.5px;
+    display: inline-block;
+    width: 562.3px;
+}
+.we-are-a {
+    margin: 0;
+}
+.about-us-we-are-a {
+    position: absolute;
+    top: 1453.47px;
+    left: 136.11px;
+    line-height: 31.5px;
+    display: inline-block;
+    width: 502.3px;
+}
+.quality-loyalty-customer {
+    position: absolute;
+    top: 1929.05px;
+    left: 136.11px;
+    line-height: 31.5px;
+    display: inline-block;
+    width: 454.5px;
+}
+.we-aim-at {
+    position: absolute;
+    top: 1453.47px;
+    left: 729.98px;
+    line-height: 31.5px;
+    display: inline-block;
+    width: 562.3px;
+}
+.contact-us-wrapper {
+    position: absolute;
+    top: 54.17px;
+    left: 1152.89px;
+    border-radius: 24.7px;
+    border: 1.2px solid #8ac653;
+    display: flex;
+    align-items: flex-start;
+    padding: 11.2px 29.4px;
+    cursor: pointer;
+    font-size: 19.13px;
+}
+.contact-us {
+    position: relative;
+    line-height: 19.58px;
+    font-weight: 600;
+}
+.vector-icon {
+    position: absolute;
+    height: 6.91%;
+    width: 31.54%;
+    top: 13.3%;
+    right: 62.85%;
+    bottom: 79.79%;
+    left: 5.61%;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+    object-fit: contain;
+}
+.about-parent {
+    position: absolute;
+    top: 64.01px;
+    left: 742.13px;
+    width: 304.4px;
+    height: 22.1px;
+    font-size: 13.41px;
+}
+.about {
+    position: absolute;
+    top: 0%;
+    left: 25.99%;
+    line-height: 20.6px;
+    color: #2acc32;
+}
+.services {
+    position: absolute;
+    top: 0%;
+    left: 51.98%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.product {
+    position: absolute;
+    top: 0%;
+    left: 82.16%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.home {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.instance-child {
+    position: absolute;
+    height: 15.38%;
+    width: 1.12%;
+    top: 84.95%;
+    right: 66.28%;
+    bottom: -0.33%;
+    left: 32.6%;
+    border-radius: 50%;
+    background-color: #2acc32;
+}
+.who-we-are {
+    position: absolute;
+    top: 580.9px;
+    left: 136.11px;
+    font-size: 36.41px;
+    line-height: 39.12px;
+    font-weight: 800;
+    color: #2acc32;
+}
+.our-mission {
+    position: absolute;
+    top: 1389.47px;
+    left: 136.11px;
+    font-size: 36.41px;
+    line-height: 39.12px;
+    font-weight: 800;
+    color: #2acc32;
+}
+.our-values {
+    position: absolute;
+    top: 1873.15px;
+    left: 136.11px;
+    font-size: 36.41px;
+    line-height: 39.12px;
+    font-weight: 800;
+    color: #2acc32;
+}
+.our-vision {
+    position: absolute;
+    top: 1389.47px;
+    left: 729.98px;
+    font-size: 36.41px;
+    line-height: 39.12px;
+    font-weight: 800;
+    color: #2acc32;
+}
+.about-us-child {
+    position: absolute;
+    top: 599.94px;
+    left: 388.48px;
+    border-top: 0.8px solid #000;
+    box-sizing: border-box;
+    width: 69.7px;
+    height: 0.8px;
+}
+.about-us-item {
+    position: absolute;
+    top: 1408.51px;
+    left: 388.48px;
+    border-top: 0.8px solid #000;
+    box-sizing: border-box;
+    width: 69.7px;
+    height: 0.8px;
+}
+.about-us-inner {
+    position: absolute;
+    top: 1892.19px;
+    left: 365.8px;
+    border-top: 0.8px solid #000;
+    box-sizing: border-box;
+    width: 69.7px;
+    height: 0.8px;
+}
+.line-div {
+    position: absolute;
+    top: 1408.51px;
+    left: 982.35px;
+    border-top: 0.8px solid #000;
+    box-sizing: border-box;
+    width: 69.7px;
+    height: 0.8px;
+}
+.rectangle-parent {
+    position: absolute;
+    top: 166.09px;
+    left: 721.13px;
+    width: 655px;
+    height: 1075.9px;
+}
+.group-child {
+    position: absolute;
+    top: 0px;
+    left: 91.49px;
+    border-radius: 198.5px;
+    background-color: #2acc32;
+    width: 397px;
+    height: 684.6px;
+}
+.nipo-agro-man {
+    position: absolute;
+    top: 58.33px;
+    left: 0px;
+    width: 655px;
+    height: 886px;
+    object-fit: cover;
+}
+.group-item {
+    position: absolute;
+    top: 842.59px;
+    left: 79.33px;
+    background: linear-gradient(179.47deg, rgba(255, 255, 255, 0), #fff);
+    width: 488.5px;
+    height: 233.3px;
+}
+.group-icon {
+    position: absolute;
+    top: 1283.33px;
+    left: 136.11px;
+    width: 89.9px;
+    height: 89.9px;
+}
+.about-us-about-us-child {
+    position: absolute;
+    top: 1283.33px;
+    left: 729.98px;
+    width: 89.9px;
+    height: 89.9px;
+}
+.about-us-child2 {
+    position: absolute;
+    top: 1767.01px;
+    left: 136.11px;
+    width: 89.9px;
+    height: 89.9px;
+}
+.group-div {
+    position: absolute;
+    top: 2263.03px;
+    left: 131px;
+    width: 110.3px;
+    height: 14px;
+    font-size: 12.04px;
+}
+.nipoagroltd-parent {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 110.3px;
+    height: 14px;
+}
+.nipoagroltd {
+    position: absolute;
+    top: 0px;
+    left: 13.31px;
+    letter-spacing: -0.03em;
+    line-height: 13.4px;
+    font-weight: 500;
+}
+.icon-park-outlinehandle-c {
+    position: absolute;
+    top: 0.53px;
+    left: 0px;
+    width: 12.8px;
+    height: 12.8px;
+}
+.nipo-agro-logo4x-2 {
+    position: absolute;
+    top: 60px;
+    left: 99px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    cursor: pointer;
+}
+.nipo-agro-logo4x-3 {
+    position: absolute;
+    top: 2133px;
+    left: 127px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+

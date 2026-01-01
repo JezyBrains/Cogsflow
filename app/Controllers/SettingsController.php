@@ -83,7 +83,9 @@ class SettingsController extends BaseController
                 $rules = [
                     'system_timezone' => 'permit_empty|max_length[50]',
                     'system_currency' => 'permit_empty|max_length[10]',
-                    'system_language' => 'permit_empty|max_length[10]'
+                    'system_language' => 'permit_empty|max_length[10]',
+                    'default_weight_unit' => 'permit_empty|in_list[kg,mt,ton,lbs,g]',
+                    'show_secondary_unit' => 'permit_empty|in_list[0,1]'
                 ];
             } elseif ($category === 'business') {
                 $rules = [
@@ -210,6 +212,25 @@ class SettingsController extends BaseController
                     $result = $this->adminUtilities->cleanLogs($days);
                     break;
                     
+                case 'reset_database':
+                    $confirmation = $this->request->getPost('confirmation') === 'true';
+                    $result = $this->adminUtilities->resetDatabase($confirmation);
+                    break;
+                    
+                case 'clear_all_data':
+                    $confirmation = $this->request->getPost('confirmation') === 'true';
+                    $result = $this->adminUtilities->clearAllData($confirmation);
+                    break;
+                    
+                case 'debug_database':
+                    try {
+                        $result = $this->adminUtilities->getDatabaseInfo();
+                    } catch (\Exception $e) {
+                        // Fallback debug method
+                        $result = $this->getBasicDatabaseInfo();
+                    }
+                    break;
+                    
                 default:
                     $result = [
                         'success' => false,
@@ -217,14 +238,19 @@ class SettingsController extends BaseController
                     ];
             }
             
-            // Log the admin action
-            if (isset($this->systemLogModel)) {
-                $this->systemLogModel->logAction(
-                    $action,
-                    $result['success'] ? 'info' : 'error',
-                    $result['message'],
-                    ['user_ip' => $this->request->getIPAddress()]
-                );
+            // Log the admin action (with error handling)
+            try {
+                if (isset($this->systemLogModel) && method_exists($this->systemLogModel, 'logAction')) {
+                    $this->systemLogModel->logAction(
+                        $action,
+                        $result['success'] ? 'info' : 'error',
+                        $result['message'] ?? 'No message',
+                        ['user_ip' => $this->request->getIPAddress()]
+                    );
+                }
+            } catch (\Exception $logError) {
+                // Don't let logging errors break the response
+                log_message('warning', 'Failed to log admin action: ' . $logError->getMessage());
             }
             
             return $this->response->setJSON($result);
@@ -584,6 +610,46 @@ class SettingsController extends BaseController
                 'success' => false,
                 'message' => 'Import failed: ' . $e->getMessage()
             ]);
+        }
+    }
+
+    /**
+     * Fallback method to get basic database info
+     */
+    private function getBasicDatabaseInfo()
+    {
+        try {
+            $db = \Config\Database::connect();
+            $tables = $db->listTables();
+            $tableInfo = [];
+            
+            foreach ($tables as $table) {
+                try {
+                    $count = $db->table($table)->countAllResults();
+                    $tableInfo[$table] = [
+                        'row_count' => $count,
+                        'has_data' => $count > 0
+                    ];
+                } catch (\Exception $e) {
+                    $tableInfo[$table] = [
+                        'row_count' => 'Error',
+                        'has_data' => false,
+                        'error' => $e->getMessage()
+                    ];
+                }
+            }
+            
+            return [
+                'success' => true,
+                'tables' => $tableInfo,
+                'total_tables' => count($tables)
+            ];
+            
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'message' => 'Fallback debug failed: ' . $e->getMessage()
+            ];
         }
     }
 }

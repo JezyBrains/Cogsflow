@@ -77,6 +77,10 @@ class BatchController extends BaseController
      */
     public function create()
     {
+        // Get current user ID
+        $session = session();
+        $userId = $session->get('user_id');
+        
         $validation = \Config\Services::validation();
         
         // Validate basic batch data
@@ -151,7 +155,23 @@ class BatchController extends BaseController
                 throw new \Exception('Failed to create batch record');
             }
             
-            // Insert bag records
+            // Generate bag IDs and insert bag records
+            $qrGenerator = new \App\Libraries\QRCodeGenerator();
+            foreach ($bags as &$bag) {
+                $bag['bag_id'] = $qrGenerator->generateBagId($batchData['batch_number'], $bag['bag_number']);
+                $bag['loading_date'] = date('Y-m-d H:i:s');
+                $bag['loaded_by'] = $userId;
+                $bag['qr_code'] = $qrGenerator->generateBagQRData([
+                    'bag_id' => $bag['bag_id'],
+                    'batch_id' => $batchId,
+                    'batch_number' => $batchData['batch_number'],
+                    'weight_kg' => $bag['weight_kg'],
+                    'moisture_percentage' => $bag['moisture_percentage'] ?? $bag['moisture_content'] ?? 0,
+                    'loading_date' => $bag['loading_date'],
+                    'loaded_by' => $userId
+                ]);
+            }
+            
             if (!$this->batchBagModel->insertBags($batchId, $bags)) {
                 throw new \Exception('Failed to create bag records');
             }
@@ -165,6 +185,31 @@ class BatchController extends BaseController
                 throw new \Exception('Transaction failed');
             }
             
+            // Log batch creation in history (after transaction completes)
+            try {
+                $historyModel = new \App\Models\BatchHistoryModel();
+                $historyModel->logBatchEvent(
+                    $batchId,
+                    'created',
+                    $session->get('username') ?? 'System',
+                    [
+                        'total_weight_mt' => $batchData['total_weight_mt'],
+                        'total_bags' => $bagCount,
+                        'grain_type' => $batchData['grain_type'],
+                        'quality_grade' => $batchData['quality_grade'],
+                        'average_moisture' => $batchData['average_moisture']
+                    ],
+                    $this->request->getPost('notes'),
+                    null,
+                    $poId,
+                    null,
+                    'pending'
+                );
+            } catch (\Exception $e) {
+                // Log error but don't fail the batch creation
+                log_message('error', 'Failed to log batch history: ' . $e->getMessage());
+            }
+            
             // Send notification about new batch
             helper('notification');
             sendBatchNotification($batchId, $batchData['batch_number'], 'created', [
@@ -174,7 +219,9 @@ class BatchController extends BaseController
                 'po_number' => $po['po_number']
             ]);
             
-            session()->setFlashdata('success', 'Batch ' . $batchData['batch_number'] . ' was successfully created with ' . $bagCount . ' bags totaling ' . $batchData['total_weight_mt'] . ' MT. Awaiting approval from PO authorizer.');
+            // Format weight with configured unit for notification
+            $weightDisplay = format_weight($batchData['total_weight_kg'], null, 2, true, false);
+            session()->setFlashdata('success', 'Batch ' . $batchData['batch_number'] . ' was successfully created with ' . $bagCount . ' bags totaling ' . $weightDisplay . '. Awaiting approval from PO authorizer.');
             
             return redirect()->to('/batches');
             
@@ -198,11 +245,22 @@ class BatchController extends BaseController
         if (!$batch) {
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Batch not found');
         }
+
+        // Load document data for the widget
+        $documentModel = new \App\Models\DocumentModel();
+        $documentTypeModel = new \App\Models\DocumentTypeModel();
+        
+        $documentTypes = $documentTypeModel->getDocumentTypesForStage('batch_approval');
+        $existingDocuments = $documentModel->getDocumentsByReference('batch', $id);
+        $requiredDocuments = $documentModel->getRequiredDocumentsForStage('batch_approval', $id, 'batch');
         
         $data = [
             'title' => 'Batch Details - ' . $batch['batch_number'],
             'batch' => $batch,
-            'bags' => $this->batchBagModel->getBagsByBatch($id)
+            'bags' => $this->batchBagModel->getBagsByBatch($id),
+            'document_types' => $documentTypes,
+            'existing_documents' => $existingDocuments,
+            'required_documents' => $requiredDocuments
         ];
         
         return view('batches/view', $data);
@@ -237,6 +295,15 @@ class BatchController extends BaseController
             session()->setFlashdata('error', 'Only pending batches can be approved');
             return redirect()->back();
         }
+
+        // DOCUMENT VALIDATION: Check if all required documents are uploaded
+        $documentModel = new \App\Models\DocumentModel();
+        $documentCheck = $documentModel->areRequiredDocumentsUploaded('batch_approval', 'batch', $id);
+        
+        if (!$documentCheck['satisfied']) {
+            session()->setFlashdata('error', 'Cannot approve batch: ' . $documentCheck['message'] . '. Please upload all required documents before approval.');
+            return redirect()->back();
+        }
         
         $updateData = [
             'status' => 'approved',
@@ -245,6 +312,29 @@ class BatchController extends BaseController
         ];
         
         $this->batchModel->update($id, $updateData);
+        
+        // Log batch approval in history
+        try {
+            $historyModel = new \App\Models\BatchHistoryModel();
+            $historyModel->logBatchEvent(
+                $id,
+                'approved',
+                $session->get('username') ?? 'System',
+                [
+                    'total_weight_mt' => $batch['total_weight_mt'],
+                    'total_bags' => $batch['total_bags'],
+                    'grain_type' => $batch['grain_type']
+                ],
+                'Batch approved and ready for dispatch',
+                null,
+                $batch['purchase_order_id'],
+                'pending',
+                'approved'
+            );
+        } catch (\Exception $e) {
+            // Log error but don't fail the approval
+            log_message('error', 'Failed to log batch history: ' . $e->getMessage());
+        }
         
         // Send notification about batch approval
         helper('notification');

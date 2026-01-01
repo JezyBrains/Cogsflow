@@ -40,6 +40,7 @@
                 $statusClasses = [
                     'pending' => 'bg-warning',
                     'in_transit' => 'bg-info',
+                    'arrived' => 'bg-primary',
                     'delivered' => 'bg-success',
                     'cancelled' => 'bg-danger'
                 ];
@@ -163,6 +164,21 @@
 
     <!-- Actions Panel -->
     <div class="col-md-4">
+        <!-- Document Management -->
+        <?php if ($dispatch['status'] === 'pending'): ?>
+        <div class="card mb-4">
+            <?= view('documents/upload_widget', [
+                'workflow_stage' => 'dispatch_transit',
+                'reference_type' => 'dispatch',
+                'reference_id' => $dispatch['id'],
+                'document_types' => $document_types,
+                'existing_documents' => $existing_documents,
+                'required_documents' => $required_documents
+            ]) ?>
+        </div>
+        <?php endif; ?>
+
+        <!-- Status Actions -->
         <div class="card">
             <div class="card-header">
                 <h6 class="mb-0"><i class="bx bx-cog me-2"></i>Actions</h6>
@@ -170,6 +186,10 @@
             <div class="card-body">
                 <?php if ($dispatch['status'] === 'pending'): ?>
                     <div class="d-grid gap-2">
+                        <a href="<?= site_url('dispatches/edit/' . $dispatch['id']) ?>" class="btn btn-warning w-100">
+                            <i class="bx bx-edit me-2"></i>Edit Dispatch
+                        </a>
+                        
                         <form method="post" action="<?= site_url('dispatches/updateStatus/' . $dispatch['id']) ?>">
                             <?= csrf_field() ?>
                             <input type="hidden" name="status" value="in_transit">
@@ -189,11 +209,15 @@
                     </div>
                 <?php elseif ($dispatch['status'] === 'in_transit'): ?>
                     <div class="d-grid gap-2">
+                        <a href="<?= site_url('dispatches/edit/' . $dispatch['id']) ?>" class="btn btn-warning w-100">
+                            <i class="bx bx-edit me-2"></i>Edit Dispatch
+                        </a>
+                        
                         <form method="post" action="<?= site_url('dispatches/updateStatus/' . $dispatch['id']) ?>">
                             <?= csrf_field() ?>
-                            <input type="hidden" name="status" value="delivered">
-                            <button type="submit" class="btn btn-success w-100">
-                                <i class="bx bx-check-circle me-2"></i>Mark Delivered
+                            <input type="hidden" name="status" value="arrived">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bx bx-map-pin me-2"></i>Mark Arrived
                             </button>
                         </form>
                         
@@ -205,6 +229,22 @@
                                 <i class="bx bx-x-circle me-2"></i>Cancel Dispatch
                             </button>
                         </form>
+                    </div>
+                <?php elseif ($dispatch['status'] === 'arrived'): ?>
+                    <div class="d-grid gap-2">
+                        <?php if (empty($dispatch['received_by'])): ?>
+                            <a href="<?= site_url('dispatches/edit/' . $dispatch['id']) ?>" class="btn btn-warning w-100">
+                                <i class="bx bx-edit me-2"></i>Edit Dispatch
+                            </a>
+                        <?php endif; ?>
+                        
+                        <a href="<?= site_url('batch-receiving/inspection/' . $dispatch['id']) ?>" class="btn btn-success w-100">
+                            <i class="bx bx-check-square me-2"></i>Perform Inspection
+                        </a>
+                        <div class="alert alert-info text-center mb-0 mt-2">
+                            <i class="bx bx-info-circle"></i>
+                            <p class="mb-0 mt-2 small">Dispatch has arrived and is awaiting receiving inspection</p>
+                        </div>
                     </div>
                 <?php elseif ($dispatch['status'] === 'delivered'): ?>
                     <div class="alert alert-success text-center">
@@ -235,7 +275,7 @@
                         </div>
                     </div>
                     
-                    <div class="timeline-item <?= $dispatch['status'] === 'in_transit' ? 'active' : ($dispatch['status'] === 'delivered' ? 'completed' : '') ?>">
+                    <div class="timeline-item <?= $dispatch['status'] === 'in_transit' ? 'active' : (in_array($dispatch['status'], ['arrived', 'delivered']) ? 'completed' : '') ?>">
                         <div class="timeline-marker"></div>
                         <div class="timeline-content">
                             <h6>In Transit</h6>
@@ -243,11 +283,19 @@
                         </div>
                     </div>
                     
+                    <div class="timeline-item <?= $dispatch['status'] === 'arrived' ? 'active' : ($dispatch['status'] === 'delivered' ? 'completed' : '') ?>">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h6>Arrived</h6>
+                            <small>Awaiting inspection</small>
+                        </div>
+                    </div>
+                    
                     <div class="timeline-item <?= $dispatch['status'] === 'delivered' ? 'active completed' : '' ?>">
                         <div class="timeline-marker"></div>
                         <div class="timeline-content">
                             <h6>Delivered</h6>
-                            <small>Cargo delivered</small>
+                            <small>Inspection completed</small>
                         </div>
                     </div>
                     

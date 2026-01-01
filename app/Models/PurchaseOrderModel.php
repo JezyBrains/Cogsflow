@@ -376,7 +376,7 @@ class PurchaseOrderModel extends Model
     }
 
     /**
-     * Update PO status based on batch transfers
+     * Update PO status based on delivered dispatches (not batches)
      */
     public function updateStatusBasedOnTransfers($purchaseOrderId)
     {
@@ -385,22 +385,24 @@ class PurchaseOrderModel extends Model
             return false;
         }
 
-        // Calculate total transferred quantity from batches
-        $batchModel = new \App\Models\BatchModel();
-        $transferredQuery = $batchModel->db->table('batches');
-        $transferredQuery->selectSum('total_weight_mt', 'total_transferred');
-        $transferredQuery->where('purchase_order_id', $purchaseOrderId);
-        $transferredResult = $transferredQuery->get()->getRowArray();
-        $totalTransferred = $transferredResult['total_transferred'] ?? 0;
+        // Calculate total delivered quantity from dispatches (not batches)
+        // Only count dispatches with status 'delivered' that have been inspected
+        $deliveredQuery = $this->db->table('dispatches d');
+        $deliveredQuery->join('batches b', 'b.id = d.batch_id');
+        $deliveredQuery->selectSum('d.actual_weight_mt', 'total_delivered');
+        $deliveredQuery->where('b.purchase_order_id', $purchaseOrderId);
+        $deliveredQuery->where('d.status', 'delivered');
+        $deliveredResult = $deliveredQuery->get()->getRowArray();
+        $totalDelivered = $deliveredResult['total_delivered'] ?? 0;
 
         $newStatus = $po['status'];
         
-        // Determine new status based on transfer progress
-        if ($totalTransferred > 0 && $totalTransferred < $po['quantity_mt']) {
-            // Some quantity transferred but not all - set to transferring
+        // Determine new status based on delivery progress
+        if ($totalDelivered > 0 && $totalDelivered < $po['quantity_mt']) {
+            // Some quantity delivered but not all - set to transferring
             $newStatus = 'transferring';
-        } elseif ($totalTransferred >= $po['quantity_mt']) {
-            // All quantity transferred - set to completed
+        } elseif ($totalDelivered >= $po['quantity_mt']) {
+            // All quantity delivered - set to completed
             $newStatus = 'completed';
         }
 
@@ -408,8 +410,8 @@ class PurchaseOrderModel extends Model
         if ($newStatus !== $po['status']) {
             $updateData = [
                 'status' => $newStatus,
-                'delivered_quantity_mt' => $totalTransferred,
-                'remaining_quantity_mt' => max(0, $po['quantity_mt'] - $totalTransferred)
+                'delivered_quantity_mt' => $totalDelivered,
+                'remaining_quantity_mt' => max(0, $po['quantity_mt'] - $totalDelivered)
             ];
             
             return $this->update($purchaseOrderId, $updateData);

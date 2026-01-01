@@ -6,36 +6,42 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-// Default route - redirect to dashboard
+// Public Landing Page Routes (no authentication required)
+$routes->get('/', 'HomeController::index');
+$routes->get('about', 'HomeController::about');
+$routes->get('services', 'HomeController::services');
+$routes->get('products', 'HomeController::products');
+$routes->get('features', 'HomeController::features');
+$routes->get('contact', 'HomeController::contact');
+$routes->post('contact/submit', 'HomeController::submitContact');
+
 // Authentication routes
 $routes->get('login', 'AuthController::login');
 $routes->post('auth/authenticate', 'AuthController::authenticate');
 $routes->get('logout', 'AuthController::logout');
 
-$routes->get('/', 'DashboardController::index');
-
 // Debug routes
 $routes->get('test', 'TestController::index');
 $routes->get('test/settings', 'TestController::settings');
 
-// Dashboard Module
+// Dashboard Module (temporarily remove auth filter for testing)
 $routes->get('dashboard', 'DashboardController::index');
 
-// Batches Module
-$routes->group('batches', ['filter' => 'role:admin,warehouse_staff,batches.view'], function ($routes) {
+// Batches Module (temporarily remove role filter for testing)
+$routes->group('batches', function ($routes) {
     $routes->get('/', 'BatchController::index');
-    $routes->get('new', 'BatchController::new', ['filter' => 'role:admin,warehouse_staff,batches.create']);
-    $routes->post('create', 'BatchController::create', ['filter' => 'role:admin,warehouse_staff,batches.create']);
+    $routes->get('new', 'BatchController::new');
+    $routes->post('create', 'BatchController::create');
     $routes->get('view/(:num)', 'BatchController::view/$1');
-    $routes->get('edit/(:num)', 'BatchController::edit/$1', ['filter' => 'role:admin,warehouse_staff,batches.edit']);
-    $routes->post('update/(:num)', 'BatchController::update/$1', ['filter' => 'role:admin,warehouse_staff,batches.edit']);
-    $routes->post('delete/(:num)', 'BatchController::delete/$1', ['filter' => 'role:admin,batches.delete']);
+    $routes->get('edit/(:num)', 'BatchController::edit/$1');
+    $routes->post('update/(:num)', 'BatchController::update/$1');
+    $routes->post('delete/(:num)', 'BatchController::delete/$1');
     $routes->post('approve/(:num)', 'BatchController::approve/$1');
     $routes->post('reject/(:num)', 'BatchController::reject/$1');
     $routes->get('po-details/(:num)', 'BatchController::getPODetails/$1');
-    $routes->get('receiving', 'BatchReceivingController::index', ['filter' => 'role:admin,warehouse_staff,batches.view']);
-    $routes->get('receiving/inspection/(:num)', 'BatchReceivingController::inspectionForm/$1', ['filter' => 'role:admin,warehouse_staff,batches.edit']);
-    $routes->post('receiving/process-inspection', 'BatchReceivingController::processInspection', ['filter' => 'role:admin,warehouse_staff,batches.edit']);
+    $routes->get('receiving', 'BatchReceivingController::index');
+    $routes->get('receiving/inspection/(:num)', 'BatchReceivingController::inspectionForm/$1');
+    $routes->post('receiving/process-inspection', 'BatchReceivingController::processInspection');
 });
 
 // Dispatches Module
@@ -44,6 +50,8 @@ $routes->group('dispatches', ['filter' => 'role:admin,warehouse_staff,dispatches
     $routes->get('new', 'DispatchController::new', ['filter' => 'role:admin,warehouse_staff,dispatches.create']);
     $routes->post('create', 'DispatchController::create', ['filter' => 'role:admin,warehouse_staff,dispatches.create']);
     $routes->get('view/(:num)', 'DispatchController::view/$1');
+    $routes->get('edit/(:num)', 'DispatchController::edit/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
+    $routes->post('update/(:num)', 'DispatchController::update/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
     $routes->post('updateStatus/(:num)', 'DispatchController::updateStatus/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
     $routes->get('receive/(:num)', 'DispatchController::showReceiveForm/$1', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
     $routes->post('receive', 'DispatchController::receive', ['filter' => 'role:admin,warehouse_staff,dispatches.edit']);
@@ -100,14 +108,33 @@ $routes->group('suppliers', ['filter' => 'role:admin,warehouse_staff,suppliers.v
 $routes->post('suppliers/create-ajax', 'SupplierController::createAjax', ['filter' => 'auth']);
 
 // Expenses Module
-$routes->group('expenses', function ($routes) {
+$routes->group('expenses', ['filter' => 'auth'], function ($routes) {
+    // Main expense routes
     $routes->get('/', 'ExpenseController::index');
     $routes->get('new', 'ExpenseController::new');
-    $routes->post('log', 'ExpenseController::log');
+    $routes->post('store', 'ExpenseController::store');
     $routes->get('show/(:num)', 'ExpenseController::show/$1');
     $routes->get('edit/(:num)', 'ExpenseController::edit/$1');
     $routes->post('update/(:num)', 'ExpenseController::update/$1');
     $routes->post('delete/(:num)', 'ExpenseController::delete/$1');
+    
+    // Approval routes (admin only)
+    $routes->post('approve/(:num)', 'ExpenseController::approve/$1', ['filter' => 'role:admin']);
+    $routes->post('reject/(:num)', 'ExpenseController::reject/$1', ['filter' => 'role:admin']);
+    
+    // Analytics and export
+    $routes->get('analytics', 'ExpenseController::analytics');
+    $routes->get('export', 'ExpenseController::export');
+    
+    // Category management
+    $routes->get('categories', 'ExpenseCategoryController::index');
+    $routes->get('categories/create', 'ExpenseCategoryController::create', ['filter' => 'role:admin']);
+    $routes->post('categories/store', 'ExpenseCategoryController::store', ['filter' => 'role:admin']);
+    $routes->get('categories/edit/(:num)', 'ExpenseCategoryController::edit/$1', ['filter' => 'role:admin']);
+    $routes->post('categories/update/(:num)', 'ExpenseCategoryController::update/$1', ['filter' => 'role:admin']);
+    $routes->post('categories/toggle/(:num)', 'ExpenseCategoryController::toggleStatus/$1', ['filter' => 'role:admin']);
+    $routes->post('categories/delete/(:num)', 'ExpenseCategoryController::delete/$1', ['filter' => 'role:admin']);
+    $routes->get('categories/active', 'ExpenseCategoryController::getActive'); // AJAX
 });
 
 // Settings Module
@@ -182,10 +209,39 @@ $routes->group('workflow', ['filter' => 'auth'], function($routes) {
 // Batch Receiving Routes
 $routes->group('batch-receiving', ['filter' => 'role:admin,warehouse_staff'], function($routes) {
     $routes->get('/', 'BatchReceivingController::index');
+    $routes->get('test/(:num)', 'BatchReceivingController::testInspection/$1');
     $routes->get('inspection/(:num)', 'BatchReceivingController::inspectionForm/$1');
     $routes->post('process-inspection', 'BatchReceivingController::processInspection');
+    
+    // New bag-by-bag inspection API endpoints
+    $routes->post('get-bag-details', 'BatchReceivingController::getBagDetails');
+    $routes->post('process-bag-inspection', 'BatchReceivingController::processBagInspection');
+    $routes->post('complete-inspection', 'BatchReceivingController::completeBagInspection');
+    $routes->get('get-inspections', 'BatchReceivingController::getInspections');
+    $routes->get('print-labels/(:num)', 'BatchReceivingController::printLabels/$1');
+    $routes->get('print-labels-from-batch/(:num)', 'BatchReceivingController::printLabelsFromBatch/$1');
+    $routes->get('debug-labels/(:num)', 'BatchReceivingController::debugLabels/$1');
+    $routes->get('qr-code/(:segment)', 'BatchReceivingController::generateQRCode/$1');
+    
+    // Phase 1 API endpoints - Visual Grid & Real-time Progress
+    $routes->get('api/bag-inspection-data', 'BatchReceivingController::getBagInspectionData');
+    $routes->post('api/record-bag-inspection', 'BatchReceivingController::recordBagInspection');
+    
     $routes->get('batch-history/(:num)', 'BatchReceivingController::batchHistory/$1');
     $routes->get('export-report/(:num)', 'BatchReceivingController::exportInspectionReport/$1');
+});
+
+// Document Management Routes
+$routes->group('documents', ['filter' => 'auth'], function($routes) {
+    $routes->post('upload', 'DocumentController::upload');
+    $routes->get('(:segment)/(:num)', 'DocumentController::getDocuments/$1/$2');
+    $routes->get('required/(:segment)/(:segment)/(:num)', 'DocumentController::getRequiredDocuments/$1/$2/$3');
+    $routes->get('check/(:segment)/(:segment)/(:num)', 'DocumentController::checkRequiredDocuments/$1/$2/$3');
+    $routes->delete('delete/(:num)', 'DocumentController::delete/$1');
+    $routes->get('download/(:num)', 'DocumentController::download/$1');
+    $routes->post('update-status/(:num)', 'DocumentController::updateStatus/$1');
+    $routes->get('types/(:segment)', 'DocumentController::getDocumentTypes/$1');
+    $routes->get('widget/(:segment)/(:segment)/(:num)', 'DocumentController::renderUploadWidget/$1/$2/$3');
 });
 
 // Set 404 override

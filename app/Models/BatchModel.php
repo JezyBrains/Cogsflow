@@ -175,7 +175,7 @@ class BatchModel extends Model
     }
 
     /**
-     * Check if user can approve batch (must be same as PO approver)
+     * Check if user can approve batch (must be same as PO approver OR admin)
      */
     public function canUserApproveBatch($batchId, $userId)
     {
@@ -189,6 +189,19 @@ class BatchModel extends Model
             return ['can_approve' => false, 'message' => 'Only pending batches can be approved'];
         }
 
+        // Check if user is admin - admins can approve any batch
+        $session = session();
+        $userRole = $session->get('role');
+        
+        // Debug logging
+        log_message('debug', 'Batch Approval Check - User ID: ' . $userId . ', Role: ' . $userRole . ', Batch ID: ' . $batchId);
+        
+        if ($userRole === 'admin') {
+            log_message('debug', 'Admin approval granted for batch ' . $batchId);
+            return ['can_approve' => true, 'message' => 'Admin can approve this batch'];
+        }
+
+        // For non-admins, must be the same user who approved the PO
         if ($batch['po_approved_by'] != $userId) {
             return ['can_approve' => false, 'message' => 'Only the user who approved the original purchase order can approve this batch'];
         }

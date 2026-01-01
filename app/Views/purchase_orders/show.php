@@ -153,7 +153,7 @@
                                 <tr>
                                     <th>Batch Number</th>
                                     <th>Status</th>
-                                    <th>Weight (MT)</th>
+                                    <th>Weight (<?= strtoupper(get_weight_unit()) ?>)</th>
                                     <th>Bags</th>
                                     <th>Avg. Moisture</th>
                                     <th>Quality Grade</th>

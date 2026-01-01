@@ -69,11 +69,11 @@
             
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <label for="quantity_mt" class="form-label">Quantity (MT)</label>
+                    <label for="quantity_mt" class="form-label"><?= get_weight_label('Quantity') ?></label>
                     <input type="number" class="form-control" id="quantity_mt" name="quantity_mt" step="0.01" min="0" value="<?= esc($purchaseOrder['quantity_mt']) ?>" required>
                 </div>
                 <div class="col-md-6">
-                    <label for="unit_price" class="form-label">Unit Price</label>
+                    <label for="unit_price" class="form-label">Unit Price (per <?= strtoupper(get_weight_unit()) ?>)</label>
                     <input type="number" class="form-control" id="unit_price" name="unit_price" step="0.01" min="0" value="<?= esc($purchaseOrder['unit_price']) ?>" required>
                 </div>
             </div>

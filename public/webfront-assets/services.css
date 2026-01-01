@@ -1,0 +1,422 @@
+.service {
+    width: 100%;
+    height: 5417.7px;
+    position: relative;
+    background-color: #f1f1f1;
+    overflow: hidden;
+    text-align: left;
+    font-size: 22px;
+    color: #191819;
+    font-family: Montserrat;
+}
+.rectangle-parent {
+    position: absolute;
+    top: 211.46px;
+    left: 99.65px;
+    width: 1188.5px;
+    height: 347.6px;
+}
+.group-child {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-radius: 28.36px;
+    width: 1188.5px;
+    height: 347.6px;
+    object-fit: cover;
+}
+.group-item {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border-radius: 28.36px;
+    background: linear-gradient(89.15deg, #191819, rgba(248, 248, 248, 0));
+    width: 1188.5px;
+    height: 347.6px;
+}
+.our-services {
+    position: absolute;
+    top: 329.11px;
+    left: 174.19px;
+    font-size: 67.86px;
+    line-height: 72.91px;
+    font-weight: 800;
+    color: #fff;
+    white-space: pre-wrap;
+}
+.contact-us-wrapper {
+    position: absolute;
+    top: 54.17px;
+    left: 1152.89px;
+    border-radius: 24.7px;
+    border: 1.2px solid #8ac653;
+    display: flex;
+    align-items: flex-start;
+    padding: 11.2px 29.4px;
+    cursor: pointer;
+    font-size: 19.13px;
+}
+.contact-us {
+    position: relative;
+    line-height: 19.58px;
+    font-weight: 600;
+}
+.vector-icon {
+    position: absolute;
+    height: 3.77%;
+    width: 30.49%;
+    top: 4.61%;
+    right: 48.49%;
+    bottom: 91.63%;
+    left: 21.02%;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+    object-fit: contain;
+}
+.about-parent {
+    position: absolute;
+    top: 64px;
+    left: 742.13px;
+    width: 304.4px;
+    height: 22.1px;
+    font-size: 13.41px;
+}
+.about {
+    position: absolute;
+    top: 0%;
+    left: 25.99%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.services {
+    position: absolute;
+    top: 0%;
+    left: 51.98%;
+    line-height: 20.6px;
+    color: #2acc32;
+}
+.product {
+    position: absolute;
+    top: 0%;
+    left: 82.16%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.home {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    line-height: 20.6px;
+    cursor: pointer;
+}
+.instance-child {
+    position: absolute;
+    height: 15.38%;
+    width: 1.12%;
+    top: 84.95%;
+    right: 37.65%;
+    bottom: -0.33%;
+    left: 61.23%;
+    border-radius: 50%;
+    background-color: #2acc32;
+}
+.footer {
+    position: absolute;
+    top: 5126.85px;
+    left: 0px;
+    background-color: #fff;
+    width: 1400px;
+    height: 290.9px;
+    overflow: hidden;
+    font-size: 12.04px;
+}
+.footer-inner {
+    position: absolute;
+    top: 186.6px;
+    left: 135px;
+    width: 110.3px;
+    height: 14px;
+}
+.nipoagroltd-parent {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 110.3px;
+    height: 14px;
+}
+.nipoagroltd {
+    position: absolute;
+    top: 0px;
+    left: 13.31px;
+    letter-spacing: -0.03em;
+    line-height: 13.4px;
+    font-weight: 500;
+}
+.icon-park-outlinehandle-c {
+    position: absolute;
+    top: 0.53px;
+    left: 0px;
+    width: 12.8px;
+    height: 12.8px;
+}
+.nipo-agro-logo4x-3 {
+    position: absolute;
+    top: 58.15px;
+    left: 131px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+.kisasa-street-kisasa-road-do-parent {
+    position: absolute;
+    top: 82.15px;
+    left: 532px;
+    width: 700.3px;
+    height: 126.4px;
+    font-size: 18.7px;
+}
+.kisasa-street-kisasa-container {
+    position: absolute;
+    top: 0.81px;
+    left: 0px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.kisasa-street-kisasa {
+    margin: 0;
+}
+.div {
+    position: absolute;
+    top: 99.41px;
+    left: 0px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.infonipoagrocom {
+    position: absolute;
+    top: 0px;
+    left: 511.33px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.salesnipoagrocom {
+    position: absolute;
+    top: 30px;
+    left: 511.33px;
+    letter-spacing: -0.03em;
+    line-height: 26.87px;
+    font-weight: 500;
+}
+.nipoagroinsights-wrapper {
+    position: absolute;
+    top: 99.72px;
+    left: 511.48px;
+    width: 150px;
+    height: 20px;
+    font-size: 17.95px;
+}
+.nipoagroinsights {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    letter-spacing: -0.03em;
+    line-height: 19.97px;
+    font-weight: 500;
+}
+.mask-group {
+    position: absolute;
+    top: 68.57px;
+    left: 483.47px;
+    width: 99.7px;
+    height: 24.9px;
+}
+.mask-group-child {
+    position: absolute;
+    top: -5px;
+    left: 50px;
+    background-color: #2acc32;
+    width: 25px;
+    height: 35px;
+}
+.service-mask-group {
+    position: absolute;
+    top: 68.57px;
+    left: 532.47px;
+    width: 99.7px;
+    height: 24.9px;
+}
+.mask-group-item {
+    position: absolute;
+    top: -5px;
+    left: 25px;
+    background-color: #2acc32;
+    width: 26px;
+    height: 35px;
+}
+.mask-group2 {
+    position: absolute;
+    top: 68.57px;
+    left: 508.47px;
+    width: 26px;
+    height: 25px;
+}
+.mask-group-inner {
+    position: absolute;
+    top: -5.38px;
+    left: -4.41px;
+    background-color: #2acc32;
+    width: 113.4px;
+    height: 35.6px;
+}
+.service-child {
+    position: absolute;
+    top: 924px;
+    left: 100px;
+    border-radius: 25px;
+    background-color: #fff;
+    width: 1189px;
+    height: 541px;
+}
+.service-item {
+    position: absolute;
+    top: 2299px;
+    left: 100px;
+    border-radius: 25px;
+    background-color: #fff;
+    width: 1189px;
+    height: 541px;
+}
+.service-inner {
+    position: absolute;
+    top: 1588px;
+    left: 100px;
+    border-radius: 25px;
+    background-color: #fff;
+    width: 1189px;
+    height: 545px;
+}
+.image-24-icon {
+    position: absolute;
+    top: 924px;
+    left: 100px;
+    border-radius: 25px 0px 0px 25px;
+    width: 473px;
+    height: 541px;
+    object-fit: cover;
+}
+.image-28-icon {
+    position: absolute;
+    top: 2299px;
+    left: 100px;
+    border-radius: 25px 0px 0px 25px;
+    width: 543px;
+    height: 541px;
+    object-fit: cover;
+}
+.image-26-icon {
+    position: absolute;
+    top: 1588px;
+    left: 816px;
+    border-radius: 0px 25px 25px 0px;
+    width: 472px;
+    height: 545px;
+    object-fit: cover;
+}
+.how-it-works-container {
+    position: absolute;
+    top: 1066px;
+    left: calc(50% - 87px);
+    line-height: 40.79px;
+    display: flex;
+    align-items: center;
+    width: 601px;
+    height: 345px;
+}
+.service-how-it-works-container {
+    width: 100%;
+}
+.how-it-works {
+    font-family: Montserrat;
+}
+.exw-fca-fob {
+    white-space: pre-wrap;
+}
+.turnkey-service-delivery-container {
+    position: absolute;
+    top: 2446px;
+    left: calc(50% - 17px);
+    line-height: 40.79px;
+    display: flex;
+    align-items: center;
+    width: 531px;
+    height: 345px;
+}
+.facilities-climate-controlled {
+    position: absolute;
+    top: 1731px;
+    left: calc(50% - 526px);
+    line-height: 40.79px;
+    display: flex;
+    align-items: center;
+    width: 601px;
+    height: 345px;
+}
+.international-trade {
+    position: absolute;
+    top: 949px;
+    left: calc(50% - 87px);
+    font-size: 32px;
+    line-height: 72.24px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    width: 371px;
+    height: 47px;
+}
+.machinery-installation-traini {
+    position: absolute;
+    top: 2349px;
+    left: calc(50% - 17px);
+    font-size: 30px;
+    line-height: 40px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    width: 531px;
+    height: 47px;
+}
+.warehousing-storage-container {
+    position: absolute;
+    top: 1631px;
+    left: calc(50% - 526px);
+    font-size: 32px;
+    line-height: 40px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    width: 616px;
+    height: 47px;
+}
+.end-to-end-services-designed {
+    position: absolute;
+    top: 672px;
+    left: calc(50% - 560px);
+    line-height: 40.79px;
+    text-align: center;
+    display: inline-block;
+    width: 1109px;
+}
+.nipo-agro-logo4x-2 {
+    position: absolute;
+    top: 60px;
+    left: 100px;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
