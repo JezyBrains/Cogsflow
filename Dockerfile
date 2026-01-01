@@ -1,7 +1,7 @@
-# Use official PHP image with Apache
-FROM php:8.1-apache
+# Use official PHP-FPM image
+FROM php:8.1-fpm
 
-# Install system dependencies
+# Install system dependencies and Nginx
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,32 +12,55 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libzip-dev \
     default-mysql-client \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl
-
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite headers
+    nginx \
+    supervisor \
+    && docker-php-ext-install pdo_mysql mysqli mbstring exif pcntl bcmath gd zip intl \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /app
 
 # Copy application files
-COPY . /var/www/html
-
-# Copy Apache configuration
-COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
+COPY . /app
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/sites-available/default
+
+# Create supervisor config
+RUN echo "[supervisord]\n\
+nodaemon=true\n\
+\n\
+[program:php-fpm]\n\
+command=/usr/local/sbin/php-fpm\n\
+autostart=true\n\
+autorestart=true\n\
+stdout_logfile=/dev/stdout\n\
+stdout_logfile_maxbytes=0\n\
+stderr_logfile=/dev/stderr\n\
+stderr_logfile_maxbytes=0\n\
+\n\
+[program:nginx]\n\
+command=/usr/sbin/nginx -g 'daemon off;'\n\
+autostart=true\n\
+autorestart=true\n\
+stdout_logfile=/dev/stdout\n\
+stdout_logfile_maxbytes=0\n\
+stderr_logfile=/dev/stderr\n\
+stderr_logfile_maxbytes=0" > /etc/supervisor/conf.d/supervisord.conf
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/writable
+RUN chown -R www-data:www-data /app \
+    && chmod -R 755 /app/writable \
+    && chmod -R 755 /app/public
 
 # Expose port 80
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Start supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
