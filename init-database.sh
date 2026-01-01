@@ -3,15 +3,13 @@
 # Database Initialization Script for CogsFlow
 # This script runs migrations and seeds the database on first deployment
 
-set -e
-
 echo "=========================================="
 echo "CogsFlow Database Initialization"
 echo "=========================================="
 
 # Wait for database to be ready
 echo "Waiting for database connection..."
-max_attempts=30
+max_attempts=60
 attempt=0
 
 while [ $attempt -lt $max_attempts ]; do
@@ -21,12 +19,13 @@ while [ $attempt -lt $max_attempts ]; do
     fi
     attempt=$((attempt + 1))
     echo "Waiting for database... (attempt $attempt/$max_attempts)"
-    sleep 2
+    sleep 3
 done
 
 if [ $attempt -eq $max_attempts ]; then
     echo "✗ Failed to connect to database after $max_attempts attempts"
-    exit 1
+    echo "Application will continue running, but database may not be initialized"
+    exit 0
 fi
 
 # Check if database is already initialized
