@@ -33,6 +33,11 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction
 # Copy Nginx configuration
 COPY nginx.conf /etc/nginx/sites-available/default
 
+# Copy initialization scripts
+COPY init-database.sh /app/init-database.sh
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/init-database.sh /app/docker-entrypoint.sh
+
 # Create supervisor config
 RUN echo "[supervisord]\n\
 nodaemon=true\n\
@@ -63,5 +68,5 @@ RUN chown -R www-data:www-data /app \
 # Expose port 80
 EXPOSE 80
 
-# Start supervisor
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Use custom entrypoint for initialization
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
