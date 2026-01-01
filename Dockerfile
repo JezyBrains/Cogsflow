@@ -43,7 +43,8 @@ COPY setup-database-now.sh /app/setup-database-now.sh
 COPY check-db-config.sh /app/check-db-config.sh
 COPY test-db-connection.sh /app/test-db-connection.sh
 COPY force-init-db.sh /app/force-init-db.sh
-RUN chmod +x /app/init-database.sh /app/docker-entrypoint.sh /app/setup-database-now.sh /app/check-db-config.sh /app/test-db-connection.sh /app/force-init-db.sh
+COPY simple-db-init.sh /app/simple-db-init.sh
+RUN chmod +x /app/init-database.sh /app/docker-entrypoint.sh /app/setup-database-now.sh /app/check-db-config.sh /app/test-db-connection.sh /app/force-init-db.sh /app/simple-db-init.sh
 
 # Create supervisor config
 RUN echo "[supervisord]\n\
