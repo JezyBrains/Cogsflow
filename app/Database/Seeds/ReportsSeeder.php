@@ -74,13 +74,25 @@ class ReportsSeeder extends Seeder
 
         foreach ($reports as $report) {
             // Check if report exists
-            $existing = $this->db->table('reports')
-                ->where('type', $report['type'])
-                ->get()
-                ->getRow();
+            try {
+                $query = $this->db->table('reports')
+                    ->where('type', $report['type'])
+                    ->get();
+                
+                if ($query === false) {
+                    // Table doesn't exist yet, skip
+                    continue;
+                }
+                
+                $existing = $query->getRow();
 
-            if (!$existing) {
-                $this->db->table('reports')->insert($report);
+                if (!$existing) {
+                    $this->db->table('reports')->insert($report);
+                }
+            } catch (\Exception $e) {
+                // Skip if there's an error
+                log_message('debug', 'Report seeding skipped for ' . $report['type'] . ': ' . $e->getMessage());
+                continue;
             }
         }
         
