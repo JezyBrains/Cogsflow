@@ -37,8 +37,25 @@ class AuthController extends BaseController
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
-        $db = \Config\Database::connect();
-        $user = $db->table('users')->where('username', $username)->get()->getRow();
+        try {
+            $db = \Config\Database::connect();
+            $query = $db->table('users')->where('username', $username)->get();
+            
+            if ($query === false) {
+                throw new \Exception('Database tables not initialized yet');
+            }
+            
+            $user = $query->getRow();
+        } catch (\Exception $e) {
+            // Database not ready yet
+            if ($this->request->isAJAX()) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Database is being initialized. Please wait a moment and try again.'
+                ]);
+            }
+            return redirect()->back()->with('error', 'Database is being initialized. Please wait a moment and try again.');
+        }
 
         if ($user && password_verify($password, $user->password_hash)) {
             // Set session data
