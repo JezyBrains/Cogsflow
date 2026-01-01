@@ -40,7 +40,9 @@ COPY nginx.conf /etc/nginx/sites-available/default
 COPY init-database.sh /app/init-database.sh
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 COPY setup-database-now.sh /app/setup-database-now.sh
-RUN chmod +x /app/init-database.sh /app/docker-entrypoint.sh /app/setup-database-now.sh
+COPY check-db-config.sh /app/check-db-config.sh
+COPY test-db-connection.sh /app/test-db-connection.sh
+RUN chmod +x /app/init-database.sh /app/docker-entrypoint.sh /app/setup-database-now.sh /app/check-db-config.sh /app/test-db-connection.sh
 
 # Create supervisor config
 RUN echo "[supervisord]\n\
