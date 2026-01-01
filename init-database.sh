@@ -13,7 +13,7 @@ max_attempts=60
 attempt=0
 
 while [ $attempt -lt $max_attempts ]; do
-    if php spark db:table users > /dev/null 2>&1; then
+    if php -r "try { \$db = \Config\Database::connect(); \$db->query('SELECT 1'); echo 'OK'; } catch (Exception \$e) { exit(1); }" 2>/dev/null | grep -q "OK"; then
         echo "✓ Database connection established"
         break
     fi
@@ -28,15 +28,14 @@ if [ $attempt -eq $max_attempts ]; then
     exit 0
 fi
 
-# Check if database is already initialized
+# Check if database is already initialized by checking for users table
 echo ""
 echo "Checking if database is already initialized..."
-if php spark db:table users > /dev/null 2>&1; then
-    table_count=$(php spark db:table users 2>&1 | grep -c "users" || true)
-    if [ "$table_count" -gt 0 ]; then
-        echo "✓ Database tables already exist - skipping initialization"
-        exit 0
-    fi
+table_exists=$(php -r "try { \$db = \Config\Database::connect(); \$result = \$db->query('SHOW TABLES LIKE \"users\"'); echo \$result->getNumRows(); } catch (Exception \$e) { echo '0'; }" 2>/dev/null)
+
+if [ "$table_exists" -gt 0 ]; then
+    echo "✓ Database tables already exist - skipping initialization"
+    exit 0
 fi
 
 echo ""
