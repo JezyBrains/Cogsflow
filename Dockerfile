@@ -39,7 +39,8 @@ COPY nginx.conf /etc/nginx/sites-available/default
 # Copy initialization scripts
 COPY init-database.sh /app/init-database.sh
 COPY docker-entrypoint.sh /app/docker-entrypoint.sh
-RUN chmod +x /app/init-database.sh /app/docker-entrypoint.sh
+COPY setup-database-now.sh /app/setup-database-now.sh
+RUN chmod +x /app/init-database.sh /app/docker-entrypoint.sh /app/setup-database-now.sh
 
 # Create supervisor config
 RUN echo "[supervisord]\n\

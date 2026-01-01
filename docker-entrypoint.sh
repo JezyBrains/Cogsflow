@@ -5,24 +5,22 @@
 
 echo "Starting CogsFlow Application..."
 
-# Start services first (non-blocking)
-echo "Starting PHP-FPM and Nginx..."
-/usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf &
-SUPERVISOR_PID=$!
-
-# Wait a moment for services to start
-sleep 3
-
-# Set proper permissions
+# Set proper permissions first
 echo "Setting file permissions..."
 chown -R www-data:www-data /app/writable /app/public/uploads 2>/dev/null || true
-chmod -R 755 /app/writable /app/public 2>/dev/null || true
+chmod -R 777 /app/writable /app/public 2>/dev/null || true
 
-# Run database initialization in background (non-blocking)
+# Run database initialization BEFORE starting services (blocking)
 if [ -f /app/init-database.sh ]; then
-    echo "Running database initialization in background..."
-    bash /app/init-database.sh &
+    echo "Running database initialization (this may take a moment)..."
+    bash /app/init-database.sh
+    if [ $? -eq 0 ]; then
+        echo "✓ Database initialization completed"
+    else
+        echo "⚠ Database initialization had issues, but continuing..."
+    fi
 fi
 
-# Keep container running by waiting for supervisor
-wait $SUPERVISOR_PID
+# Now start services after database is ready
+echo "Starting PHP-FPM and Nginx..."
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
