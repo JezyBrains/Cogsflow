@@ -125,8 +125,8 @@ class EnhanceBagTrackingSystem extends Migration
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('dispatch_id', 'dispatches', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('batch_bag_id', 'batch_bags', 'id', 'CASCADE', 'CASCADE');
-        $this->forge->addIndex(['bag_id']);
-        $this->forge->addIndex(['dispatch_id', 'batch_bag_id']);
+        $this->forge->addKey(['bag_id']);
+        $this->forge->addKey(['dispatch_id', 'batch_bag_id']);
         $this->forge->createTable('bag_inspections');
 
         // Create bag_discrepancies table for tracking issues
