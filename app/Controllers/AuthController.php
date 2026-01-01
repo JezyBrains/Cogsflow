@@ -37,8 +37,21 @@ class AuthController extends BaseController
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
 
-        $db = \Config\Database::connect();
-        $user = $db->table('users')->where('username', $username)->get()->getRow();
+        try {
+            $db = \Config\Database::connect();
+            $builder = $db->table('users');
+            $query = $builder->where('username', $username)->get();
+            
+            if ($query === false) {
+                log_message('error', 'Database query failed: ' . $db->error());
+                return redirect()->back()->with('error', 'Database error. Please try again.');
+            }
+            
+            $user = $query->getRow();
+        } catch (\Exception $e) {
+            log_message('error', 'Login error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred. Please try again.');
+        }
 
         if ($user && password_verify($password, $user->password_hash)) {
             // Set session data
