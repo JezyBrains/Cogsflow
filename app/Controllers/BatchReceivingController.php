@@ -52,30 +52,40 @@ class BatchReceivingController extends BaseController
         // Get dispatches that have arrived and need inspection
         // STRICT WORKFLOW: Only show dispatches with status 'arrived' that haven't been inspected yet
         // This enforces the proper workflow: pending → in_transit → arrived → (inspection) → delivered
-        $arriveddispatches = $this->dispatchModel
-            ->select('dispatches.*, batches.batch_number, batches.grain_type, batches.supplier_id,
-                     batches.total_bags, batches.total_weight_kg, batches.total_weight_mt, 
-                     batches.average_moisture, suppliers.name as supplier_name,
-                     purchase_orders.po_number')
-            ->join('batches', 'batches.id = dispatches.batch_id')
-            ->join('suppliers', 'suppliers.id = batches.supplier_id', 'left')
-            ->join('purchase_orders', 'purchase_orders.id = batches.purchase_order_id', 'left')
-            ->where('dispatches.status', 'arrived')
-            ->where('dispatches.received_by IS NULL')
-            ->where('dispatches.inspection_date IS NULL')
-            ->orderBy('dispatches.actual_arrival', 'ASC')
-            ->findAll();
+        try {
+            $arriveddispatches = $this->dispatchModel
+                ->select('dispatches.*, batches.batch_number, batches.grain_type, batches.supplier_id,
+                         batches.total_bags, batches.total_weight_kg, 
+                         batches.average_moisture, suppliers.name as supplier_name,
+                         purchase_orders.po_number')
+                ->join('batches', 'batches.id = dispatches.batch_id')
+                ->join('suppliers', 'suppliers.id = batches.supplier_id', 'left')
+                ->join('purchase_orders', 'purchase_orders.id = batches.purchase_order_id', 'left')
+                ->where('dispatches.status', 'arrived')
+                ->where('dispatches.received_by IS NULL')
+                ->where('dispatches.inspection_date IS NULL')
+                ->orderBy('dispatches.actual_arrival', 'ASC')
+                ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'BatchReceivingController::index() - Error fetching arrived dispatches: ' . $e->getMessage());
+            $arriveddispatches = [];
+        }
 
         // Get recently completed inspections by current user
-        $recentInspections = $this->dispatchModel
-            ->select('dispatches.*, batches.batch_number, batches.grain_type')
-            ->join('batches', 'batches.id = dispatches.batch_id')
-            ->where('dispatches.received_by', $currentUser)
-            ->where('dispatches.status', 'delivered')
-            ->where('dispatches.inspection_date IS NOT NULL')  // Only properly inspected
-            ->orderBy('dispatches.inspection_date', 'DESC')
-            ->limit(10)
-            ->findAll();
+        try {
+            $recentInspections = $this->dispatchModel
+                ->select('dispatches.*, batches.batch_number, batches.grain_type')
+                ->join('batches', 'batches.id = dispatches.batch_id')
+                ->where('dispatches.received_by', $currentUser)
+                ->where('dispatches.status', 'delivered')
+                ->where('dispatches.inspection_date IS NOT NULL')  // Only properly inspected
+                ->orderBy('dispatches.inspection_date', 'DESC')
+                ->limit(10)
+                ->findAll();
+        } catch (\Exception $e) {
+            log_message('error', 'BatchReceivingController::index() - Error fetching recent inspections: ' . $e->getMessage());
+            $recentInspections = [];
+        }
 
         // Get pending inspections statistics
         $stats = [
