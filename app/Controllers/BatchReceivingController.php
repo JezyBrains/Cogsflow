@@ -135,7 +135,7 @@ class BatchReceivingController extends BaseController
             // Step 2: Get dispatch data
             $dispatch = $this->dispatchModel
                 ->select('dispatches.*, batches.batch_number, batches.grain_type, batches.supplier_id,
-                         batches.total_bags, batches.total_weight_kg, batches.total_weight_mt, 
+                         batches.total_bags, batches.total_weight_kg, 
                          batches.average_moisture, suppliers.name as supplier_name,
                          purchase_orders.po_number')
                 ->join('batches', 'batches.id = dispatches.batch_id')

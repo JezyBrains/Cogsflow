@@ -16,7 +16,7 @@ class PurchaseOrderController extends BaseController
             
             // Get purchase orders with supplier information and transferred quantities
             $builder = $purchaseOrderModel->db->table('purchase_orders po');
-            $builder->select('po.*, s.name as supplier_name, s.contact_person, s.phone, COALESCE(SUM(b.total_weight_mt), 0) as transferred_quantity_mt');
+            $builder->select('po.*, s.name as supplier_name, s.contact_person, s.phone, COALESCE(SUM(b.total_weight_kg), 0) as transferred_quantity_kg');
             $builder->join('suppliers s', 's.id = po.supplier_id', 'left');
             $builder->join('batches b', 'b.purchase_order_id = po.id', 'left');
             $builder->groupBy('po.id');
@@ -178,10 +178,10 @@ class PurchaseOrderController extends BaseController
         // Calculate transferred quantity from batches and get batches list
         $batchModel = new \App\Models\BatchModel();
         $transferredQuery = $batchModel->db->table('batches');
-        $transferredQuery->selectSum('total_weight_mt', 'transferred_quantity_mt');
+        $transferredQuery->selectSum('total_weight_kg', 'transferred_quantity_kg');
         $transferredQuery->where('purchase_order_id', $id);
         $transferredResult = $transferredQuery->get()->getRowArray();
-        $transferredQuantity = $transferredResult['transferred_quantity_mt'] ?? 0;
+        $transferredQuantity = ($transferredResult['transferred_quantity_kg'] ?? 0) / 1000;
         
         // Get all batches for this purchase order
         $batchesQuery = $batchModel->db->table('batches b');
@@ -562,7 +562,7 @@ class PurchaseOrderController extends BaseController
             // Calculate total transferred quantity
             $totalTransferred = 0;
             foreach ($batches as $batch) {
-                $totalTransferred += $batch['total_weight_mt'];
+                $totalTransferred += $batch['total_weight_kg'] / 1000;
             }
             
             return $this->response->setJSON([

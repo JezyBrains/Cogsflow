@@ -135,7 +135,6 @@ class BatchController extends BaseController
                 'grain_type' => $this->request->getPost('grain_type'),
                 'total_bags' => $bagCount,
                 'total_weight_kg' => $totalWeight,
-                'total_weight_mt' => $totalWeightMT,
                 'average_moisture' => round($averageMoisture, 2),
                 'quality_grade' => $this->determineQualityGrade($averageMoisture),
                 'status' => 'pending',
@@ -193,7 +192,7 @@ class BatchController extends BaseController
                     'created',
                     $session->get('username') ?? 'System',
                     [
-                        'total_weight_mt' => $batchData['total_weight_mt'],
+                        'total_weight_kg' => $batchData['total_weight_kg'],
                         'total_bags' => $bagCount,
                         'grain_type' => $batchData['grain_type'],
                         'quality_grade' => $batchData['quality_grade'],
@@ -213,7 +212,7 @@ class BatchController extends BaseController
             // Send notification about new batch
             helper('notification');
             sendBatchNotification($batchId, $batchData['batch_number'], 'created', [
-                'total_weight' => $batchData['total_weight_mt'],
+                'total_weight' => $batchData['total_weight_kg'] / 1000,
                 'grain_type' => $batchData['grain_type'],
                 'quality_grade' => $batchData['quality_grade'],
                 'po_number' => $po['po_number']
@@ -321,7 +320,7 @@ class BatchController extends BaseController
                 'approved',
                 $session->get('username') ?? 'System',
                 [
-                    'total_weight_mt' => $batch['total_weight_mt'],
+                    'total_weight_kg' => $batch['total_weight_kg'],
                     'total_bags' => $batch['total_bags'],
                     'grain_type' => $batch['grain_type']
                 ],
