@@ -53,10 +53,22 @@ class DashboardController extends BaseController
     {
         // Get all purchase orders with transferred quantities
         $builder = $purchaseOrderModel->db->table('purchase_orders po');
-        $builder->select('po.*, COALESCE(SUM(b.total_weight_mt), 0) as transferred_quantity_mt');
+        $builder->select('po.*, COALESCE(SUM(b.total_weight_kg), 0) as transferred_quantity_kg');
         $builder->join('batches b', 'b.purchase_order_id = po.id', 'left');
         $builder->groupBy('po.id');
-        $purchaseOrders = $builder->get()->getResultArray();
+        $query = $builder->get();
+        
+        if ($query === false) {
+            return [
+                'total_purchase_orders' => 0,
+                'pending_orders' => 0,
+                'transferring_orders' => 0,
+                'completed_orders' => 0,
+                'total_value' => 0
+            ];
+        }
+        
+        $purchaseOrders = $query->getResultArray();
         
         $stats = [
             'total_purchase_orders' => count($purchaseOrders),
@@ -67,7 +79,7 @@ class DashboardController extends BaseController
         ];
         
         foreach ($purchaseOrders as $po) {
-            $transferredQty = (float)$po['transferred_quantity_mt'];
+            $transferredQty = (float)$po['transferred_quantity_kg'] / 1000; // Convert kg to MT
             $totalQty = (float)$po['quantity_mt'];
             $stats['total_value'] += (float)$po['total_amount'];
             
