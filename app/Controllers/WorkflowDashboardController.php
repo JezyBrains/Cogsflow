@@ -285,7 +285,7 @@ class WorkflowDashboardController extends BaseController
     private function getBatchTrends($days)
     {
         $builder = $this->batchModel->db->table('batches');
-        $builder->select('DATE(created_at) as date, COUNT(*) as count, SUM(total_weight_mt) as total_weight, status');
+        $builder->select('DATE(created_at) as date, COUNT(*) as count, SUM(total_weight_kg) as total_weight, status');
         $builder->where('created_at >=', date('Y-m-d', strtotime("-{$days} days")));
         $builder->groupBy(['DATE(created_at)', 'status']);
         $builder->orderBy('date', 'ASC');
@@ -409,7 +409,7 @@ class WorkflowDashboardController extends BaseController
             $data['summary']['batches']['pending_batches'],
             $data['summary']['batches']['approved_batches'],
             $data['summary']['batches']['delivered_batches'],
-            number_format($data['summary']['batches']['total_weight_mt'], 3)
+            number_format($data['summary']['batches']['total_weight_mt'] ?? 0, 3)
         ]);
         fputcsv($output, []);
         

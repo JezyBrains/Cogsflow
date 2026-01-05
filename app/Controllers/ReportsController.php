@@ -55,14 +55,14 @@ class ReportsController extends BaseController
             
             // Calculate current stock from available batches
             $currentStock = $this->batchModel
-                ->selectSum('total_weight_mt')
+                ->selectSum('total_weight_kg')
                 ->where('status', 'available')
                 ->first();
             
             $stats = [
                 'total_batches' => $totalBatches,
                 'active_dispatches' => $activeDispatches,
-                'current_stock' => number_format($currentStock['total_weight_mt'] ?? 0, 2),
+                'current_stock' => number_format(($currentStock['total_weight_kg'] ?? 0) / 1000, 2),
                 'monthly_revenue' => number_format($this->calculateMonthlyRevenue(), 2)
             ];
 

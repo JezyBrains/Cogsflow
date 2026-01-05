@@ -488,14 +488,15 @@ class ReportController extends BaseController
             
             // Get current stock (sum of all batch quantities minus dispatched quantities)
             $totalIncoming = $db->table('batches')
-                               ->selectSum('total_weight_mt')
+                               ->selectSum('total_weight_kg')
                                ->get()
                                ->getRow()
-                               ->total_weight_mt ?? 0;
+                               ->total_weight_kg ?? 0;
+            $totalIncoming = $totalIncoming / 1000; // Convert to MT
             
             // Get total outgoing (sum of dispatched batch weights)
             $totalOutgoing = $db->table('dispatches d')
-                               ->select('SUM(b.total_weight_mt) as total_dispatched')
+                               ->select('SUM(b.total_weight_kg) as total_dispatched')
                                ->join('batches b', 'd.batch_id = b.id')
                                ->where('d.status !=', 'cancelled')
                                ->get()
