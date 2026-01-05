@@ -120,7 +120,7 @@ class DispatchModel extends Model
      */
     public function getDispatchesWithBatchInfo()
     {
-        return $this->select('dispatches.*, batches.batch_number, batches.grain_type, batches.total_weight_mt, suppliers.name as supplier_name')
+        return $this->select('dispatches.*, batches.batch_number, batches.grain_type, batches.total_weight_kg, suppliers.name as supplier_name')
                     ->join('batches', 'batches.id = dispatches.batch_id', 'left')
                     ->join('suppliers', 'suppliers.id = batches.supplier_id', 'left')
                     ->orderBy('dispatches.created_at', 'DESC')
@@ -135,7 +135,7 @@ class DispatchModel extends Model
      */
     public function getDispatchWithBatchInfo($id)
     {
-        return $this->select('dispatches.*, batches.batch_number, batches.grain_type, batches.total_weight_mt, batches.total_bags, suppliers.name as supplier_name, suppliers.contact_person, suppliers.phone')
+        return $this->select('dispatches.*, batches.batch_number, batches.grain_type, batches.total_weight_kg, batches.total_bags, suppliers.name as supplier_name, suppliers.contact_person, suppliers.phone')
                     ->join('batches', 'batches.id = dispatches.batch_id', 'left')
                     ->join('suppliers', 'suppliers.id = batches.supplier_id', 'left')
                     ->where('dispatches.id', $id)
@@ -150,7 +150,7 @@ class DispatchModel extends Model
     public function getAvailableBatches()
     {
         $batchModel = new \App\Models\BatchModel();
-        return $batchModel->select('batches.id, batches.batch_number, batches.grain_type, batches.total_weight_mt, suppliers.name as supplier_name')
+        return $batchModel->select('batches.id, batches.batch_number, batches.grain_type, batches.total_weight_kg, suppliers.name as supplier_name')
                          ->join('suppliers', 'suppliers.id = batches.supplier_id', 'left')
                          ->where('batches.status', 'approved')
                          ->whereNotIn('batches.id', function($builder) {
@@ -179,12 +179,17 @@ class DispatchModel extends Model
 
         // Calculate total weight dispatched using fresh query
         $builder = $this->db->table('dispatches d');
-        $builder->select('SUM(b.total_weight_mt) as total_weight');
+        $builder->select('SUM(b.total_weight_kg) as total_weight');
         $builder->join('batches b', 'b.id = d.batch_id', 'left');
         $builder->where('d.status !=', 'cancelled');
-        $result = $builder->get()->getRowArray();
+        $query = $builder->get();
         
-        $stats['total_weight_dispatched'] = $result['total_weight'] ?? 0;
+        if ($query === false) {
+            $stats['total_weight_dispatched'] = 0;
+        } else {
+            $result = $query->getRowArray();
+            $stats['total_weight_dispatched'] = ($result['total_weight'] ?? 0) / 1000; // Convert kg to MT
+        }
 
         return $stats;
     }
@@ -194,7 +199,7 @@ class DispatchModel extends Model
      */
     public function getDispatchesAwaitingInspection()
     {
-        return $this->select('dispatches.*, batches.batch_number, batches.grain_type, batches.total_weight_mt, batches.total_bags, suppliers.name as supplier_name')
+        return $this->select('dispatches.*, batches.batch_number, batches.grain_type, batches.total_weight_kg, batches.total_bags, suppliers.name as supplier_name')
                     ->join('batches', 'batches.id = dispatches.batch_id', 'left')
                     ->join('suppliers', 'suppliers.id = batches.supplier_id', 'left')
                     ->where('dispatches.status', 'arrived')
@@ -213,7 +218,7 @@ class DispatchModel extends Model
         }
 
         $expectedBags = $dispatch['total_bags'];
-        $expectedWeightKg = $dispatch['total_weight_mt'] * 1000;
+        $expectedWeightKg = $dispatch['total_weight_kg'];
         $actualWeightMt = round($actualWeightKg / 1000, 3);
 
         $bagDiscrepancy = $actualBags - $expectedBags;
