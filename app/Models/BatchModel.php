@@ -293,9 +293,15 @@ class BatchModel extends Model
 
         // Get total weight using fresh query
         $builder = $this->db->table('batches');
-        $builder->selectSum('total_weight_mt', 'total_weight');
-        $result = $builder->get()->getRowArray();
-        $stats['total_weight_mt'] = $result['total_weight'] ?? 0;
+        $builder->selectSum('total_weight_kg', 'total_weight');
+        $query = $builder->get();
+        
+        if ($query === false) {
+            $stats['total_weight_mt'] = 0;
+        } else {
+            $result = $query->getRowArray();
+            $stats['total_weight_mt'] = ($result['total_weight'] ?? 0) / 1000; // Convert kg to MT
+        }
 
         return $stats;
     }
