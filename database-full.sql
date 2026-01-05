@@ -435,6 +435,33 @@ CREATE TABLE IF NOT EXISTS `expense_categories` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `expenses` (
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `expense_number` VARCHAR(50) NOT NULL UNIQUE,
+    `category` VARCHAR(100) NOT NULL,
+    `description` TEXT NOT NULL,
+    `amount` DECIMAL(15,2) NOT NULL,
+    `expense_date` DATE NOT NULL,
+    `reference_type` VARCHAR(50) NULL,
+    `reference_id` INT(11) UNSIGNED NULL,
+    `recorded_by` INT(11) UNSIGNED NULL,
+    `approved_by` INT(11) UNSIGNED NULL,
+    `approved_at` DATETIME NULL,
+    `status` ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    `payment_method` VARCHAR(50) NULL,
+    `receipt_number` VARCHAR(100) NULL,
+    `notes` TEXT NULL,
+    `created_at` DATETIME NULL,
+    `updated_at` DATETIME NULL,
+    PRIMARY KEY (`id`),
+    KEY `idx_expense_number` (`expense_number`),
+    KEY `idx_category` (`category`),
+    KEY `idx_status` (`status`),
+    KEY `idx_expense_date` (`expense_date`),
+    FOREIGN KEY (`recorded_by`) REFERENCES `users`(`id`) ON DELETE SET NULL,
+    FOREIGN KEY (`approved_by`) REFERENCES `users`(`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- ============================================
 -- NOTIFICATIONS
 -- ============================================
