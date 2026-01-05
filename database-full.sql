@@ -462,6 +462,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
 CREATE TABLE IF NOT EXISTS `notification_types` (
     `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(50) NOT NULL UNIQUE,
+    `display_name` VARCHAR(100) NOT NULL,
     `description` TEXT NULL,
     `default_enabled` BOOLEAN DEFAULT TRUE,
     `role_specific` JSON NULL,
@@ -584,13 +585,13 @@ INSERT INTO `users` (`username`, `email`, `password_hash`, `role`, `is_active`, 
 ON DUPLICATE KEY UPDATE `email` = VALUES(`email`);
 
 -- Insert notification types
-INSERT INTO `notification_types` (`name`, `description`, `default_enabled`, `created_at`) VALUES
-('batch_created', 'New batch created', 1, NOW()),
-('batch_approved', 'Batch approved', 1, NOW()),
-('dispatch_created', 'New dispatch created', 1, NOW()),
-('dispatch_arrived', 'Dispatch arrived at destination', 1, NOW()),
-('inventory_low', 'Inventory below threshold', 1, NOW()),
-('system_alert', 'System alerts and warnings', 1, NOW())
+INSERT INTO `notification_types` (`name`, `display_name`, `description`, `default_enabled`, `created_at`) VALUES
+('batch_created', 'Batch Created', 'New batch created', 1, NOW()),
+('batch_approved', 'Batch Approved', 'Batch approved', 1, NOW()),
+('dispatch_created', 'Dispatch Created', 'New dispatch created', 1, NOW()),
+('dispatch_arrived', 'Dispatch Arrived', 'Dispatch arrived at destination', 1, NOW()),
+('inventory_low', 'Low Inventory', 'Inventory below threshold', 1, NOW()),
+('system_alert', 'System Alert', 'System alerts and warnings', 1, NOW())
 ON DUPLICATE KEY UPDATE `description` = VALUES(`description`);
 
 -- Insert basic settings
