@@ -37,6 +37,9 @@ class PurchaseOrderController extends BaseController
                 $po['dynamic_status'] = $this->calculateDynamicStatus($po);
             }
             
+            log_message('info', 'Purchase Order Index: Passing ' . count($purchaseOrders) . ' POs to view');
+            log_message('debug', 'Purchase Order Data: ' . json_encode($purchaseOrders));
+            
             $data = [
                 'purchaseOrders' => $purchaseOrders ?? []
             ];
@@ -60,7 +63,8 @@ class PurchaseOrderController extends BaseController
      */
     private function calculateDynamicStatus($po)
     {
-        $transferredQty = (float)$po['transferred_quantity_mt'];
+        // Convert kg to MT for comparison
+        $transferredQty = ((float)($po['transferred_quantity_kg'] ?? 0)) / 1000;
         $totalQty = (float)$po['quantity_mt'];
         
         // If no transfers yet, return original status or pending
