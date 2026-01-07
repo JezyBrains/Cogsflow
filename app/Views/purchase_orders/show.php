@@ -38,7 +38,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <strong>Expected Delivery:</strong><br>
-                        <?= date('M d, Y', strtotime($purchaseOrder['expected_delivery_date'])) ?>
+                        <?= !empty($purchaseOrder['expected_delivery_date']) ? date('M d, Y', strtotime($purchaseOrder['expected_delivery_date'])) : '<span class="text-muted">Not set</span>' ?>
                     </div>
                     <div class="col-md-6">
                         <strong>Grain Type:</strong><br>
@@ -48,7 +48,7 @@
                 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <strong>Quantity:</strong><br>
+                        <strong>Ordered Quantity:</strong><br>
                         <?= number_format($purchaseOrder['quantity_mt'], 2) ?> MT
                     </div>
                     <div class="col-md-6">
@@ -59,12 +59,12 @@
                 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <strong>Delivered Quantity:</strong><br>
-                        <?= number_format($purchaseOrder['delivered_quantity_mt'], 2) ?> MT
+                        <strong>Transferred Quantity:</strong><br>
+                        <span class="text-info"><?= number_format($purchaseOrder['transferred_quantity_mt'] ?? 0, 2) ?> MT</span>
                     </div>
                     <div class="col-md-6">
-                        <strong>Transferred Quantity:</strong><br>
-                        <span class="text-info"><?= number_format($purchaseOrder['transferred_quantity_mt'], 2) ?> MT</span>
+                        <strong>Remaining:</strong><br>
+                        <span class="text-warning"><?= number_format($purchaseOrder['quantity_mt'] - ($purchaseOrder['transferred_quantity_mt'] ?? 0), 2) ?> MT</span>
                     </div>
                 </div>
                 
