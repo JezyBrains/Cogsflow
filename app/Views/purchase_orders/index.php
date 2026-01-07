@@ -47,7 +47,7 @@
                                     <?php endif; ?>
                                 </td>
                                 <td><?= date('M d, Y', strtotime($po['order_date'])) ?></td>
-                                <td><?= date('M d, Y', strtotime($po['expected_delivery_date'])) ?></td>
+                                <td><?= !empty($po['expected_delivery_date']) ? date('M d, Y', strtotime($po['expected_delivery_date'])) : '<span class="text-muted">Not set</span>' ?></td>
                                 <td>
                                     <div><strong>Total:</strong> <?= number_format($po['total_amount'], 2) ?></div>
                                     <div class="text-muted small"><?= esc($po['grain_type']) ?> - <?= number_format($po['quantity_mt'], 2) ?> MT</div>
@@ -76,9 +76,12 @@
                                     }
                                     ?>
                                     <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
-                                    <?php if ($po['transferred_quantity_mt'] > 0): ?>
+                                    <?php 
+                                    $transferredMt = ($po['transferred_quantity_kg'] ?? 0) / 1000;
+                                    if ($transferredMt > 0): 
+                                    ?>
                                         <div class="small text-muted mt-1">
-                                            <?= number_format($po['transferred_quantity_mt'], 2) ?> / <?= number_format($po['quantity_mt'], 2) ?> MT
+                                            <?= number_format($transferredMt, 2) ?> / <?= number_format($po['quantity_mt'], 2) ?> MT
                                         </div>
                                     <?php endif; ?>
                                 </td>
