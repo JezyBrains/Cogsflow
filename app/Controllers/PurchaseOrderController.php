@@ -129,6 +129,9 @@ class PurchaseOrderController extends BaseController
         // Save to database
         $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
         
+        $session = session();
+        $userId = $session->get('user_id');
+        
         $purchaseOrderData = [
             'po_number' => $poNumber,
             'supplier_id' => $supplierId,
@@ -139,20 +142,33 @@ class PurchaseOrderController extends BaseController
             'unit_price' => $unitPrice,
             'total_amount' => $total,
             'status' => 'pending',
-            'delivered_quantity_mt' => 0,
-            'remaining_quantity_mt' => $quantity
+            'notes' => $notes,
+            'created_by' => $userId
         ];
 
         try {
             $purchaseOrderId = $purchaseOrderModel->insert($purchaseOrderData);
             
             if ($purchaseOrderId) {
+                // Send notification if helper exists
+                if (function_exists('sendPurchaseOrderNotification')) {
+                    helper('notification');
+                    sendPurchaseOrderNotification($purchaseOrderId, $poNumber, 'created', [
+                        'supplier' => $supplier['name'],
+                        'grain_type' => $grainType,
+                        'quantity_mt' => $quantity,
+                        'total_amount' => $total
+                    ]);
+                }
+                
                 return redirect()->to('/purchase-orders')->with('success', 'Purchase order created successfully! PO Number: ' . $poNumber);
             } else {
-                return redirect()->back()->withInput()->with('error', 'Failed to create purchase order. Please try again.');
+                log_message('error', 'Purchase Order Insert returned false - no ID generated');
+                return redirect()->back()->withInput()->with('error', 'Failed to create purchase order. Please check the form data and try again.');
             }
         } catch (\Exception $e) {
             log_message('error', 'Purchase Order Creation Error: ' . $e->getMessage());
+            log_message('error', 'Stack trace: ' . $e->getTraceAsString());
             return redirect()->back()->withInput()->with('error', 'Database error: ' . $e->getMessage());
         }
     }
