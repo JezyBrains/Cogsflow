@@ -21,7 +21,16 @@ class PurchaseOrderController extends BaseController
             $builder->join('batches b', 'b.purchase_order_id = po.id', 'left');
             $builder->groupBy('po.id');
             $builder->orderBy('po.order_date', 'DESC');
-            $purchaseOrders = $builder->get()->getResultArray();
+            
+            $query = $builder->get();
+            
+            if ($query === false) {
+                log_message('error', 'Purchase Order Index: Query returned false');
+                $purchaseOrders = [];
+            } else {
+                $purchaseOrders = $query->getResultArray();
+                log_message('info', 'Purchase Order Index: Found ' . count($purchaseOrders) . ' purchase orders');
+            }
             
             // Calculate dynamic status for each PO
             foreach ($purchaseOrders as &$po) {
@@ -35,6 +44,7 @@ class PurchaseOrderController extends BaseController
             return view('purchase_orders/index', $data);
         } catch (\Exception $e) {
             log_message('error', 'Purchase Order Index Error: ' . $e->getMessage());
+            log_message('error', 'Stack trace: ' . $e->getTraceAsString());
             
             // Return view with empty data if there's an error
             $data = [
