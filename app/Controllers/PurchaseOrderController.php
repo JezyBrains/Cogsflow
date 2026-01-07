@@ -16,10 +16,10 @@ class PurchaseOrderController extends BaseController
             
             // Get purchase orders with supplier information and transferred quantities
             $builder = $purchaseOrderModel->db->table('purchase_orders po');
-            $builder->select('po.*, s.name as supplier_name, s.contact_person, s.phone, COALESCE(SUM(b.total_weight_kg), 0) as transferred_quantity_kg');
+            $builder->select('po.id, po.po_number, po.supplier_id, po.grain_type, po.quantity_mt, po.unit_price, po.total_amount, po.order_date, po.expected_delivery_date, po.status, po.approved_by, po.approved_at, po.notes, po.created_by, po.created_at, po.updated_at, s.name as supplier_name, s.contact_person, s.phone, COALESCE(SUM(b.total_weight_kg), 0) as transferred_quantity_kg');
             $builder->join('suppliers s', 's.id = po.supplier_id', 'left');
             $builder->join('batches b', 'b.purchase_order_id = po.id', 'left');
-            $builder->groupBy('po.id');
+            $builder->groupBy('po.id, po.po_number, po.supplier_id, po.grain_type, po.quantity_mt, po.unit_price, po.total_amount, po.order_date, po.expected_delivery_date, po.status, po.approved_by, po.approved_at, po.notes, po.created_by, po.created_at, po.updated_at, s.name, s.contact_person, s.phone');
             $builder->orderBy('po.order_date', 'DESC');
             
             $query = $builder->get();
