@@ -457,9 +457,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="dropdown-item po-option" data-id="${po.id}" data-po-number="${po.po_number}" 
                      data-supplier-id="${po.supplier_id}" data-supplier-name="${po.supplier_name}" 
                      data-grain-type="${po.grain_type}" data-quantity="${po.quantity_mt}" 
-                     data-remaining="${po.remaining_quantity_mt}">
+                     data-remaining="${po.remaining_quantity}">
                     <div class="fw-bold">${po.po_number} - ${po.supplier_name}</div>
-                    <small class="text-muted">Grain: ${po.grain_type} | Remaining: ${po.remaining_quantity_mt} <?= $weightUnit ?></small>
+                    <small class="text-muted">Grain: ${po.grain_type} | Remaining: ${parseFloat(po.remaining_quantity).toFixed(2)} <?= $weightUnit ?></small>
                 </div>
             `).join('');
         }
