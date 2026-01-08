@@ -136,7 +136,7 @@
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-muted">Total Weight (MT)</span>
-                        <span class="fw-medium h5 mb-0 text-primary"><?= number_format($batch['total_weight_mt'], 3) ?></span>
+                        <span class="fw-medium h5 mb-0 text-primary"><?= number_format($batch['total_weight_kg'] / 1000, 3) ?></span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-muted">Average Moisture</span>

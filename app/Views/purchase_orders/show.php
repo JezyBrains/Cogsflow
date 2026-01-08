@@ -205,7 +205,7 @@
                                             <?= ucfirst($batch['status']) ?>
                                         </span>
                                     </td>
-                                    <td><?= number_format($batch['total_weight_mt'], 3) ?></td>
+                                    <td><?= number_format($batch['total_weight_kg'] / 1000, 3) ?></td>
                                     <td><?= $batch['total_bags'] ?></td>
                                     <td><?= number_format($batch['average_moisture'], 2) ?>%</td>
                                     <td>
