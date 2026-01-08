@@ -485,23 +485,14 @@ class PurchaseOrderController extends BaseController
         try {
             $purchaseOrderModel = new \App\Models\PurchaseOrderModel();
             
-            // Search purchase orders with supplier information and delivered quantities
+            // Search approved purchase orders with supplier information and transferred quantities
             $builder = $purchaseOrderModel->db->table('purchase_orders po');
-            $builder->select('po.id, po.po_number, po.grain_type, po.quantity_mt, po.delivered_quantity_mt, po.remaining_quantity_mt, po.status, s.name as supplier_name');
+            $builder->select('po.id, po.po_number, po.grain_type, po.quantity_mt, po.status, s.name as supplier_name, COALESCE(SUM(b.total_weight_kg), 0) as transferred_quantity_kg');
             $builder->join('suppliers s', 's.id = po.supplier_id', 'left');
+            $builder->join('batches b', 'b.purchase_order_id = po.id', 'left');
             
-            // Allow multiple statuses for search - include approved, confirmed, pending, transferring, and empty
-            $allowedStatuses = ['approved', 'confirmed', 'pending', 'transferring', ''];
-            $builder->groupStart();
-            foreach ($allowedStatuses as $status) {
-                if ($status === '') {
-                    $builder->orWhere('po.status IS NULL');
-                    $builder->orWhere('po.status', '');
-                } else {
-                    $builder->orWhere('po.status', $status);
-                }
-            }
-            $builder->groupEnd();
+            // Only search approved POs
+            $builder->where('po.status', 'approved');
             
             // Search by PO number or supplier name
             $builder->groupStart();
@@ -509,24 +500,26 @@ class PurchaseOrderController extends BaseController
             $builder->orLike('s.name', $query);
             $builder->groupEnd();
             
+            $builder->groupBy('po.id, po.po_number, po.grain_type, po.quantity_mt, po.status, s.name');
             $builder->orderBy('po.order_date', 'DESC');
-            $builder->limit(20); // Increased limit to account for filtering
+            $builder->limit(20);
             
             $results = $builder->get()->getResultArray();
             
-            // Filter out completed POs - use delivered_quantity_mt from database
+            // Calculate remaining quantity and filter out completed POs
             $filteredResults = [];
             foreach ($results as $po) {
-                $deliveredQty = (float)$po['delivered_quantity_mt'];
+                $transferredMt = ($po['transferred_quantity_kg'] ?? 0) / 1000;
                 $totalQty = (float)$po['quantity_mt'];
-                $remainingQty = (float)$po['remaining_quantity_mt'];
+                $remainingQty = $totalQty - $transferredMt;
                 
-                // Skip if PO is completed (delivered quantity >= total quantity)
-                if ($deliveredQty >= $totalQty || $remainingQty <= 0) {
+                // Skip if PO is fully fulfilled
+                if ($remainingQty <= 0) {
                     continue;
                 }
                 
-                // Use the remaining_quantity_mt from database (updated by inspection process)
+                // Add calculated values
+                $po['transferred_quantity_mt'] = $transferredMt;
                 $po['remaining_quantity_mt'] = $remainingQty;
                 $filteredResults[] = $po;
             }
