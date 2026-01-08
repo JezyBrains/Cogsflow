@@ -11,9 +11,19 @@
         <a href="<?= site_url('purchase-orders') ?>" class="btn btn-secondary me-2">
             <i class="fas fa-arrow-left"></i> Back to List
         </a>
-        <a href="<?= site_url('purchase-orders/' . $purchaseOrder['id'] . '/edit') ?>" class="btn btn-warning">
-            <i class="fas fa-edit"></i> Edit
-        </a>
+        <?php if ($purchaseOrder['status'] === 'pending'): ?>
+            <button type="button" class="btn btn-success me-2" onclick="approvePO(<?= $purchaseOrder['id'] ?>, '<?= esc($purchaseOrder['po_number']) ?>')">
+                <i class="fas fa-check"></i> Approve
+            </button>
+            <button type="button" class="btn btn-danger me-2" onclick="showRejectModal(<?= $purchaseOrder['id'] ?>, '<?= esc($purchaseOrder['po_number']) ?>')">
+                <i class="fas fa-times"></i> Reject
+            </button>
+        <?php endif; ?>
+        <?php if ($purchaseOrder['status'] === 'pending'): ?>
+            <a href="<?= site_url('purchase-orders/' . $purchaseOrder['id'] . '/edit') ?>" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -124,7 +134,30 @@
                 <h6 class="mb-0">Status</h6>
             </div>
             <div class="card-body">
-                <span class="badge bg-warning text-dark">Pending</span>
+                <?php
+                $statusBadge = 'bg-secondary';
+                $statusText = ucfirst($purchaseOrder['status']);
+                switch($purchaseOrder['status']) {
+                    case 'approved':
+                        $statusBadge = 'bg-success';
+                        break;
+                    case 'pending':
+                        $statusBadge = 'bg-warning text-dark';
+                        break;
+                    case 'rejected':
+                        $statusBadge = 'bg-danger';
+                        break;
+                    case 'completed':
+                        $statusBadge = 'bg-primary';
+                        break;
+                }
+                ?>
+                <span class="badge <?= $statusBadge ?>"><?= $statusText ?></span>
+                <?php if (!empty($purchaseOrder['approved_by']) && !empty($purchaseOrder['approved_at'])): ?>
+                    <div class="mt-2 small text-muted">
+                        <?= $purchaseOrder['status'] === 'approved' ? 'Approved' : 'Rejected' ?> on <?= date('M d, Y', strtotime($purchaseOrder['approved_at'])) ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -201,4 +234,61 @@
         </div>
     </div>
 </div>
+
+<!-- Rejection Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">Reject Purchase Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="rejectForm" method="POST">
+                <div class="modal-body">
+                    <p>Are you sure you want to reject <strong id="rejectPONumber"></strong>?</p>
+                    <div class="mb-3">
+                        <label for="rejection_reason" class="form-label">Rejection Reason <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Reject Purchase Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<?= $this->endSection() ?>
+
+<?= $this->section('scripts') ?>
+<script>
+function approvePO(id, poNumber) {
+    if (confirm(`Are you sure you want to approve Purchase Order ${poNumber}?`)) {
+        // Create a form to submit approval request
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `<?= site_url('purchase-orders') ?>/${id}/approve`;
+        
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '<?= csrf_token() ?>';
+        csrfInput.value = '<?= csrf_hash() ?>';
+        form.appendChild(csrfInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function showRejectModal(id, poNumber) {
+    document.getElementById('rejectPONumber').textContent = poNumber;
+    document.getElementById('rejectForm').action = `<?= site_url('purchase-orders') ?>/${id}/reject`;
+    
+    const modal = new bootstrap.Modal(document.getElementById('rejectModal'));
+    modal.show();
+}
+</script>
 <?= $this->endSection() ?>

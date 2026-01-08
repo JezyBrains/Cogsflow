@@ -72,8 +72,8 @@ $routes->group('purchase-orders', function ($routes) {
     $routes->get('(:num)/edit', 'PurchaseOrderController::edit/$1');
     $routes->put('(:num)', 'PurchaseOrderController::update/$1');
     $routes->delete('(:num)', 'PurchaseOrderController::delete/$1');
-    $routes->post('approve/(:num)', 'PurchaseOrderController::approve/$1');
-    $routes->post('reject/(:num)', 'PurchaseOrderController::reject/$1');
+    $routes->post('(:num)/approve', 'PurchaseOrderController::approve/$1');
+    $routes->post('(:num)/reject', 'PurchaseOrderController::reject/$1');
     $routes->get('fulfillment-progress/(:num)', 'PurchaseOrderController::getFulfillmentProgress/$1');
     $routes->get('fulfillment-history/(:num)', 'PurchaseOrderController::getFulfillmentHistory/$1');
     $routes->get('discrepancy-analysis/(:num)', 'PurchaseOrderController::getDiscrepancyAnalysis/$1');
