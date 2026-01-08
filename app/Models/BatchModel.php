@@ -33,7 +33,7 @@ class BatchModel extends Model
         'total_bags' => 'required|integer|greater_than[0]',
         'total_weight_kg' => 'required|decimal|greater_than[0]',
         'average_moisture' => 'required|decimal|greater_than[0]|less_than[100]',
-        'received_date' => 'required|valid_date'
+        'batch_created_date' => 'required|valid_date'
     ];
 
     protected $validationMessages = [
