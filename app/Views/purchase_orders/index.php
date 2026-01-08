@@ -50,7 +50,7 @@
                                 <td><?= !empty($po['expected_delivery_date']) ? date('M d, Y', strtotime($po['expected_delivery_date'])) : '<span class="text-muted">Not set</span>' ?></td>
                                 <td>
                                     <div><strong>Total:</strong> <?= number_format($po['total_amount'], 2) ?></div>
-                                    <div class="text-muted small"><?= esc($po['grain_type']) ?> - <?= number_format($po['quantity_mt'], 2) ?> MT</div>
+                                    <div class="text-muted small"><?= esc($po['grain_type']) ?> - <?= format_weight(denormalize_weight_from_kg($po['quantity_mt'] * 1000), null, 2, true) ?></div>
                                 </td>
                                 <td>
                                     <?php
@@ -77,11 +77,12 @@
                                     ?>
                                     <span class="badge <?= $badgeClass ?>"><?= ucfirst($status) ?></span>
                                     <?php 
-                                    $transferredMt = ($po['transferred_quantity_kg'] ?? 0) / 1000;
-                                    if ($transferredMt > 0): 
+                                    helper('unit');
+                                    $transferredQty = denormalize_weight_from_kg($po['transferred_quantity_kg'] ?? 0);
+                                    if ($transferredQty > 0): 
                                     ?>
                                         <div class="small text-muted mt-1">
-                                            <?= number_format($transferredMt, 2) ?> / <?= number_format($po['quantity_mt'], 2) ?> MT
+                                            <?= format_weight($transferredQty, null, 2, true) ?> / <?= format_weight(denormalize_weight_from_kg($po['quantity_mt'] * 1000), null, 2, true) ?>
                                         </div>
                                     <?php endif; ?>
                                 </td>

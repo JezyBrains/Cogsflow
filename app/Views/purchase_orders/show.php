@@ -59,7 +59,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <strong>Ordered Quantity:</strong><br>
-                        <?= number_format($purchaseOrder['quantity_mt'], 2) ?> MT
+                        <?= format_weight(denormalize_weight_from_kg($purchaseOrder['quantity_mt'] * 1000), null, 2, true) ?>
                     </div>
                     <div class="col-md-6">
                         <strong>Unit Price:</strong><br>
@@ -70,11 +70,16 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <strong>Transferred Quantity:</strong><br>
-                        <span class="text-info"><?= number_format($purchaseOrder['transferred_quantity_mt'] ?? 0, 2) ?> MT</span>
+                        <span class="text-info"><?= format_weight(denormalize_weight_from_kg($purchaseOrder['transferred_quantity_kg'] ?? 0), null, 2, true) ?></span>
                     </div>
                     <div class="col-md-6">
                         <strong>Remaining:</strong><br>
-                        <span class="text-warning"><?= number_format($purchaseOrder['quantity_mt'] - ($purchaseOrder['transferred_quantity_mt'] ?? 0), 2) ?> MT</span>
+                        <?php 
+                        $totalQty = denormalize_weight_from_kg($purchaseOrder['quantity_mt'] * 1000);
+                        $transferredQty = denormalize_weight_from_kg($purchaseOrder['transferred_quantity_kg'] ?? 0);
+                        $remainingQty = $totalQty - $transferredQty;
+                        ?>
+                        <span class="text-warning"><?= format_weight($remainingQty, null, 2, true) ?></span>
                     </div>
                 </div>
                 
@@ -176,7 +181,7 @@
             <div class="card-body">
                 <?php if (!empty($batches)): ?>
                     <div class="mb-3">
-                        <strong>Total Transferred: <?= number_format($purchaseOrder['transferred_quantity_mt'], 2) ?> MT</strong>
+                        <strong>Total Transferred: <?= format_weight(denormalize_weight_from_kg($purchaseOrder['transferred_quantity_kg'] ?? 0), null, 2, true) ?></strong>
                         <span class="text-muted ms-2">(<?= count($batches) ?> batches)</span>
                     </div>
                     
