@@ -129,7 +129,7 @@
                             </tr>
                             <tr>
                                 <td class="fw-bold">Total Weight:</td>
-                                <td><?= number_format($dispatch['total_weight_mt'], 2) ?> MT</td>
+                                <td><?= format_weight(denormalize_weight_from_kg($dispatch['total_weight_kg']), null, 2, true) ?></td>
                             </tr>
                             <tr>
                                 <td class="fw-bold">Total Bags:</td>

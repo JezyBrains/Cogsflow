@@ -56,7 +56,7 @@
                                 <strong>Grain Type:</strong> <?= esc($dispatch['grain_type']) ?>
                             </div>
                             <div class="col-md-3">
-                                <strong>Total Weight:</strong> <?= number_format($dispatch['total_weight_mt'], 2) ?> MT
+                                <strong>Total Weight:</strong> <?= format_weight(denormalize_weight_from_kg($dispatch['total_weight_kg']), null, 2, true) ?>
                             </div>
                             <div class="col-md-3">
                                 <strong>Supplier:</strong> <?= esc($dispatch['supplier_name']) ?>

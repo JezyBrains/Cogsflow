@@ -223,9 +223,8 @@
             const actualWeightKg = parseFloat(actualWeightInput.value) || 0;
             const actualBags = parseInt(actualBagsInput.value) || 0;
             
-            // Calculate MT
-            const actualWeightMt = (actualWeightKg / 1000).toFixed(3);
-            calculatedMtInput.value = actualWeightMt + ' MT';
+            // Display weight in kg
+            calculatedMtInput.value = actualWeightKg.toFixed(2) + ' kg';
             
             // Check for discrepancies
             const bagsDiff = actualBags - expectedBags;

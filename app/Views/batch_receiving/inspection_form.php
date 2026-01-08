@@ -58,7 +58,7 @@
                         <div class="col-md-3">
                             <div class="text-center">
                                 <h6 class="text-muted">Expected Weight</h6>
-                                <h4 class="text-success"><?= number_format($dispatch['total_weight_mt'], 3) ?> MT</h4>
+                                <h4 class="text-success"><?= format_weight(denormalize_weight_from_kg($dispatch['total_weight_kg']), null, 3, true) ?></h4>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -307,7 +307,7 @@
                     <div class="mb-3">
                         <label class="form-label">Expected Weight</label>
                         <div class="form-control-plaintext">
-                            <strong><?= number_format($dispatch['total_weight_mt'], 3) ?> MT</strong>
+                            <strong><?= format_weight(denormalize_weight_from_kg($dispatch['total_weight_kg']), null, 3, true) ?></strong>
                             <small class="text-muted d-block">(<?= number_format($dispatch['total_weight_kg']) ?> kg)</small>
                         </div>
                     </div>
@@ -939,9 +939,8 @@ function updateCalculations() {
         const actualWeightKg = parseFloat($('#actual_weight_kg').val()) || 0;
         const actualBags = parseInt($('#actual_bags').val()) || 0;
         
-        // Calculate MT
-        const actualWeightMt = actualWeightKg / 1000;
-        $('#calculated_weight_mt').val(actualWeightMt.toFixed(3) + ' MT');
+        // Display weight in configured unit
+        $('#calculated_weight_mt').val(actualWeightKg.toFixed(2) + ' kg');
         
         // Calculate differences
         const weightDiff = actualWeightKg - expectedWeightKg;

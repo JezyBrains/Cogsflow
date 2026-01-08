@@ -25,7 +25,7 @@
             </div>
             <div class="d-flex gap-2">
                 <span class="badge bg-info"><?= isset($dispatch['grain_type']) ? esc($dispatch['grain_type']) : 'N/A' ?></span>
-                <span class="badge bg-secondary"><?= isset($dispatch['total_weight_mt']) ? number_format($dispatch['total_weight_mt'], 2) : '0.00' ?> MT</span>
+                <span class="badge bg-secondary"><?= isset($dispatch['total_weight_kg']) ? format_weight(denormalize_weight_from_kg($dispatch['total_weight_kg']), null, 2, true) : '0.00 kg' ?></span>
             </div>
         </div>
     </div>

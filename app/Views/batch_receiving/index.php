@@ -181,7 +181,7 @@
                                             <td>
                                                 <span class="badge bg-info"><?= esc($dispatch['grain_type']) ?></span>
                                             </td>
-                                            <td><?= number_format($dispatch['total_weight_mt'], 3) ?> MT</td>
+                                            <td><?= format_weight(denormalize_weight_from_kg($dispatch['total_weight_kg']), null, 3, true) ?></td>
                                             <td><?= number_format($dispatch['total_bags']) ?></td>
                                             <td>
                                                 <?php if ($dispatch['actual_arrival']): ?>

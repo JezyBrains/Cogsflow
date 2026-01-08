@@ -155,15 +155,17 @@ class PurchaseOrderModel extends Model
             $results = $query->getResultArray();
             
             // Filter out POs that are fully fulfilled
+            helper('unit');
             $availablePOs = [];
             foreach ($results as $po) {
-                $transferredMt = ($po['transferred_quantity_kg'] ?? 0) / 1000;
-                $remainingMt = $po['quantity_mt'] - $transferredMt;
+                $transferredQty = denormalize_weight_from_kg($po['transferred_quantity_kg'] ?? 0);
+                $poTotalQty = denormalize_weight_from_kg($po['quantity_mt'] * 1000);
+                $remainingQty = $poTotalQty - $transferredQty;
                 
                 // Only include POs with remaining quantity
-                if ($remainingMt > 0) {
-                    $po['transferred_quantity_mt'] = $transferredMt;
-                    $po['remaining_quantity_mt'] = $remainingMt;
+                if ($remainingQty > 0) {
+                    $po['transferred_quantity'] = $transferredQty;
+                    $po['remaining_quantity'] = $remainingQty;
                     $availablePOs[] = $po;
                 }
             }

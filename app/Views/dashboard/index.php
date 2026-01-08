@@ -475,7 +475,7 @@
                                         <span class="text-heading"><?= esc($batch['supplier_name'] ?? 'Unknown') ?></span>
                                     </td>
                                     <td>
-                                        <span class="badge bg-label-info"><?= number_format($batch['total_weight_mt'], 2) ?> MT</span>
+                                        <span class="badge bg-label-info"><?= format_weight(denormalize_weight_from_kg($batch['total_weight_kg']), null, 2, true) ?></span>
                                     </td>
                                     <td>
                                         <?php

@@ -397,7 +397,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         const avgMoisture = validBags > 0 ? totalMoisture / validBags : 0;
-        const totalMT = totalWeight / 1000;
+        // Weight display handled by PHP helper
+        const totalWeightKg = totalWeight;
         
         document.getElementById('totalBags').textContent = totalBags;
         document.getElementById('totalWeight').textContent = totalWeight.toFixed(2);
