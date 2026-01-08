@@ -131,12 +131,8 @@
                         <span class="fw-medium h5 mb-0"><?= number_format($batch['total_bags']) ?></span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted">Total Weight (kg)</span>
-                        <span class="fw-medium h5 mb-0"><?= number_format($batch['total_weight_kg'], 2) ?></span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted">Total Weight (MT)</span>
-                        <span class="fw-medium h5 mb-0 text-primary"><?= number_format($batch['total_weight_kg'] / 1000, 3) ?></span>
+                        <span class="text-muted"><?= get_weight_label('Total Weight') ?></span>
+                        <span class="fw-medium h5 mb-0 text-primary"><?= format_weight(denormalize_weight_from_kg($batch['total_weight_kg']), null, 3, true) ?></span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-muted">Average Moisture</span>
