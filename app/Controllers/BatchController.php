@@ -155,7 +155,10 @@ class BatchController extends BaseController
             $batchId = $this->batchModel->insert($batchData);
             
             if (!$batchId) {
-                throw new \Exception('Failed to create batch record');
+                $errors = $this->batchModel->errors();
+                $errorMsg = !empty($errors) ? implode(', ', $errors) : 'Unknown database error';
+                log_message('error', 'Batch creation failed: ' . $errorMsg . ' | Data: ' . json_encode($batchData));
+                throw new \Exception('Failed to create batch record: ' . $errorMsg);
             }
             
             // Generate bag IDs and insert bag records
