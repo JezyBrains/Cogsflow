@@ -122,7 +122,7 @@
                                 <td>
                                     <div>
                                         <strong><?= esc($dispatch['batch_number']) ?></strong>
-                                        <br><small class="text-muted"><?= esc($dispatch['grain_type']) ?> - <?= number_format($dispatch['total_weight_mt'], 2) ?> MT</small>
+                                        <br><small class="text-muted"><?= esc($dispatch['grain_type']) ?> - <?= format_weight(denormalize_weight_from_kg($dispatch['total_weight_kg']), null, 2, true) ?></small>
                                     </div>
                                 </td>
                                 <td>

@@ -61,8 +61,8 @@
                         <td><span class="badge bg-info fs-6"><?= number_format($dispatch['total_weight_kg'], 2) ?> kg</span></td>
                     </tr>
                     <tr>
-                        <td class="fw-bold">Total Weight (MT):</td>
-                        <td><span class="badge bg-info fs-6"><?= number_format($dispatch['total_weight_mt'], 3) ?> MT</span></td>
+                        <td class="fw-bold">Total Weight:</td>
+                        <td><span class="badge bg-info fs-6"><?= format_weight(denormalize_weight_from_kg($dispatch['total_weight_kg']), null, 3, true) ?></span></td>
                     </tr>
                     <tr>
                         <td class="fw-bold">Supplier:</td>

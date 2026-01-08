@@ -60,10 +60,10 @@
                         <?php foreach ($available_batches as $batch): ?>
                             <option value="<?= $batch['id'] ?>" 
                                     data-grain="<?= esc($batch['grain_type']) ?>"
-                                    data-weight="<?= $batch['total_weight_mt'] ?>"
+                                    data-weight="<?= $batch['total_weight_kg'] ?>"
                                     data-supplier="<?= esc($batch['supplier_name']) ?>"
                                     <?= old('batch_id') == $batch['id'] ? 'selected' : '' ?>>
-                                <?= esc($batch['batch_number']) ?> - <?= esc($batch['grain_type']) ?> (<?= number_format($batch['total_weight_mt'], 2) ?> MT) - <?= esc($batch['supplier_name']) ?>
+                                <?= esc($batch['batch_number']) ?> - <?= esc($batch['grain_type']) ?> (<?= format_weight(denormalize_weight_from_kg($batch['total_weight_kg']), null, 2, true) ?>) - <?= esc($batch['supplier_name']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
