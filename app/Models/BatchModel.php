@@ -157,8 +157,12 @@ class BatchModel extends Model
         }
 
         // Check if batch quantity exceeds remaining PO quantity
-        if ($batchData['total_weight_mt'] > $po['remaining_quantity_mt']) {
-            return ['valid' => false, 'message' => 'Batch quantity (' . $batchData['total_weight_mt'] . ' MT) exceeds remaining PO quantity (' . $po['remaining_quantity_mt'] . ' MT)'];
+        helper('unit');
+        $batchWeight = denormalize_weight_from_kg($batchData['total_weight_kg']);
+        $poRemaining = denormalize_weight_from_kg($po['remaining_quantity_mt'] * 1000);
+        
+        if ($batchWeight > $poRemaining) {
+            return ['valid' => false, 'message' => 'Batch quantity (' . format_weight($batchWeight, null, 2, true) . ') exceeds remaining PO quantity (' . format_weight($poRemaining, null, 2, true) . ')'];
         }
 
         return ['valid' => true, 'message' => 'Batch is valid against purchase order'];
@@ -287,10 +291,10 @@ class BatchModel extends Model
         $query = $builder->get();
         
         if ($query === false) {
-            $stats['total_weight_mt'] = 0;
+            $stats['total_weight_kg'] = 0;
         } else {
             $result = $query->getRowArray();
-            $stats['total_weight_mt'] = ($result['total_weight'] ?? 0) / 1000; // Convert kg to MT
+            $stats['total_weight_kg'] = $result['total_weight'] ?? 0;
         }
 
         return $stats;

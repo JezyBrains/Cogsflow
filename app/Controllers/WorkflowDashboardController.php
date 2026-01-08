@@ -409,7 +409,7 @@ class WorkflowDashboardController extends BaseController
             $data['summary']['batches']['pending_batches'],
             $data['summary']['batches']['approved_batches'],
             $data['summary']['batches']['delivered_batches'],
-            number_format($data['summary']['batches']['total_weight_mt'] ?? 0, 3)
+            number_format(($data['summary']['batches']['total_weight_kg'] ?? 0) / 1000, 3)
         ]);
         fputcsv($output, []);
         

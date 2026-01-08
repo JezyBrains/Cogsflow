@@ -241,11 +241,11 @@ class PurchaseOrderModel extends Model
     public function getPOFulfillmentHistory($purchaseOrderId)
     {
         return $this->db->table('batches')
-            ->select('batches.id as batch_id, batches.batch_number, batches.total_weight_mt as batch_weight,
+            ->select('batches.id as batch_id, batches.batch_number, batches.total_weight_kg as batch_weight,
                      batches.status as batch_status, batches.created_at as batch_created,
                      batches.approved_at, batches.approved_by,
                      dispatches.id as dispatch_id, dispatches.vehicle_number, dispatches.status as dispatch_status,
-                     dispatches.actual_weight_mt, dispatches.discrepancies, dispatches.inspection_date,
+                     dispatches.actual_weight_kg, dispatches.discrepancies, dispatches.inspection_date,
                      dispatches.received_by, dispatches.created_at as dispatch_created')
             ->join('dispatches', 'dispatches.batch_id = batches.id', 'left')
             ->where('batches.purchase_order_id', $purchaseOrderId)

@@ -167,13 +167,13 @@ class SupplierModel extends Model
             if ($db->tableExists('batches')) {
                 try {
                     $query = $db->table('batches')
-                               ->selectSum('total_weight_mt')
+                               ->selectSum('total_weight_kg')
                                ->where('supplier_id', $supplierId)
                                ->get();
                     
                     if ($query !== false) {
                         $result = $query->getRow();
-                        $totalVolume = $result->total_weight_mt ?? 0;
+                        $totalVolume = ($result->total_weight_kg ?? 0) / 1000; // Convert kg to MT for display
                     }
                 } catch (\Throwable $e) {
                     log_message('error', 'Error getting total volume: ' . $e->getMessage());
