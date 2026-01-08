@@ -107,10 +107,13 @@ class BatchController extends BaseController
             $poId = $this->request->getPost('purchase_order_id');
             $po = $this->purchaseOrderModel->find($poId);
             
-            // Allow approved, confirmed, pending, transferring, and empty status (legacy data)
-            $allowedStatuses = ['approved', 'confirmed', 'pending', 'transferring', ''];
-            if (!$po || !in_array($po['status'], $allowedStatuses)) {
-                throw new \Exception('Selected purchase order is not available or not approved. Current status: ' . ($po['status'] ?? 'null'));
+            // Only allow approved purchase orders for batch creation
+            if (!$po) {
+                throw new \Exception('Selected purchase order not found.');
+            }
+            
+            if ($po['status'] !== 'approved') {
+                throw new \Exception('Only approved purchase orders can be used to create batches. Current status: ' . $po['status'] . '. Please get the PO approved first.');
             }
 
             // Process bag data
