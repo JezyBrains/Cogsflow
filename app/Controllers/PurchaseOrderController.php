@@ -489,7 +489,7 @@ class PurchaseOrderController extends BaseController
             
             // Search approved purchase orders with supplier information and transferred quantities
             $builder = $purchaseOrderModel->db->table('purchase_orders po');
-            $builder->select('po.id, po.po_number, po.grain_type, po.quantity_mt, po.status, s.name as supplier_name, COALESCE(SUM(b.total_weight_kg), 0) as transferred_quantity_kg');
+            $builder->select('po.id, po.po_number, po.supplier_id, po.grain_type, po.quantity_mt, po.status, s.name as supplier_name, COALESCE(SUM(b.total_weight_kg), 0) as transferred_quantity_kg');
             $builder->join('suppliers s', 's.id = po.supplier_id', 'left');
             $builder->join('batches b', 'b.purchase_order_id = po.id', 'left');
             
@@ -502,7 +502,7 @@ class PurchaseOrderController extends BaseController
             $builder->orLike('s.name', $query);
             $builder->groupEnd();
             
-            $builder->groupBy('po.id, po.po_number, po.grain_type, po.quantity_mt, po.status, s.name');
+            $builder->groupBy('po.id, po.po_number, po.supplier_id, po.grain_type, po.quantity_mt, po.status, s.name');
             $builder->orderBy('po.order_date', 'DESC');
             $builder->limit(20);
             
