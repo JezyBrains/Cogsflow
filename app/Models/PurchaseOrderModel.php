@@ -24,9 +24,7 @@ class PurchaseOrderModel extends Model
         'status',
         'approved_by',
         'approved_at',
-        'rejection_reason',
-        'delivered_quantity_mt',
-        'remaining_quantity_mt'
+        'rejection_reason'
     ];
 
     protected bool $allowEmptyInserts = false;
@@ -138,11 +136,13 @@ class PurchaseOrderModel extends Model
                 return [];
             }
             
+            // Get approved POs with transferred quantity calculated from batches
             $builder = $this->db->table($this->table . ' po');
-            $builder->select('po.*, s.name as supplier_name, s.contact_person');
+            $builder->select('po.*, s.name as supplier_name, s.contact_person, COALESCE(SUM(b.total_weight_kg), 0) as transferred_quantity_kg');
             $builder->join('suppliers s', 's.id = po.supplier_id', 'left');
+            $builder->join('batches b', 'b.purchase_order_id = po.id', 'left');
             $builder->where('po.status', 'approved');
-            $builder->where('po.remaining_quantity_mt >', 0);
+            $builder->groupBy('po.id, po.po_number, po.supplier_id, po.grain_type, po.quantity_mt, po.unit_price, po.total_amount, po.order_date, po.expected_delivery_date, po.status, po.approved_by, po.approved_at, po.notes, po.created_by, po.created_at, po.updated_at, s.name, s.contact_person');
             $builder->orderBy('po.order_date', 'ASC');
             
             $query = $builder->get();
@@ -152,7 +152,23 @@ class PurchaseOrderModel extends Model
                 return [];
             }
             
-            return $query->getResultArray();
+            $results = $query->getResultArray();
+            
+            // Filter out POs that are fully fulfilled
+            $availablePOs = [];
+            foreach ($results as $po) {
+                $transferredMt = ($po['transferred_quantity_kg'] ?? 0) / 1000;
+                $remainingMt = $po['quantity_mt'] - $transferredMt;
+                
+                // Only include POs with remaining quantity
+                if ($remainingMt > 0) {
+                    $po['transferred_quantity_mt'] = $transferredMt;
+                    $po['remaining_quantity_mt'] = $remainingMt;
+                    $availablePOs[] = $po;
+                }
+            }
+            
+            return $availablePOs;
             
         } catch (\Throwable $e) {
             log_message('error', 'PurchaseOrderModel::getApprovedPOsForBatch() error: ' . $e->getMessage());
@@ -162,28 +178,31 @@ class PurchaseOrderModel extends Model
 
     /**
      * Update delivery progress for a PO
+     * Note: This method is deprecated as we calculate transferred quantity from batches dynamically
      */
     public function updateDeliveryProgress($poId, $deliveredQuantity)
     {
+        // Calculate transferred quantity from batches
+        $builder = $this->db->table('batches');
+        $builder->selectSum('total_weight_kg', 'transferred_quantity_kg');
+        $builder->where('purchase_order_id', $poId);
+        $result = $builder->get()->getRowArray();
+        
+        $transferredMt = ($result['transferred_quantity_kg'] ?? 0) / 1000;
+        
         $po = $this->find($poId);
         if (!$po) {
             return false;
         }
-
-        $newDeliveredQuantity = $po['delivered_quantity_mt'] + $deliveredQuantity;
-        $newRemainingQuantity = $po['quantity_mt'] - $newDeliveredQuantity;
         
-        $updateData = [
-            'delivered_quantity_mt' => $newDeliveredQuantity,
-            'remaining_quantity_mt' => max(0, $newRemainingQuantity)
-        ];
-
+        $remainingMt = $po['quantity_mt'] - $transferredMt;
+        
         // Mark as completed if fully delivered
-        if ($newRemainingQuantity <= 0) {
-            $updateData['status'] = 'completed';
+        if ($remainingMt <= 0) {
+            return $this->update($poId, ['status' => 'completed']);
         }
-
-        return $this->update($poId, $updateData);
+        
+        return true;
     }
 
     /**
@@ -195,13 +214,21 @@ class PurchaseOrderModel extends Model
         if (!$po) {
             return null;
         }
-
-        $deliveredPercentage = ($po['delivered_quantity_mt'] / $po['quantity_mt']) * 100;
+        
+        // Calculate transferred quantity from batches
+        $builder = $this->db->table('batches');
+        $builder->selectSum('total_weight_kg', 'transferred_quantity_kg');
+        $builder->where('purchase_order_id', $poId);
+        $result = $builder->get()->getRowArray();
+        
+        $transferredMt = ($result['transferred_quantity_kg'] ?? 0) / 1000;
+        $remainingMt = $po['quantity_mt'] - $transferredMt;
+        $deliveredPercentage = ($transferredMt / $po['quantity_mt']) * 100;
         
         return [
             'total_quantity' => $po['quantity_mt'],
-            'delivered_quantity' => $po['delivered_quantity_mt'],
-            'remaining_quantity' => $po['remaining_quantity_mt'],
+            'delivered_quantity' => $transferredMt,
+            'remaining_quantity' => max(0, $remainingMt),
             'completion_percentage' => round($deliveredPercentage, 2)
         ];
     }
@@ -409,9 +436,7 @@ class PurchaseOrderModel extends Model
         // Update status if it changed
         if ($newStatus !== $po['status']) {
             $updateData = [
-                'status' => $newStatus,
-                'delivered_quantity_mt' => $totalDelivered,
-                'remaining_quantity_mt' => max(0, $po['quantity_mt'] - $totalDelivered)
+                'status' => $newStatus
             ];
             
             return $this->update($purchaseOrderId, $updateData);
