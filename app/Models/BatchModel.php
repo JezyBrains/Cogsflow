@@ -14,7 +14,7 @@ class BatchModel extends Model
     protected $protectFields = true;
     protected $allowedFields = [
         'batch_number', 'supplier_id', 'purchase_order_id', 'grain_type', 'total_bags', 'total_weight_kg',
-        'total_weight_mt', 'average_moisture', 'quality_grade', 'status', 'notes', 'received_date',
+        'average_moisture', 'quality_grade', 'status', 'notes', 'received_date',
         'approved_by', 'approved_at', 'rejection_reason'
     ];
 
@@ -59,17 +59,7 @@ class BatchModel extends Model
     protected $skipValidation = false;
     protected $cleanValidationRules = true;
 
-    // Callbacks
-    protected $beforeInsert = ['calculateTotalWeight'];
-    protected $beforeUpdate = ['calculateTotalWeight'];
-
-    protected function calculateTotalWeight(array $data)
-    {
-        if (isset($data['data']['total_weight_kg'])) {
-            $data['data']['total_weight_mt'] = round($data['data']['total_weight_kg'] / 1000, 3);
-        }
-        return $data;
-    }
+    // Callbacks removed - total_weight_mt no longer used
 
     // Custom methods
     public function getBatchWithSupplier($id)
