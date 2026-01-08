@@ -14,8 +14,8 @@ class BatchModel extends Model
     protected $protectFields = true;
     protected $allowedFields = [
         'batch_number', 'supplier_id', 'purchase_order_id', 'grain_type', 'total_bags', 'total_weight_kg',
-        'average_moisture', 'quality_grade', 'status', 'notes', 'received_date',
-        'approved_by', 'approved_at', 'rejection_reason'
+        'average_moisture', 'status', 'notes', 'batch_created_date',
+        'approved_by', 'approved_at'
     ];
 
     // Dates

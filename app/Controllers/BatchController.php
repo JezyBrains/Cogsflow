@@ -140,10 +140,9 @@ class BatchController extends BaseController
                 'total_bags' => $bagCount,
                 'total_weight_kg' => $totalWeight,
                 'average_moisture' => round($averageMoisture, 2),
-                'quality_grade' => $this->determineQualityGrade($averageMoisture),
                 'status' => 'pending',
                 'notes' => $this->request->getPost('notes'),
-                'received_date' => $this->request->getPost('batch_created_date')
+                'batch_created_date' => $this->request->getPost('batch_created_date')
             ];
 
             // Validate batch against PO constraints
