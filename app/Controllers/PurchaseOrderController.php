@@ -63,9 +63,10 @@ class PurchaseOrderController extends BaseController
      */
     private function calculateDynamicStatus($po)
     {
-        // Convert kg to MT for comparison
-        $transferredQty = ((float)($po['transferred_quantity_kg'] ?? 0)) / 1000;
-        $totalQty = (float)$po['quantity_mt'];
+        helper('unit');
+        // Convert to display unit for comparison
+        $transferredQty = denormalize_weight_from_kg((float)($po['transferred_quantity_kg'] ?? 0));
+        $totalQty = denormalize_weight_from_kg((float)$po['quantity_mt'] * 1000);
         
         // If no transfers yet, return original status or pending
         if ($transferredQty == 0) {
@@ -211,7 +212,8 @@ class PurchaseOrderController extends BaseController
         $transferredQuery->selectSum('total_weight_kg', 'transferred_quantity_kg');
         $transferredQuery->where('purchase_order_id', $id);
         $transferredResult = $transferredQuery->get()->getRowArray();
-        $transferredQuantity = ($transferredResult['transferred_quantity_kg'] ?? 0) / 1000;
+        helper('unit');
+        $transferredQuantity = denormalize_weight_from_kg($transferredResult['transferred_quantity_kg'] ?? 0);
         
         // Get all batches for this purchase order
         $batchesQuery = $batchModel->db->table('batches b');
@@ -507,11 +509,12 @@ class PurchaseOrderController extends BaseController
             $results = $builder->get()->getResultArray();
             
             // Calculate remaining quantity and filter out completed POs
+            helper('unit');
             $filteredResults = [];
             foreach ($results as $po) {
-                $transferredMt = ($po['transferred_quantity_kg'] ?? 0) / 1000;
-                $totalQty = (float)$po['quantity_mt'];
-                $remainingQty = $totalQty - $transferredMt;
+                $transferredQty = denormalize_weight_from_kg($po['transferred_quantity_kg'] ?? 0);
+                $totalQty = denormalize_weight_from_kg((float)$po['quantity_mt'] * 1000);
+                $remainingQty = $totalQty - $transferredQty;
                 
                 // Skip if PO is fully fulfilled
                 if ($remainingQty <= 0) {
@@ -519,8 +522,8 @@ class PurchaseOrderController extends BaseController
                 }
                 
                 // Add calculated values
-                $po['transferred_quantity_mt'] = $transferredMt;
-                $po['remaining_quantity_mt'] = $remainingQty;
+                $po['transferred_quantity'] = $transferredQty;
+                $po['remaining_quantity'] = $remainingQty;
                 $filteredResults[] = $po;
             }
             
@@ -583,9 +586,10 @@ class PurchaseOrderController extends BaseController
             $batches = $builder->get()->getResultArray();
             
             // Calculate total transferred quantity
+            helper('unit');
             $totalTransferred = 0;
             foreach ($batches as $batch) {
-                $totalTransferred += $batch['total_weight_kg'] / 1000;
+                $totalTransferred += denormalize_weight_from_kg($batch['total_weight_kg']);
             }
             
             return $this->response->setJSON([

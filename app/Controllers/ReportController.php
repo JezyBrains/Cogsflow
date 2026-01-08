@@ -492,7 +492,8 @@ class ReportController extends BaseController
                                ->get()
                                ->getRow()
                                ->total_weight_kg ?? 0;
-            $totalIncoming = $totalIncoming / 1000; // Convert to MT
+            helper('unit');
+            $totalIncoming = denormalize_weight_from_kg($totalIncoming);
             
             // Get total outgoing (sum of dispatched batch weights)
             $totalOutgoing = $db->table('dispatches d')

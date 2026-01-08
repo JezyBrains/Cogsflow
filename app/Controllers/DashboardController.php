@@ -78,9 +78,10 @@ class DashboardController extends BaseController
             'total_value' => 0
         ];
         
+        helper('unit');
         foreach ($purchaseOrders as $po) {
-            $transferredQty = (float)$po['transferred_quantity_kg'] / 1000; // Convert kg to MT
-            $totalQty = (float)$po['quantity_mt'];
+            $transferredQty = denormalize_weight_from_kg((float)$po['transferred_quantity_kg']);
+            $totalQty = denormalize_weight_from_kg((float)$po['quantity_mt'] * 1000);
             $stats['total_value'] += (float)$po['total_amount'];
             
             // Calculate dynamic status

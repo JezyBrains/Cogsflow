@@ -502,7 +502,8 @@ class DispatchController extends BaseController
             $actualBags = (int)$this->request->getPost('actual_bags');
             $actualWeightKg = (float)$this->request->getPost('actual_weight_kg');
             $inspectionNotes = $this->request->getPost('inspection_notes');
-            $actualWeightMt = round($actualWeightKg / 1000, 3);
+            helper('unit');
+            $actualWeightDisplay = denormalize_weight_from_kg($actualWeightKg);
 
             // Calculate discrepancies
             $discrepancyAnalysis = $this->dispatchModel->calculateDiscrepancies($id, $actualBags, $actualWeightKg);

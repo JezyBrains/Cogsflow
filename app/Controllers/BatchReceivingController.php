@@ -278,7 +278,8 @@ class BatchReceivingController extends BaseController
 
         $actualBags = (int)$this->request->getPost('actual_bags');
         $actualWeightKg = (float)$this->request->getPost('actual_weight_kg');
-        $actualWeightMt = $actualWeightKg / 1000;
+        helper('unit');
+        $actualWeightDisplay = denormalize_weight_from_kg($actualWeightKg);
         $inspectionNotes = $this->request->getPost('inspection_notes') ?? '';
 
         // Calculate discrepancies
@@ -1368,7 +1369,6 @@ class BatchReceivingController extends BaseController
                 'inspection_date' => date('Y-m-d H:i:s'),
                 'actual_bags' => $totalBags,
                 'actual_weight_kg' => $totalActualWeight,
-                'actual_weight_mt' => $totalActualWeight / 1000,
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
 
@@ -1386,7 +1386,8 @@ class BatchReceivingController extends BaseController
                     ->where('grain_type', $batch['grain_type'])
                     ->first();
 
-                $weightToAdd = $totalActualWeight / 1000; // Convert kg to MT
+                helper('unit');
+                $weightToAdd = denormalize_weight_from_kg($totalActualWeight);
 
                 if ($inventory) {
                     // Update existing inventory - use current_stock_mt field
@@ -1428,7 +1429,6 @@ class BatchReceivingController extends BaseController
                     [
                         'total_bags_inspected' => $inspectedBags,
                         'actual_weight_kg' => $totalActualWeight,
-                        'actual_weight_mt' => $totalActualWeight / 1000,
                         'has_discrepancies' => $hasDiscrepancies,
                         'good_bags' => $goodBags,
                         'damaged_bags' => $damagedBags,

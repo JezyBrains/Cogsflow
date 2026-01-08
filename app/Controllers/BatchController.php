@@ -128,7 +128,8 @@ class BatchController extends BaseController
             }
             
             $averageMoisture = $totalMoisture / $bagCount;
-            $totalWeightMT = round($totalWeight / 1000, 3);
+            helper('unit');
+            $totalWeightDisplay = denormalize_weight_from_kg($totalWeight);
             
             // Create batch record with PO validation
             $batchData = [
@@ -213,9 +214,9 @@ class BatchController extends BaseController
             }
             
             // Send notification about new batch
-            helper('notification');
+            helper(['notification', 'unit']);
             sendBatchNotification($batchId, $batchData['batch_number'], 'created', [
-                'total_weight' => $batchData['total_weight_kg'] / 1000,
+                'total_weight' => denormalize_weight_from_kg($batchData['total_weight_kg']),
                 'grain_type' => $batchData['grain_type'],
                 'quality_grade' => $batchData['quality_grade'],
                 'po_number' => $po['po_number']
