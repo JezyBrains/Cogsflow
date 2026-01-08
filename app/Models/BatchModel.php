@@ -159,7 +159,7 @@ class BatchModel extends Model
         // Check if batch quantity exceeds remaining PO quantity
         helper('unit');
         $batchWeight = denormalize_weight_from_kg($batchData['total_weight_kg']);
-        $poRemaining = denormalize_weight_from_kg($po['remaining_quantity_mt'] * 1000);
+        $poRemaining = $po['remaining_quantity'] ?? denormalize_weight_from_kg($po['quantity_mt'] * 1000);
         
         if ($batchWeight > $poRemaining) {
             return ['valid' => false, 'message' => 'Batch quantity (' . format_weight($batchWeight, null, 2, true) . ') exceeds remaining PO quantity (' . format_weight($poRemaining, null, 2, true) . ')'];
