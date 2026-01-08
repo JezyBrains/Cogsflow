@@ -539,7 +539,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <small class="text-muted">Status: <span class="badge bg-${batch.status === 'approved' ? 'success' : batch.status === 'pending' ? 'warning' : 'danger'}">${batch.status}</span></small>
                         </div>
                         <div class="col-md-3">
-                            <strong>${batch.total_weight_mt} <?= $weightUnit ?></strong><br>
+                            <strong>${(batch.total_weight_kg / 1000).toFixed(3)} <?= $weightUnit ?></strong><br>
                             <small class="text-muted">${batch.total_bags} bags</small>
                         </div>
                         <div class="col-md-3">
