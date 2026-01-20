@@ -42,7 +42,7 @@ RUN chmod +x /usr/local/bin/start-container
 COPY . /var/www
 
 # Install Dependencies (excluding dev)
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+RUN composer install --no-interaction --optimize-autoloader --no-dev --no-scripts
 
 # Fix permissions
 RUN chown -R www-data:www-data /var/www
