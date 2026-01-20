@@ -37,16 +37,18 @@
 
                 <div class="grid grid-cols-3 gap-10 pt-8 border-t border-zenith-100 mt-auto">
                     <div>
-                        <p class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest mb-1.5">Inbound Flux</p>
-                        <p class="text-2xl font-display font-black text-zenith-900">+12.4%</p>
+                        <p class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest mb-1.5">Inbound Volume</p>
+                        <p class="text-2xl font-display font-black text-zenith-900">{{ number_format($procurement_volume) }}
+                            Bags</p>
                     </div>
                     <div>
-                        <p class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest mb-1.5">Node Latency</p>
-                        <p class="text-2xl font-display font-black text-zenith-900">0.8ms</p>
+                        <p class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest mb-1.5">Total Revenue</p>
+                        <p class="text-2xl font-display font-black text-zenith-900">{{ number_format($total_revenue) }} TZS
+                        </p>
                     </div>
                     <div>
-                        <p class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest mb-1.5">Distribution</p>
-                        <p class="text-2xl font-display font-black text-zenith-900">99.4%</p>
+                        <p class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest mb-1.5">Net Profit</p>
+                        <p class="text-2xl font-display font-black text-zenith-900">{{ number_format($net_profit) }} TZS</p>
                     </div>
                 </div>
             </div>
@@ -58,22 +60,16 @@
                     <div>
                         <span class="text-[10px] font-bold text-zenith-500 uppercase tracking-widest block mb-1">Authorized
                             Agents</span>
-                        <h3 class="text-4xl font-display font-black text-zenith-900">248</h3>
+                        <h3 class="text-4xl font-display font-black text-zenith-900">{{ $total_users }}</h3>
                         <p class="text-xs text-zenith-400 font-medium mt-3 leading-relaxed">Verified system operators across
-                            14 distributed enterprise nodes.</p>
+                            distributed enterprise nodes.</p>
                     </div>
                     <div class="mt-8 flex items-center justify-between">
                         <div class="flex -space-x-2">
-                            @for($i = 0; $i < 4; $i++)
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-zenith-100 border-2 border-white overflow-hidden shadow-zenith-sm transition-transform hover:scale-110 hover:z-10 cursor-pointer">
-                                    <img src="https://ui-avatars.com/api/?name=Node+{{ $i }}&background=E5E7EB&color=4B5563"
-                                        alt="Node Avatar">
-                                </div>
-                            @endfor
+                            <!-- Simple avatars for now -->
                             <div
                                 class="w-10 h-10 rounded-xl bg-zenith-800 border-2 border-white flex items-center justify-center text-[9px] font-black text-white shadow-zenith-sm">
-                                +244
+                                All
                             </div>
                         </div>
                         <button class="w-px h-8 bg-zenith-100"></button>
@@ -89,7 +85,7 @@
                     <div class="flex items-center gap-6">
                         <div
                             class="w-14 h-14 rounded-2xl bg-white border border-zenith-200 shadow-zenith-sm flex items-center justify-center relative">
-                            <span class="text-xs font-black text-zenith-500">100%</span>
+                            <span class="text-xs font-black text-zenith-500">{{ $integrity_score }}%</span>
                             <div class="absolute inset-0 border-2 border-zenith-500/20 rounded-2xl"></div>
                             <div class="absolute inset-0 border-2 border-t-zenith-500 rounded-2xl animate-spin-slow"></div>
                         </div>
@@ -108,18 +104,12 @@
                     <div class="w-2 h-2 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/20"></div>
                 </div>
                 <div class="space-y-4">
+                    <!-- Static alerts for now, could be dynamic later -->
                     <div class="p-4 rounded-xl bg-zenith-50 border border-zenith-100 flex items-start gap-4">
                         <div class="w-2 h-2 rounded-full bg-zenith-500 mt-1.5"></div>
                         <div>
-                            <p class="text-xs font-bold text-zenith-800">New Supply Route Optimized</p>
-                            <p class="text-[10px] text-zenith-400 mt-0.5">Automated efficiency Gain: 4.2%</p>
-                        </div>
-                    </div>
-                    <div class="p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-4">
-                        <div class="w-2 h-2 rounded-full bg-red-500 mt-1.5"></div>
-                        <div>
-                            <p class="text-xs font-bold text-red-800">Critical Node Pressure: Arusha</p>
-                            <p class="text-[10px] text-red-400 mt-0.5">Volume exceeding threshold by 12%</p>
+                            <p class="text-xs font-bold text-zenith-800">System Online</p>
+                            <p class="text-[10px] text-zenith-400 mt-0.5">All nodes operational</p>
                         </div>
                     </div>
                 </div>
@@ -128,41 +118,47 @@
             <!-- Transaction Ledger Preview -->
             <div class="col-span-12 md:col-span-8 zenith-card p-10">
                 <div class="flex items-center justify-between mb-8">
-                    <h3 class="text-lg font-display font-black text-zenith-900 tracking-tight">Financial Stream</h3>
-                    <a href="{{ route('security.audit') }}"
+                    <h3 class="text-lg font-display font-black text-zenith-900 tracking-tight">Recent Financial Stream</h3>
+                    <a href="{{ route('finance.index') }}"
                         class="zenith-button-outline py-2.5 px-6 text-[10px] rounded-xl uppercase tracking-widest">View
-                        Master Logs</a>
+                        All</a>
                 </div>
 
                 <table class="zenith-table">
                     <thead>
                         <tr>
-                            <th>Protocol ID</th>
-                            <th>Entity / Node</th>
+                            <th>Transaction ID</th>
+                            <th>Description</th>
                             <th>Volume</th>
-                            <th>Status</th>
+                            <th>Type</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @for($i = 0; $i < 3; $i++)
+                        @forelse($recent_transactions as $transaction)
                             <tr class="hover:bg-zenith-50 transition-colors cursor-pointer group">
-                                <td class="font-mono text-[11px] text-zenith-500">ZN-LE-{{ 1024 + $i }}</td>
+                                <td class="font-mono text-[11px] text-zenith-500">TX-{{ $transaction->id }}</td>
                                 <td>
                                     <div class="flex items-center gap-3">
-                                        <div
-                                            class="w-8 h-8 rounded-lg bg-zenith-100 flex items-center justify-center text-zenith-600 font-bold text-xs group-hover:bg-zenith-500 group-hover:text-white transition-all">
-                                            {{ chr(65 + $i) }}
-                                        </div>
-                                        <p class="text-xs font-bold text-zenith-800">Arusha Agro-Trade Node</p>
+                                        <p class="text-xs font-bold text-zenith-800">{{ $transaction->description }}</p>
                                     </div>
                                 </td>
-                                <td class="text-xs font-bold text-zenith-600">TZS {{ number_format(42000000 + ($i * 1000000)) }}
+                                <td class="text-xs font-bold text-zenith-600">
+                                    {{ number_format($transaction->amount) }} TZS
                                 </td>
                                 <td>
-                                    <span class="zenith-badge bg-emerald-50 text-emerald-600">Authorized</span>
+                                    @if($transaction->type === 'income')
+                                        <span class="zenith-badge bg-emerald-50 text-emerald-600">Income</span>
+                                    @else
+                                        <span class="zenith-badge bg-red-50 text-red-600">Expense</span>
+                                    @endif
                                 </td>
                             </tr>
-                        @endfor
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-xs text-zenith-400">No recent transactions found.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

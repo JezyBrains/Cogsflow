@@ -14,9 +14,7 @@ Route::post('/login', [\App\Http\Controllers\LoginController::class, 'authentica
 Route::post('/logout', [\App\Http\Controllers\LoginController::class, 'logout'])->name('logout');
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
+Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
 // Phase 1: Security Grid
 Route::middleware('auth')->prefix('security')->name('security.')->group(function () {
