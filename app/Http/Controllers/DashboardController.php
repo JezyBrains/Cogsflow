@@ -4,11 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\FinanceEntry;
-use App\Models\Batch;
-use App\Models\AuditLog;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use App\Models\Transaction;
 
 class DashboardController extends Controller
 {
@@ -18,14 +14,13 @@ class DashboardController extends Controller
         $total_users = User::count();
 
         // 2. Financial Stream (Recent Transactions)
-        $recent_transactions = FinanceEntry::with('category')
-            ->latest()
+        $recent_transactions = Transaction::latest()
             ->take(5)
             ->get();
 
         // 3. Financial Totals (Income vs Expense)
-        $total_revenue = FinanceEntry::where('type', 'income')->sum('amount');
-        $total_expenses = FinanceEntry::where('type', 'expense')->sum('amount');
+        $total_revenue = Transaction::where('type', 'income')->sum('amount');
+        $total_expenses = Transaction::where('type', 'expense')->sum('amount');
 
         // Calculate flux (percentage change or just simple diff for now)
         $net_profit = $total_revenue - $total_expenses;
