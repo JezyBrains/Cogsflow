@@ -14,8 +14,8 @@ class FinalSystemSeeder extends Seeder
         // 1. Create Executive Admin
         User::create([
             'name' => 'Executive Admin',
-            'email' => 'admin@nipo.com',
-            'password' => Hash::make('password'),
+            'email' => env('ADMIN_EMAIL', 'admin@nipo.com'),
+            'password' => Hash::make(env('ADMIN_PASSWORD', 'password')),
         ]);
 
         // 2. Setup Finance Categories
