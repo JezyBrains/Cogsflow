@@ -19,8 +19,13 @@ class DashboardController extends Controller
             ->get();
 
         // 3. Financial Totals (Income vs Expense)
-        $total_revenue = Transaction::where('type', 'income')->sum('amount');
-        $total_expenses = Transaction::where('type', 'expense')->sum('amount');
+        $total_revenue = Transaction::whereHas('category', function ($q) {
+            $q->where('type', 'income');
+        })->sum('amount');
+
+        $total_expenses = Transaction::whereHas('category', function ($q) {
+            $q->where('type', 'expense');
+        })->sum('amount');
 
         // Calculate flux (percentage change or just simple diff for now)
         $net_profit = $total_revenue - $total_expenses;
