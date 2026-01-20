@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Poppins:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        @apply h-full antialiased;
+    }
+
+    body {
+        @apply font-sans bg-zenith-50 text-zenith-800 h-full overflow-hidden;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply font-display tracking-tight text-zenith-900;
+    }
+}
+
+@layer components {
+
+    /* Zenith Layout Shell */
+    .zenith-shell {
+        @apply flex h-screen w-screen overflow-hidden bg-zenith-50;
+    }
+
+    .zenith-sidebar {
+        @apply w-72 bg-white border-r border-zenith-200 flex flex-col shrink-0 z-20 h-full;
+    }
+
+    .zenith-main {
+        @apply flex-1 flex flex-col min-w-0 h-full relative overflow-hidden bg-zenith-50;
+    }
+
+    .zenith-content {
+        @apply flex-1 overflow-y-auto px-10 py-8 scrollbar-hide;
+    }
+
+    /* Zenith Data Surface */
+    .zenith-card {
+        @apply bg-white border border-zenith-200 rounded-zenith shadow-zenith-sm hover:shadow-zenith-md transition-all duration-300 overflow-hidden relative;
+    }
+
+    .zenith-card-elevated {
+        @apply bg-white border border-zenith-200 rounded-zenith shadow-zenith-lg transition-all duration-500;
+    }
+
+    /* Zenith Interactive Elements */
+    .zenith-button {
+        @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-zenith-500 hover:bg-zenith-600 text-white font-semibold rounded-2xl shadow-zenith-sm active:scale-[0.98] transition-all duration-200;
+    }
+
+    .zenith-button-outline {
+        @apply inline-flex items-center justify-center gap-2 px-6 py-3 border border-zenith-200 bg-white hover:bg-zenith-50 text-zenith-800 font-semibold rounded-2xl shadow-zenith-sm active:scale-[0.98] transition-all duration-200;
+    }
+
+    .zenith-input {
+        @apply w-full px-5 py-4 bg-zenith-100 border border-transparent focus:bg-white focus:border-zenith-500/30 focus:ring-4 focus:ring-zenith-500/5 text-zenith-800 placeholder-zenith-400 rounded-2xl outline-none transition-all duration-300;
+    }
+
+    /* Zenith Data Layouts */
+    .zenith-grid {
+        @apply grid grid-cols-12 gap-6;
+    }
+
+    .zenith-table {
+        @apply w-full text-left border-separate border-spacing-0;
+    }
+
+    .zenith-table thead th {
+        @apply px-6 py-4 text-[11px] font-bold text-zenith-400 uppercase tracking-widest bg-zenith-50 border-b border-zenith-200 first:rounded-tl-2xl last:rounded-tr-2xl;
+    }
+
+    .zenith-table tbody td {
+        @apply px-6 py-4 border-b border-zenith-100 align-middle;
+    }
+
+    .zenith-badge {
+        @apply inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider;
+    }
+
+    /* Nipo Agro Custom Styles */
+    :root {
+        --primary-green: #2E7D32;
+        --accent-lime: #A2D149;
+    }
+
+    .font-montserrat {
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .text-primary-green {
+        color: var(--primary-green);
+    }
+
+    .bg-primary-green {
+        background-color: var(--primary-green);
+    }
+
+    .border-primary-green {
+        border-color: var(--primary-green);
+    }
+
+    .text-accent-lime {
+        color: var(--accent-lime);
+    }
+
+    /* Hand-drawn Oval Class */
+    .hand-drawn-oval {
+        position: absolute;
+        left: -10%;
+        top: -15%;
+        width: 120%;
+        height: 130%;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .hand-drawn-oval path {
+        fill: none;
+        stroke: var(--primary-green);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 0;
+    }
+}
+
+@layer utilities {
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
