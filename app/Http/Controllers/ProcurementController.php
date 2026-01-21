@@ -20,7 +20,12 @@ class ProcurementController extends Controller
     public function index()
     {
         $pos = PurchaseOrder::with(['supplier', 'creator'])->latest()->paginate(10);
-        return view('procurement.index', compact('pos'));
+
+        // Metrics
+        $totalVolumeKg = PurchaseOrder::sum('total_quantity_kg');
+        $totalVolumeTons = $totalVolumeKg / 1000;
+
+        return view('procurement.index', compact('pos', 'totalVolumeTons'));
     }
 
     public function suppliers()

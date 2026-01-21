@@ -25,7 +25,7 @@
             <div class="zenith-card p-8 bg-white border-zenith-200">
                 <p class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest mb-4">Cumulative Volume</p>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-3xl font-display font-black text-zenith-900 tracking-tight">428.5 <span class="text-xs text-zenith-400">TONS</span></h3>
+                    <h3 class="text-3xl font-display font-black text-zenith-900 tracking-tight">{{ number_format($totalVolumeTons, 1) }} <span class="text-xs text-zenith-400">TONS</span></h3>
                     <div class="w-12 h-12 rounded-2xl bg-zenith-50 flex items-center justify-center text-zenith-500 shadow-zenith-sm">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
