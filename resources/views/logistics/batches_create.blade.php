@@ -4,7 +4,7 @@
 @section('page_title', 'Batch Protocol Initiation')
 
 @section('content')
-    <div class="space-y-8 max-w-4xl">
+    <div class="space-y-8">
         <!-- Header Stream -->
         <div class="flex items-center justify-between">
             <div>
