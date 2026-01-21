@@ -23,7 +23,8 @@ class SupplierPolicy
     {
         // For Nipo Agro V2, we assume all internal staff can view unless restricted.
         // In a multi-tenant setup, this would be: return $user->org_id === $supplier->org_id;
-        return $user->hasRole('admin') || $user->hasRole('procurement');
+        // For Nipo Agro V2, we assume all internal staff can view.
+        return $user !== null;
     }
 
     /**

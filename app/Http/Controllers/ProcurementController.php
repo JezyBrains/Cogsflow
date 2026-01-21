@@ -44,12 +44,15 @@ class ProcurementController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:suppliers',
+            // 'code' is auto-generated below
             'contact_person' => 'nullable|string',
             'phone' => 'nullable|string',
             'email' => 'nullable|email',
             'address' => 'nullable|string'
         ]);
+
+        // Auto-generate unique node code
+        $data['code'] = 'SUP-' . strtoupper(\Illuminate\Support\Str::random(6));
 
         $this->procurement->createSupplier($data);
 

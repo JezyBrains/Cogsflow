@@ -95,10 +95,7 @@
                             <input type="text" name="name" required class="zenith-input" placeholder="e.g. Mwanza Agri-Node">
                         </div>
                         
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest ml-1">Unique Node Code</label>
-                            <input type="text" name="code" placeholder="e.g. SUP-902" required class="zenith-input">
-                        </div>
+                        <!-- Unique Node Code is now auto-generated -->
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             <div class="space-y-2">
