@@ -82,9 +82,9 @@
                                     @endif
                                 </td>
                                 <td class="text-right pr-10 py-8">
-                                    <button class="zenith-button-outline px-4 py-2.5 rounded-xl text-[10px] uppercase tracking-widest bg-slate-50 border-slate-200 text-slate-500 hover:bg-zenith-500 hover:text-white hover:border-zenith-500 transition-all">
+                                    <a href="{{ route('logistics.batches.create', ['po_id' => $po->id]) }}" class="zenith-button-outline px-4 py-2.5 rounded-xl text-[10px] uppercase tracking-widest bg-slate-50 border-slate-200 text-slate-500 hover:bg-zenith-500 hover:text-white hover:border-zenith-500 transition-all inline-block">
                                         Inspect
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

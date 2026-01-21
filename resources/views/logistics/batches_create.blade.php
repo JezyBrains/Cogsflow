@@ -113,6 +113,20 @@
     <script>
         let bagCount = 1;
 
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const poId = urlParams.get('po_id');
+
+            if (poId) {
+                const select = document.getElementById('po_selector');
+                select.value = poId;
+                // Dispatch change event to trigger auto-fill
+                if (select.value === poId) {
+                    autoFillFromPO(select);
+                }
+            }
+        });
+
         function autoFillFromPO(select) {
             const option = select.options[select.selectedIndex];
             if (!option.value) {
@@ -151,10 +165,10 @@
             const row = document.createElement('div');
             row.className = 'grid grid-cols-3 gap-4 group mt-3';
             row.innerHTML = `
-                                <input type="number" step="0.1" name="bags[${bagCount}][weight_kg]" class="zenith-input" placeholder="Weight (KG)" required>
-                                <input type="number" step="0.1" name="bags[${bagCount}][moisture]" class="zenith-input" placeholder="Moisture %" required>
-                                <input type="text" name="bags[${bagCount}][serial]" class="zenith-input" placeholder="Serial (Optional)">
-                            `;
+                                    <input type="number" step="0.1" name="bags[${bagCount}][weight_kg]" class="zenith-input" placeholder="Weight (KG)" required>
+                                    <input type="number" step="0.1" name="bags[${bagCount}][moisture]" class="zenith-input" placeholder="Moisture %" required>
+                                    <input type="text" name="bags[${bagCount}][serial]" class="zenith-input" placeholder="Serial (Optional)">
+                                `;
             stream.appendChild(row);
             bagCount++;
         }
