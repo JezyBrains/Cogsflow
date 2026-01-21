@@ -116,16 +116,38 @@
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const poId = urlParams.get('po_id');
-
+            
             if (poId) {
                 const select = document.getElementById('po_selector');
                 select.value = poId;
                 // Dispatch change event to trigger auto-fill
                 if (select.value === poId) {
-                    autoFillFromPO(select);
+                   autoFillFromPO(select); 
                 }
             }
+
+            // Auto-add row logic
+            document.getElementById('bagStream').addEventListener('input', function(e) {
+                if (e.target.tagName === 'INPUT') {
+                    checkAndAddRow();
+                }
+            });
         });
+
+        function checkAndAddRow() {
+            const rows = document.querySelectorAll('#bagStream > div');
+            const lastRow = rows[rows.length - 1];
+            const inputs = lastRow.querySelectorAll('input[required]');
+            
+            let allFilled = true;
+            inputs.forEach(input => {
+                if (!input.value) allFilled = false;
+            });
+
+            if (allFilled) {
+                addBagRow();
+            }
+        }
 
         function autoFillFromPO(select) {
             const option = select.options[select.selectedIndex];
