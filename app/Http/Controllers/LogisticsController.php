@@ -34,7 +34,7 @@ class LogisticsController extends Controller
     {
         $suppliers = Supplier::where('is_active', true)->get();
         $purchaseOrders = \App\Models\PurchaseOrder::with('supplier')
-            ->where('status', 'issued')
+            ->whereIn('status', ['issued', 'partially_fulfilled'])
             ->get();
         return view('logistics.batches_create', compact('suppliers', 'purchaseOrders'));
     }
