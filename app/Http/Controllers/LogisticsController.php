@@ -73,7 +73,11 @@ class LogisticsController extends Controller
      */
     public function createDispatch()
     {
-        $availableBatches = Batch::whereIn('status', ['at_gate', 'accepted'])->get();
+        $availableBatches = Batch::whereIn('status', ['at_gate', 'accepted'])
+            ->whereDoesntHave('dispatches', function ($query) {
+                $query->where('status', '!=', 'cancelled');
+            })
+            ->get();
         return view('logistics.dispatches_create', compact('availableBatches'));
     }
 
