@@ -41,6 +41,7 @@ class ProcurementService
             $data['created_by'] = $userId;
             $data['total_amount'] = $data['total_quantity_kg'] * $data['unit_price'];
             $data['po_number'] = 'PO-' . date('Ymd') . '-' . strtoupper(bin2hex(random_bytes(2)));
+            $data['status'] = 'issued';
 
             $po = PurchaseOrder::create($data);
             $this->audit->log('purchase_order_created', $po, null, $po->toArray());
