@@ -81,6 +81,56 @@
                                 </p>
                             </div>
                         </div>
+
+                        <!-- Transactions Table -->
+                        <div class="mt-8">
+                            <h3 class="text-lg font-bold text-zenith-900 mb-4">Detailed Transactions</h3>
+                            <div class="overflow-x-auto border border-zenith-100 rounded-2xl">
+                                <table class="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr
+                                            class="bg-zenith-50/50 border-b border-zenith-100 text-[10px] uppercase text-zenith-400 font-black tracking-widest">
+                                            <th class="px-6 py-4">Date</th>
+                                            <th class="px-6 py-4">Reference</th>
+                                            <th class="px-6 py-4">Category</th>
+                                            <th class="px-6 py-4 text-right">Amount</th>
+                                            <th class="px-6 py-4">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-zenith-50">
+                                        @foreach($data['transactions'] as $transaction)
+                                            <tr class="hover:bg-zenith-50/30 transition-colors">
+                                                <td class="px-6 py-4 text-sm text-zenith-600">
+                                                    {{ $transaction->transaction_date->format('M d, Y') }}
+                                                </td>
+                                                <td class="px-6 py-4 text-sm font-bold text-zenith-800">
+                                                    {{ $transaction->reference_number }}
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <span class="text-xs font-medium text-zenith-500">
+                                                        {{ $transaction->category ? $transaction->category->name : 'N/A' }}
+                                                    </span>
+                                                    <div
+                                                        class="text-[10px] uppercase tracking-tighter {{ $transaction->category && $transaction->category->type === 'income' ? 'text-green-500' : 'text-red-500' }}">
+                                                        {{ $transaction->category ? $transaction->category->type : '' }}
+                                                    </div>
+                                                </td>
+                                                <td
+                                                    class="px-6 py-4 text-right font-display font-black {{ $transaction->category && $transaction->category->type === 'income' ? 'text-green-600' : 'text-red-600' }}">
+                                                    {{ number_format($transaction->amount, 2) }}
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    <span
+                                                        class="px-2 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter bg-green-100 text-green-600">
+                                                        {{ $transaction->status }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 @elseif($slug === 'suppliers')
                     <table class="w-full text-left border-collapse">

@@ -37,16 +37,17 @@ class ReportingService
             $query->where('transaction_date', '<=', $endDate);
         }
 
-        $transactions = $query->get();
+        $transactions = $query->orderBy('transaction_date', 'desc')->get();
 
-        $income = $transactions->filter(fn($t) => $t->category->type === 'income')->sum('amount');
-        $expense = $transactions->filter(fn($t) => $t->category->type === 'expense')->sum('amount');
+        $income = $transactions->filter(fn($t) => $t->category && $t->category->type === 'income')->sum('amount');
+        $expense = $transactions->filter(fn($t) => $t->category && $t->category->type === 'expense')->sum('amount');
 
         return [
             'total_income' => $income,
             'total_expense' => $expense,
             'net_balance' => $income - $expense,
-            'transaction_count' => $transactions->count()
+            'transaction_count' => $transactions->count(),
+            'transactions' => $transactions
         ];
     }
 

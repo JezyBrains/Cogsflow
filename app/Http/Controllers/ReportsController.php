@@ -78,6 +78,21 @@ class ReportsController extends Controller
             case 'inventory':
                 $data = $this->reportingService->getStockSummary()->toArray();
                 break;
+            case 'finance':
+                $startDate = $request->input('start_date');
+                $endDate = $request->input('end_date');
+                $financeData = $this->reportingService->getFinanceSummary($startDate, $endDate);
+                $data = $financeData['transactions']->map(function ($t) {
+                    return [
+                        'Date' => $t->transaction_date->format('Y-m-d'),
+                        'Reference' => $t->reference_number,
+                        'Category' => $t->category ? $t->category->name : 'N/A',
+                        'Type' => $t->category ? ucfirst($t->category->type) : 'N/A',
+                        'Amount' => $t->amount,
+                        'Notes' => $t->notes,
+                    ];
+                })->toArray();
+                break;
             case 'suppliers':
                 $data = $this->reportingService->getSupplierAnalytics()->toArray();
                 break;
@@ -94,7 +109,9 @@ class ReportsController extends Controller
 
                 // Rows
                 foreach ($data as $row) {
-                    fputcsv($handle, $row);
+                    // Ensure row is an array if it's an object/collection item
+                    $rowArray = (array) $row;
+                    fputcsv($handle, $rowArray);
                 }
             }
 
