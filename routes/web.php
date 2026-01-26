@@ -60,6 +60,10 @@ Route::middleware('auth')->prefix('finance')->name('finance.')->group(function (
     Route::post('/store', [\App\Http\Controllers\FinanceController::class, 'store'])->name('store');
     Route::post('/approve/{id}', [\App\Http\Controllers\FinanceController::class, 'approve'])->name('approve');
 
+    Route::get('/{id}/edit', [\App\Http\Controllers\FinanceController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [\App\Http\Controllers\FinanceController::class, 'update'])->name('update');
+    Route::delete('/{id}', [\App\Http\Controllers\FinanceController::class, 'destroy'])->name('destroy');
+
     // Finance Categories
     Route::resource('categories', \App\Http\Controllers\FinanceCategoryController::class)->names('categories');
 });

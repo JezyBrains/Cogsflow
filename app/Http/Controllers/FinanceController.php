@@ -38,6 +38,41 @@ class FinanceController extends Controller
     }
 
     /**
+     * Show form to edit a transaction
+     */
+    public function edit($id)
+    {
+        $transaction = Transaction::findOrFail($id);
+        $categories = FinanceCategory::where('is_active', true)->get();
+        return view('finance.edit', compact('transaction', 'categories'));
+    }
+
+    /**
+     * Update a transaction
+     */
+    public function update(Request $request, $id)
+    {
+        $data = $request->validate([
+            'category_id' => 'required|exists:finance_categories,id',
+            'amount' => 'required|numeric|min:0.01',
+            'transaction_date' => 'required|date',
+            'payment_method' => 'required|string',
+            'payee_payer_name' => 'nullable|string',
+            'notes' => 'nullable|string'
+        ]);
+
+        try {
+            $transaction = Transaction::findOrFail($id);
+            // We could also add a check to only allow editing if it was not approved yet,
+            // or if the user has specific permissions.
+            $transaction->update($data);
+            return redirect()->route('finance.index')->with('success', 'Transaction updated successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
      * Store a new transaction
      */
     public function store(Request $request)
@@ -64,6 +99,20 @@ class FinanceController extends Controller
         try {
             $this->financeService->approveTransaction($id, Auth::id());
             return redirect()->back()->with('success', 'Transaction approved.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Remove a transaction (Void)
+     */
+    public function destroy($id)
+    {
+        try {
+            $transaction = Transaction::findOrFail($id);
+            $transaction->delete();
+            return redirect()->back()->with('success', 'Transaction voided/deleted.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

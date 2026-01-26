@@ -145,16 +145,31 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-right">
+                                <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
                                     @if($trx->status === 'pending')
                                         <form action="{{ route('finance.approve', $trx->id) }}" method="POST" class="inline">
                                             @csrf
                                             <button type="submit"
-                                                class="text-xs text-blue-600 hover:text-blue-800 font-medium bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
+                                                class="text-[10px] text-green-600 hover:text-green-800 font-black uppercase tracking-widest bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg transition-colors">
                                                 Approve
                                             </button>
                                         </form>
                                     @endif
+
+                                    <a href="{{ route('finance.edit', $trx->id) }}"
+                                        class="text-[10px] text-blue-600 hover:text-blue-800 font-black uppercase tracking-widest bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
+                                        Edit
+                                    </a>
+
+                                    <form action="{{ route('finance.destroy', $trx->id) }}" method="POST" class="inline"
+                                        onsubmit="return confirm('Are you sure you want to void this transaction?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="text-[10px] text-red-600 hover:text-red-800 font-black uppercase tracking-widest bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors">
+                                            Void
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         @empty
