@@ -25,5 +25,9 @@ class AppServiceProvider extends ServiceProvider
 
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Batch::class, \App\Policies\BatchPolicy::class);
         \Illuminate\Support\Facades\Gate::policy(\App\Models\Dispatch::class, \App\Policies\DispatchPolicy::class);
+
+        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
+            return $user->hasRole('admin') ? true : null;
+        });
     }
 }

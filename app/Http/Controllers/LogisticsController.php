@@ -112,8 +112,7 @@ class LogisticsController extends Controller
     public function showBatch($id)
     {
         $batch = Batch::with(['bags', 'supplier', 'attachments', 'dispatches'])->findOrFail($id);
-        if (!Auth::user()->can('view', $batch))
-            abort(403);
+        $this->authorize('view', $batch);
 
         return view('logistics.batch_details', compact('batch'));
     }
@@ -124,6 +123,8 @@ class LogisticsController extends Controller
     public function showInspection($id)
     {
         $dispatch = Dispatch::with(['batch.bags', 'batch.supplier', 'attachments', 'batch.attachments'])->findOrFail($id);
+        $this->authorize('view', $dispatch);
+
         return view('logistics.inspection', compact('dispatch'));
     }
 
