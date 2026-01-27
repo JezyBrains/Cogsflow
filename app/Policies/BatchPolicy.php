@@ -8,12 +8,21 @@ use Illuminate\Auth\Access\Response;
 
 class BatchPolicy
 {
+    public function before(User $user, string $ability): ?bool
+    {
+        if ($user->hasRole('admin')) {
+            return true;
+        }
+
+        return null;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasRole('admin') || $user->hasRole('logistics') || $user->hasRole('procurement') || $user->hasRole('finance');
     }
 
     /**
@@ -21,7 +30,10 @@ class BatchPolicy
      */
     public function view(User $user, Batch $batch): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('logistics');
+        return $user->hasRole('admin') ||
+            $user->hasRole('logistics') ||
+            $user->hasRole('procurement') ||
+            $user->hasRole('finance');
     }
 
     /**
