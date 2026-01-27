@@ -78,44 +78,49 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            <tbody>
                                 @foreach($batch->bags as $bag)
-                                    <tr class="hover:bg-zenith-50/50 transition-colors" id="bag-row-{{ $bag->id }}">
+                                    <tr class="hover:bg-zenith-50/50 transition-colors group" id="bag-row-{{ $bag->id }}" data-bag-id="{{ $bag->id }}">
                                         <td>
                                             <div class="flex flex-col">
-                                                <span class="text-xs font-black text-zenith-900 underline decoration-zenith-100">{{ $bag->bag_serial_number ?? 'UNIT-' . str_pad($bag->id, 4, '0', STR_PAD_LEFT) }}</span>
+                                                <span class="text-xs font-black text-zenith-900">{{ $bag->bag_serial_number ?? 'UNIT-' . str_pad($bag->id, 4, '0', STR_PAD_LEFT) }}</span>
                                                 <span class="text-[9px] text-zenith-300 font-bold uppercase">ID #{{ $bag->id }}</span>
                                             </div>
                                         </td>
                                         <td>
-                                            <span class="text-xs font-black text-zenith-800">{{ number_format($bag->weight_kg, 2) }} kg</span>
-                                        </td>
-                                        <td>
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-8 h-1 bg-zenith-50 rounded-full overflow-hidden">
-                                                    <div class="h-full bg-zenith-500" style="width: {{ 100 - ($bag->moisture_content ?? 0) }}%"></div>
-                                                </div>
-                                                <span class="text-[10px] font-black text-zenith-500">{{ $bag->moisture_content ?? 'N/A' }}%</span>
+                                            <div class="relative group/input">
+                                                <input type="number" step="0.01" value="{{ $bag->actual_weight ?? $bag->weight_kg }}" 
+                                                    class="bag-input w-24 bg-transparent border-none focus:ring-2 focus:ring-zenith-500 rounded-lg text-xs font-black text-zenith-800 p-1"
+                                                    data-field="actual_weight" data-ref="{{ $bag->weight_kg }}">
+                                                <span class="text-[9px] text-zenith-200 block">REF: {{ number_format($bag->weight_kg, 2) }}</span>
                                             </div>
                                         </td>
                                         <td>
-                                            @if($bag->weight_discrepancy)
-                                                <span class="text-[10px] font-black {{ $bag->weight_discrepancy < 0 ? 'text-red-500' : 'text-green-500' }}">
-                                                    {{ $bag->weight_discrepancy > 0 ? '+' : '' }}{{ number_format($bag->weight_discrepancy, 2) }}
+                                            <input type="number" step="0.1" value="{{ $bag->actual_moisture ?? $bag->moisture_content ?? 0 }}" 
+                                                class="bag-input w-20 bg-transparent border-none focus:ring-2 focus:ring-zenith-500 rounded-lg text-xs font-black text-zenith-500 p-1"
+                                                data-field="actual_moisture">
+                                        </td>
+                                        <td>
+                                            <div id="discrepancy-{{ $bag->id }}">
+                                                @php $diff = ($bag->actual_weight ?? $bag->weight_kg) - $bag->weight_kg; @endphp
+                                                <span class="text-[10px] font-black {{ $diff < 0 ? 'text-red-500' : ($diff > 0 ? 'text-green-500' : 'text-zenith-200') }}">
+                                                    {{ $diff > 0 ? '+' : '' }}{{ number_format($diff, 2) }}
                                                 </span>
-                                            @else
-                                                <span class="text-[9px] text-zenith-200">NOMINAL</span>
-                                            @endif
+                                            </div>
                                         </td>
                                         <td>
-                                            <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded {{ $bag->inspected_at ? 'bg-green-50 text-green-600' : 'bg-zenith-50 text-zenith-300' }}">
-                                                {{ $bag->inspected_at ? 'Verified' : 'Pending' }}
-                                            </span>
+                                            <div class="flex items-center gap-2">
+                                                <span class="status-badge text-[10px] font-black uppercase px-2 py-0.5 rounded {{ $bag->inspected_at ? 'bg-green-50 text-green-600' : 'bg-zenith-50 text-zenith-300' }}">
+                                                    {{ $bag->inspected_at ? 'Verified' : 'Pending' }}
+                                                </span>
+                                                <span class="sync-indicator hidden">
+                                                    <svg class="w-3 h-3 animate-spin text-zenith-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                </span>
+                                            </div>
                                         </td>
                                         <td>
-                                            <button onclick='openQuickAdjust({{ $bag->id }}, "{{ $bag->bag_serial_number }}", {{ $bag->weight_kg }}, {{ $bag->moisture_content ?? 0 }})' class="p-2 hover:bg-zenith-50 rounded-xl text-zenith-400 hover:text-zenith-600 transition-colors">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
+                                            <button onclick='ZenithUI.notify("info", "Scan serial to jump to row. Changes save automatically.")' class="p-2 opacity-0 group-hover:opacity-100 text-zenith-200 hover:text-zenith-400 transition-all">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                             </button>
                                         </td>
                                     </tr>
@@ -128,96 +133,98 @@
         </div>
     </div>
 
-    <!-- Quick Adjust Modal -->
-    <div id="adjustModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 bg-zenith-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-[2.5rem] shadow-zenith-xl w-full max-w-lg overflow-hidden animate-zenith-in">
-            <div class="p-10">
-                <div class="flex justify-between items-center mb-8">
-                    <div>
-                        <h3 class="text-xl font-display font-black text-zenith-900" id="modalTitle">Unit Intervention</h3>
-                        <p class="text-zenith-400 text-xs font-bold uppercase tracking-widest mt-1" id="modalSub">Adjusting Weight & Moisture</p>
-                    </div>
-                    <button onclick="closeAdjustModal()" class="text-zenith-300 hover:text-zenith-900 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-
-                <form id="adjustForm" class="space-y-6">
-                    @csrf
-                    <input type="hidden" id="modal_bag_id">
-                    
-                    <div class="grid grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label class="block text-[10px] font-black uppercase text-zenith-400 tracking-widest px-1">Actual Weight (KG)</label>
-                            <input type="number" id="actual_weight" step="0.01" class="w-full bg-zenith-50 border-none rounded-2xl px-5 py-4 text-sm font-black text-zenith-900 focus:ring-2 focus:ring-zenith-500 transition-all">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="block text-[10px] font-black uppercase text-zenith-400 tracking-widest px-1">Actual Moisture (%)</label>
-                            <input type="number" id="actual_moisture" step="0.1" class="w-full bg-zenith-50 border-none rounded-2xl px-5 py-4 text-sm font-black text-zenith-900 focus:ring-2 focus:ring-zenith-500 transition-all">
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase text-zenith-400 tracking-widest px-1">Quality Note</label>
-                        <textarea id="quality_note" rows="2" class="w-full bg-zenith-50 border-none rounded-2xl px-5 py-4 text-sm font-medium text-zenith-800 focus:ring-2 focus:ring-zenith-500 transition-all" placeholder="Observations..."></textarea>
-                    </div>
-
-                    <button type="submit" class="w-full zenith-button !py-5 text-xs font-black uppercase tracking-[0.2em] shadow-zenith-lg">
-                        COMMIT PROTOCOL UPDATE
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <script>
-        function openQuickAdjust(id, serial, weight, moisture) {
-            document.getElementById('modal_bag_id').value = id;
-            document.getElementById('modalTitle').textContent = 'Intervening: ' + (serial || 'UNIT-' + id);
-            document.getElementById('actual_weight').value = weight;
-            document.getElementById('actual_moisture').value = moisture;
-            document.getElementById('adjustModal').classList.remove('hidden');
-        }
-
-        function closeAdjustModal() {
-            document.getElementById('adjustModal').classList.add('hidden');
-        }
-
-        document.getElementById('adjustForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const id = document.getElementById('modal_bag_id').value;
-            
-            // We reuse the existing recordBagInspection logic but adapt for this view
-            const formData = new FormData();
-            formData.append('bag_id', id);
-            formData.append('actual_weight', document.getElementById('actual_weight').value);
-            formData.append('actual_moisture', document.getElementById('actual_moisture').value);
-            formData.append('condition_status', 'Good'); // Default for intake
-            formData.append('notes', document.getElementById('quality_note').value);
-            formData.append('dispatch_id', '{{ optional($batch->dispatches->first())->id ?? "" }}');
-
-            try {
-                // If there's no dispatch yet, we might need a direct batch-bag endpoint
-                // But for now, let's see if we can use the existing inspection endpoint
-                // Or I should create a specific one for Batch details
+        const bagInputs = document.querySelectorAll('.bag-input');
+        
+        bagInputs.forEach(input => {
+            input.addEventListener('change', async function() {
+                const row = this.closest('tr');
+                const bagId = row.dataset.bagId;
+                const indicator = row.querySelector('.sync-indicator');
+                const badge = row.querySelector('.status-badge');
                 
-                const response = await fetch('{{ route("logistics.dispatches.inspect.bag") }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                });
+                indicator.classList.remove('hidden');
+                
+                const formData = new FormData();
+                formData.append('bag_id', bagId);
+                formData.append('actual_weight', row.querySelector('[data-field="actual_weight"]').value);
+                formData.append('actual_moisture', row.querySelector('[data-field="actual_moisture"]').value);
+                formData.append('condition_status', 'Good');
+                formData.append('dispatch_id', '{{ optional($batch->dispatches->first())->id ?? "" }}');
 
-                const data = await response.json();
-                if (data.success) {
-                    ZenithUI.notify('success', 'Batch aggregate updated.');
-                    location.reload();
+                try {
+                    const response = await fetch('{{ route("logistics.dispatches.inspect.bag") }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        indicator.classList.add('hidden');
+                        badge.className = 'status-badge text-[10px] font-black uppercase px-2 py-0.5 rounded bg-green-50 text-green-600';
+                        badge.textContent = 'Verified';
+                        
+                        // Update discrepancy styling
+                        const ref = parseFloat(row.querySelector('[data-field="actual_weight"]').dataset.ref);
+                        const cur = parseFloat(row.querySelector('[data-field="actual_weight"]').value);
+                        const diff = cur - ref;
+                        const discDiv = document.getElementById('discrepancy-' + bagId);
+                        discDiv.innerHTML = `<span class="text-[10px] font-black ${diff < 0 ? 'text-red-500' : (diff > 0 ? 'text-green-500' : 'text-zenith-200')}">${diff > 0 ? '+' : ''}${diff.toFixed(2)}</span>`;
+                    }
+                } catch (error) {
+                    indicator.classList.add('hidden');
+                    ZenithUI.notify('error', 'Sync failure.');
                 }
-            } catch (error) {
-                ZenithUI.notify('error', 'Sync failure detected.');
+            });
+
+            // Keyboard Navigation
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const row = this.closest('tr');
+                    const nextRow = row.nextElementSibling;
+                    if (nextRow) {
+                        const nextInput = nextRow.querySelector(`[data-field="${this.dataset.field}"]`);
+                        if (nextInput) {
+                            nextInput.focus();
+                            nextInput.select();
+                        }
+                    }
+                }
+                if (e.key === 'ArrowDown') {
+                     const row = this.closest('tr');
+                     const nextRow = row.nextElementSibling;
+                     if (nextRow) nextRow.querySelector(`[data-field="${this.dataset.field}"]`).focus();
+                }
+                if (e.key === 'ArrowUp') {
+                     const row = this.closest('tr');
+                     const prevRow = row.previousElementSibling;
+                     if (prevRow) prevRow.querySelector(`[data-field="${this.dataset.field}"]`).focus();
+                }
+            });
+        });
+
+        // Search/Scan Jump
+        document.getElementById('bagSearch').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const val = this.value.toUpperCase();
+                const rows = document.querySelectorAll('tbody tr');
+                for (let row of rows) {
+                    const serial = row.querySelector('td:first-child span').textContent.toUpperCase();
+                    if (serial.includes(val)) {
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        row.querySelector('.bag-input').focus();
+                        row.querySelector('.bag-input').select();
+                        this.value = '';
+                        break;
+                    }
+                }
             }
         });
     </script>
+@endsection
 @endsection

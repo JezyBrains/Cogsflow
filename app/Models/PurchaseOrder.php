@@ -24,8 +24,29 @@ class PurchaseOrder extends Model
         return $this->belongsTo(Supplier::class);
     }
 
+    public function batches()
+    {
+        return $this->hasMany(Batch::class);
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Volume currently fulfilled by batches
+     */
+    public function getSuppliedQuantityKgAttribute()
+    {
+        return $this->batches()->sum('total_weight_kg');
+    }
+
+    /**
+     * Volume remaining to be fulfilled
+     */
+    public function getRemainingQuantityKgAttribute()
+    {
+        return max(0, $this->total_quantity_kg - $this->supplied_quantity_kg);
     }
 }

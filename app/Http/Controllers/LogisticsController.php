@@ -136,13 +136,22 @@ class LogisticsController extends Controller
         $request->validate([
             'dispatch_id' => 'nullable|exists:dispatches,id',
             'bag_id' => 'required|exists:batch_bags,id',
-            'actual_weight' => 'required|numeric|min:0',
+            'actual_weight' => 'nullable|numeric|min:0',
             'actual_moisture' => 'nullable|numeric|min:0|max:100',
-            'condition_status' => 'required|string',
+            'condition_status' => 'nullable|string',
             'notes' => 'nullable|string',
         ]);
 
-        $this->logisticsService->recordBagInspection($request->all(), Auth::id());
+        $data = $request->all();
+        // Provide defaults for rapid entry if not provided
+        if (!isset($data['condition_status']))
+            $data['condition_status'] = 'Good';
+        if (!isset($data['actual_weight'])) {
+            $bag = \App\Models\BatchBag::find($data['bag_id']);
+            $data['actual_weight'] = $bag->weight_kg; // Fallback to recorded weight
+        }
+
+        $this->logisticsService->recordBagInspection($data, Auth::id());
 
         return response()->json(['success' => true, 'message' => 'Bag inspection recorded.']);
     }

@@ -29,6 +29,7 @@ Route::middleware('auth')->prefix('procurement')->name('procurement.')->group(fu
     Route::get('/suppliers', [\App\Http\Controllers\ProcurementController::class, 'suppliers'])->name('suppliers');
     Route::get('/suppliers/{id}', [\App\Http\Controllers\ProcurementController::class, 'showSupplier'])->name('suppliers.show');
     Route::post('/suppliers', [\App\Http\Controllers\ProcurementController::class, 'storeSupplier'])->name('suppliers.store');
+    Route::get('/orders/{id}', [\App\Http\Controllers\ProcurementController::class, 'showPO'])->name('orders.show');
     Route::post('/orders', [\App\Http\Controllers\ProcurementController::class, 'storePO'])->name('orders.store');
 });
 

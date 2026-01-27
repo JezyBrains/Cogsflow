@@ -106,69 +106,54 @@
                                 </tr>
                             </thead>
                             <tbody>
+                            <tbody>
                                 @foreach($dispatch->batch->bags as $bag)
-                                    <tr class="hover:bg-zenith-50/50 transition-colors {{ $bag->inspected_at ? 'opacity-60 grayscale' : '' }}"
-                                        id="bag-row-{{ $bag->id }}">
+                                    <tr class="hover:bg-zenith-50/50 transition-colors group" id="bag-row-{{ $bag->id }}" data-bag-id="{{ $bag->id }}">
                                         <td>
                                             <div class="flex flex-col">
-                                                <span
-                                                    class="text-xs font-black text-zenith-900">{{ $bag->bag_serial_number ?? 'B-' . str_pad($bag->id, 5, '0', STR_PAD_LEFT) }}</span>
-                                                <span class="text-[9px] text-zenith-400 font-bold uppercase">Bin ID:
-                                                    #{{ $bag->id }}</span>
+                                                <span class="text-xs font-black text-zenith-900">{{ $bag->bag_serial_number ?? 'B-' . str_pad($bag->id, 5, '0', STR_PAD_LEFT) }}</span>
+                                                <span class="text-[9px] text-zenith-400 font-bold uppercase">Bin ID: #{{ $bag->id }}</span>
                                             </div>
                                         </td>
                                         <td>
-                                            <span
-                                                class="text-xs font-black text-zenith-800">{{ number_format($bag->weight_kg, 2) }}kg</span>
-                                            <div class="text-[9px] text-zenith-300 font-bold uppercase">M:
-                                                {{ $bag->moisture_content ?? 'N/A' }}%</div>
+                                            <span class="text-xs font-black text-zenith-800">{{ number_format($bag->weight_kg, 2) }}kg</span>
+                                            <div class="text-[9px] text-zenith-300 font-bold uppercase">M: {{ $bag->moisture_content ?? 'N/A' }}%</div>
                                         </td>
-                                        <td id="actual-td-{{ $bag->id }}">
-                                            @if($bag->inspected_at)
-                                                <span
-                                                    class="text-xs font-black text-zenith-900">{{ number_format($bag->actual_weight, 2) }}kg</span>
-                                                <div class="text-[9px] text-zenith-400 font-bold uppercase">M:
-                                                    {{ $bag->actual_moisture }}%</div>
-                                            @else
-                                                <span class="text-[9px] text-zenith-200 uppercase font-bold italic">Awaiting
-                                                    Scale...</span>
-                                            @endif
+                                        <td>
+                                            <div class="flex flex-col gap-1">
+                                                <input type="number" step="0.01" value="{{ $bag->actual_weight ?? $bag->weight_kg }}" 
+                                                    class="bag-input w-24 bg-transparent border-none focus:ring-2 focus:ring-zenith-500 rounded-lg text-xs font-black text-zenith-900 p-1"
+                                                    data-field="actual_weight" data-ref="{{ $bag->weight_kg }}">
+                                                <input type="number" step="0.1" value="{{ $bag->actual_moisture ?? $bag->moisture_content ?? 0 }}" 
+                                                    class="bag-input w-24 bg-transparent border-none focus:ring-2 focus:ring-zenith-500 rounded-lg text-[10px] font-bold text-zenith-500 p-1"
+                                                    data-field="actual_moisture" placeholder="Moisture %">
+                                            </div>
                                         </td>
-                                        <td id="discrepancy-td-{{ $bag->id }}">
-                                            @if($bag->inspected_at)
-                                                @php $diff = $bag->weight_discrepancy; @endphp
-                                                <span
-                                                    class="text-xs font-black {{ $diff < 0 ? 'text-red-500' : ($diff > 0 ? 'text-green-500' : 'text-zenith-400') }}">
+                                        <td>
+                                            <div id="discrepancy-{{ $bag->id }}">
+                                                @php $diff = ($bag->actual_weight ?? $bag->weight_kg) - $bag->weight_kg; @endphp
+                                                <span class="text-[10px] font-black {{ $diff < 0 ? 'text-red-500' : ($diff > 0 ? 'text-green-500' : 'text-zenith-200') }}">
                                                     {{ $diff > 0 ? '+' : '' }}{{ number_format($diff, 2) }}kg
                                                 </span>
-                                            @else
-                                                -
-                                            @endif
+                                            </div>
                                         </td>
                                         <td>
-                                            @if($bag->inspected_at)
-                                                <span
-                                                    class="zenith-badge {{ $bag->condition_status === 'Damaged' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600' }}">
-                                                    {{ strtoupper($bag->condition_status) }}
+                                            <select class="bag-input bg-transparent border-none text-[10px] font-black uppercase focus:ring-0 p-0" data-field="condition_status">
+                                                <option value="Good" {{ $bag->condition_status === 'Good' ? 'selected' : '' }}>PRIME</option>
+                                                <option value="Damaged" {{ $bag->condition_status === 'Damaged' ? 'selected' : '' }}>DAMAGED</option>
+                                                <option value="Wet" {{ $bag->condition_status === 'Wet' ? 'selected' : '' }}>WET</option>
+                                                <option value="Contaminated" {{ $bag->condition_status === 'Contaminated' ? 'selected' : '' }}>CONTAM</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <div class="flex items-center gap-2">
+                                                <span class="status-badge text-[10px] font-black uppercase px-2 py-0.5 rounded {{ $bag->inspected_at ? 'bg-green-50 text-green-600' : 'bg-zenith-50 text-zenith-300' }}">
+                                                    {{ $bag->inspected_at ? 'Verified' : 'Pending' }}
                                                 </span>
-                                            @else
-                                                -
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if(!$bag->inspected_at)
-                                                <button
-                                                    onclick="openInspectionModal({{ $bag->id }}, '{{ $bag->bag_serial_number }}', {{ $bag->weight_kg }})"
-                                                    class="zenith-button !px-3 !py-1 text-[10px]">
-                                                    INSPECT
-                                                </button>
-                                            @else
-                                                <svg class="w-5 h-5 text-green-500 mx-auto" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                                        d="M5 13l4 4L19 7"></path>
-                                                </svg>
-                                            @endif
+                                                <span class="sync-indicator hidden">
+                                                    <svg class="w-3 h-3 animate-spin text-zenith-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                </span>
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -187,126 +172,103 @@
         </div>
     </div>
 
-    <!-- Inspection Modal -->
-    <div id="inspectionModal"
-        class="hidden fixed inset-0 bg-zenith-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-zenith-lg w-full max-w-lg overflow-hidden animate-zenith-in">
-            <div class="px-8 py-6 border-b border-zenith-100 bg-zenith-50/50 flex justify-between items-center">
-                <div>
-                    <h3 class="text-xl font-display font-black text-zenith-900" id="modalBagTitle">Bag Inspection</h3>
-                    <p class="text-zenith-400 text-xs font-bold uppercase tracking-widest mt-1" id="modalBagSub">Reference:
-                        50.00kg</p>
-                </div>
-                <button onclick="closeInspectionModal()" class="text-zenith-300 hover:text-zenith-900 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
-                    </svg>
-                </button>
-            </div>
-
-            <form id="inspectionForm" class="p-8 space-y-6">
-                @csrf
-                <input type="hidden" id="modal_bag_id" name="bag_id">
-                <input type="hidden" name="dispatch_id" value="{{ $dispatch->id }}">
-
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase text-zenith-400 tracking-widest">Scale Weight
-                            (kg)</label>
-                        <input type="number" name="actual_weight" id="actual_weight" step="0.01" required
-                            class="w-full bg-zenith-50 border-2 border-zenith-100 rounded-2xl px-4 py-3 text-lg font-black text-zenith-900 focus:border-zenith-500 focus:outline-none transition-all">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="block text-[10px] font-black uppercase text-zenith-400 tracking-widest">Moisture
-                            (%)</label>
-                        <input type="number" name="actual_moisture" step="0.1"
-                            class="w-full bg-zenith-50 border-2 border-zenith-100 rounded-2xl px-4 py-3 text-lg font-black text-zenith-900 focus:border-zenith-500 focus:outline-none transition-all">
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black uppercase text-zenith-400 tracking-widest">Visual Grade /
-                        Condition</label>
-                    <select name="condition_status"
-                        class="w-full bg-zenith-50 border-2 border-zenith-100 rounded-2xl px-4 py-3 text-sm font-black text-zenith-900 focus:border-zenith-500 focus:outline-none transition-all appearance-none">
-                        <option value="Good">PRIME QUALITY (GOOD)</option>
-                        <option value="Damaged">DAMAGED / TORN</option>
-                        <option value="Wet">WET / MOISTURE DAMAGE</option>
-                        <option value="Contaminated">CONTAMINATED</option>
-                    </select>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black uppercase text-zenith-400 tracking-widest">Inspection
-                        Notes</label>
-                    <textarea name="notes" rows="2"
-                        class="w-full bg-zenith-50 border-2 border-zenith-100 rounded-2xl px-4 py-3 text-sm font-medium text-zenith-900 focus:border-zenith-500 focus:outline-none transition-all"></textarea>
-                </div>
-
-                <div class="pt-4">
-                    <button type="submit"
-                        class="w-full zenith-button !py-4 text-sm tracking-widest font-black uppercase shadow-zenith-lg">
-                        COMMIT INSPECTION RECORD
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
     <script>
-        function openInspectionModal(id, serial, refWeight) {
-            document.getElementById('modal_bag_id').value = id;
-            document.getElementById('modalBagTitle').textContent = 'Inspecting: ' + (serial || 'Bag #' + id);
-            document.getElementById('modalBagSub').textContent = 'Reference Load: ' + refWeight.toFixed(2) + 'kg';
-            document.getElementById('actual_weight').value = refWeight;
-            document.getElementById('inspectionModal').classList.remove('hidden');
-            document.getElementById('actual_weight').focus();
-        }
+        const bagInputs = document.querySelectorAll('.bag-input');
+        
+        bagInputs.forEach(input => {
+            input.addEventListener('change', async function() {
+                const row = this.closest('tr');
+                const bagId = row.dataset.bagId;
+                const indicator = row.querySelector('.sync-indicator');
+                const badge = row.querySelector('.status-badge');
+                
+                indicator.classList.remove('hidden');
+                
+                const formData = new FormData();
+                formData.append('bag_id', bagId);
+                formData.append('actual_weight', row.querySelector('[data-field="actual_weight"]').value);
+                formData.append('actual_moisture', row.querySelector('[data-field="actual_moisture"]').value);
+                formData.append('condition_status', row.querySelector('[data-field="condition_status"]').value);
+                formData.append('dispatch_id', '{{ $dispatch->id }}');
 
-        function closeInspectionModal() {
-            document.getElementById('inspectionModal').classList.add('hidden');
-            document.getElementById('inspectionForm').reset();
-        }
+                try {
+                    const response = await fetch('{{ route("logistics.dispatches.inspect.bag") }}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
 
-        document.getElementById('inspectionForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-
-            fetch('{{ route("logistics.dispatches.inspect.bag") }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Accept': 'application/json'
-                },
-                body: formData
-            })
-                .then(response => response.json())
-                .then(data => {
+                    const data = await response.json();
                     if (data.success) {
-                        closeInspectionModal();
-                        location.reload(); // Simple reload for now to refresh status
+                        indicator.classList.add('hidden');
+                        badge.className = 'status-badge text-[10px] font-black uppercase px-2 py-0.5 rounded bg-green-50 text-green-600';
+                        badge.textContent = 'Verified';
+                        
+                        // Update discrepancy styling
+                        const ref = parseFloat(row.querySelector('[data-field="actual_weight"]').dataset.ref);
+                        const cur = parseFloat(row.querySelector('[data-field="actual_weight"]').value);
+                        const diff = cur - ref;
+                        const discDiv = document.getElementById('discrepancy-' + bagId);
+                        discDiv.innerHTML = `<span class="text-[10px] font-black ${diff < 0 ? 'text-red-500' : (diff > 0 ? 'text-green-500' : 'text-zenith-200')}">${diff > 0 ? '+' : ''}${diff.toFixed(2)}kg</span>`;
+                        
+                        // Update progress bar if possible
+                        updateProgress();
                     }
-                });
+                } catch (error) {
+                    indicator.classList.add('hidden');
+                    ZenithUI.notify('error', 'Sync failure.');
+                }
+            });
+
+            // Keyboard Navigation
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const row = this.closest('tr');
+                    const nextRow = row.nextElementSibling;
+                    if (nextRow) {
+                        const nextInput = nextRow.querySelector(`[data-field="${this.dataset.field}"]`);
+                        if (nextInput) {
+                            nextInput.focus();
+                            nextInput.select();
+                        }
+                    }
+                }
+            });
         });
 
-        // QR Scanning Simulation via Keyboard
-        document.getElementById('bagSearch').addEventListener('keypress', function (e) {
+        function updateProgress() {
+            const total = {{ $dispatch->batch->bags->count() }};
+            const verified = document.querySelectorAll('.status-badge.bg-green-50').length;
+            const percent = Math.round((verified / total) * 100);
+            
+            document.querySelector('.relative.pt-1 span.bg-zenith-50').textContent = `${verified} / ${total} Bins Cleared`;
+            document.querySelector('.text-right span').textContent = `${percent}%`;
+            document.querySelector('.overflow-hidden.h-2 div').style.width = `${percent}%`;
+        }
+
+        // Search/Scan Jump
+        document.getElementById('bagSearch').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 const val = this.value.toUpperCase();
-                console.log('Searching for QR:', val);
-                // Find row with this serial and click inspect
                 const rows = document.querySelectorAll('tbody tr');
-                rows.forEach(row => {
-                    const serialText = row.querySelector('td:first-child span:first-child').textContent;
-                    if (serialText.toUpperCase().includes(val) && !row.classList.contains('opacity-60')) {
-                        row.querySelector('button').click();
+                for (let row of rows) {
+                    const serial = row.querySelector('td:first-child span').textContent.toUpperCase();
+                    if (serial.includes(val)) {
+                        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        row.querySelector('.bag-input').focus();
+                        row.querySelector('.bag-input').select();
+                        this.value = '';
+                        break;
                     }
-                });
-                this.value = '';
+                }
             }
         });
     </script>
+@endsection
 
     <style>
         @keyframes zenith-in {
