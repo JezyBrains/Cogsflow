@@ -8,13 +8,17 @@
         <!-- Terminal Header -->
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="text-3xl font-display font-black text-zenith-900 uppercase tracking-tight">Batch Quality Terminal</h2>
-                <p class="text-zenith-400 font-medium mt-1">Batch ID: <span class="text-zenith-600 font-black">{{ $batch->batch_number }}</span> • {{ $batch->supplier->name }}</p>
+                <h2 class="text-3xl font-display font-black text-zenith-900 uppercase tracking-tight">Batch Quality Terminal
+                </h2>
+                <p class="text-zenith-400 font-medium mt-1">Batch ID: <span
+                        class="text-zenith-600 font-black">{{ $batch->batch_number }}</span> •
+                    {{ $batch->supplier->name ?? 'Unknown' }}</p>
             </div>
             <div class="flex gap-4">
                 <a href="{{ route('logistics.batches') }}" class="zenith-button-outline">
                     <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
                     </svg>
                     Return to Control
                 </a>
@@ -42,26 +46,25 @@
                         </div>
                         <div class="flex justify-between items-center">
                             <span class="text-[10px] font-bold uppercase text-zenith-300">Recorded Weight</span>
-                            <span class="text-xs font-black text-zenith-500">{{ number_format($batch->total_weight_kg, 2) }} KG</span>
+                            <span class="text-xs font-black text-zenith-500">{{ number_format($batch->total_weight_kg, 2) }}
+                                KG</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Document Vault Widget -->
-                <x-attachment-widget 
-                    :attachable_type="'App\Models\Batch'" 
-                    :attachable_id="$batch->id" 
-                    :attachments="$batch->attachments" 
-                />
+                <x-attachment-widget :attachable_type="'App\Models\Batch'" :attachable_id="$batch->id"
+                    :attachments="$batch->attachments" />
             </div>
 
             <!-- Right: Granular Bag Terminal -->
             <div class="lg:col-span-2 space-y-6">
                 <div class="zenith-card">
                     <div class="p-6 border-b border-zenith-100 flex items-center justify-between bg-zenith-50/20">
-                        <h3 class="text-lg font-display font-black text-zenith-900 italic tracking-tight">Granular Unit Registry</h3>
+                        <h3 class="text-lg font-display font-black text-zenith-900 italic tracking-tight">Granular Unit
+                            Registry</h3>
                         <div class="flex gap-4">
-                             <input type="text" id="bagSearch" placeholder="SCAN SERIAL..."
+                            <input type="text" id="bagSearch" placeholder="SCAN SERIAL..."
                                 class="bg-zenith-50 border-zenith-100 text-[10px] font-black uppercase px-4 py-2 rounded-lg focus:ring-2 focus:ring-zenith-500 focus:outline-none placeholder:text-zenith-200">
                         </div>
                     </div>
@@ -78,49 +81,68 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <tbody>
                                 @foreach($batch->bags as $bag)
-                                    <tr class="hover:bg-zenith-50/50 transition-colors group" id="bag-row-{{ $bag->id }}" data-bag-id="{{ $bag->id }}">
+                                    <tr class="hover:bg-zenith-50/50 transition-colors group" id="bag-row-{{ $bag->id }}"
+                                        data-bag-id="{{ $bag->id }}">
                                         <td>
                                             <div class="flex flex-col">
-                                                <span class="text-xs font-black text-zenith-900">{{ $bag->bag_serial_number ?? 'UNIT-' . str_pad($bag->id, 4, '0', STR_PAD_LEFT) }}</span>
-                                                <span class="text-[9px] text-zenith-300 font-bold uppercase">ID #{{ $bag->id }}</span>
+                                                <span
+                                                    class="text-xs font-black text-zenith-900">{{ $bag->bag_serial_number ?? 'UNIT-' . str_pad($bag->id, 4, '0', STR_PAD_LEFT) }}</span>
+                                                <span class="text-[9px] text-zenith-300 font-bold uppercase">ID
+                                                    #{{ $bag->id }}</span>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="relative group/input">
-                                                <input type="number" step="0.01" value="{{ $bag->actual_weight ?? $bag->weight_kg }}" 
+                                                <input type="number" step="0.01"
+                                                    value="{{ $bag->actual_weight ?? $bag->weight_kg }}"
                                                     class="bag-input w-24 bg-transparent border-none focus:ring-2 focus:ring-zenith-500 rounded-lg text-xs font-black text-zenith-800 p-1"
                                                     data-field="actual_weight" data-ref="{{ $bag->weight_kg }}">
-                                                <span class="text-[9px] text-zenith-200 block">REF: {{ number_format($bag->weight_kg, 2) }}</span>
+                                                <span class="text-[9px] text-zenith-200 block">REF:
+                                                    {{ number_format($bag->weight_kg, 2) }}</span>
                                             </div>
                                         </td>
                                         <td>
-                                            <input type="number" step="0.1" value="{{ $bag->actual_moisture ?? $bag->moisture_content ?? 0 }}" 
+                                            <input type="number" step="0.1"
+                                                value="{{ $bag->actual_moisture ?? $bag->moisture_content ?? 0 }}"
                                                 class="bag-input w-20 bg-transparent border-none focus:ring-2 focus:ring-zenith-500 rounded-lg text-xs font-black text-zenith-500 p-1"
                                                 data-field="actual_moisture">
                                         </td>
                                         <td>
                                             <div id="discrepancy-{{ $bag->id }}">
                                                 @php $diff = ($bag->actual_weight ?? $bag->weight_kg) - $bag->weight_kg; @endphp
-                                                <span class="text-[10px] font-black {{ $diff < 0 ? 'text-red-500' : ($diff > 0 ? 'text-green-500' : 'text-zenith-200') }}">
+                                                <span
+                                                    class="text-[10px] font-black {{ $diff < 0 ? 'text-red-500' : ($diff > 0 ? 'text-green-500' : 'text-zenith-200') }}">
                                                     {{ $diff > 0 ? '+' : '' }}{{ number_format($diff, 2) }}
                                                 </span>
                                             </div>
                                         </td>
                                         <td>
                                             <div class="flex items-center gap-2">
-                                                <span class="status-badge text-[10px] font-black uppercase px-2 py-0.5 rounded {{ $bag->inspected_at ? 'bg-green-50 text-green-600' : 'bg-zenith-50 text-zenith-300' }}">
+                                                <span
+                                                    class="status-badge text-[10px] font-black uppercase px-2 py-0.5 rounded {{ $bag->inspected_at ? 'bg-green-50 text-green-600' : 'bg-zenith-50 text-zenith-300' }}">
                                                     {{ $bag->inspected_at ? 'Verified' : 'Pending' }}
                                                 </span>
                                                 <span class="sync-indicator hidden">
-                                                    <svg class="w-3 h-3 animate-spin text-zenith-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                                    <svg class="w-3 h-3 animate-spin text-zenith-400" fill="none"
+                                                        viewBox="0 0 24 24">
+                                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                                            stroke-width="4"></circle>
+                                                        <path class="opacity-75" fill="currentColor"
+                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                        </path>
+                                                    </svg>
                                                 </span>
                                             </div>
                                         </td>
                                         <td>
-                                            <button onclick='ZenithUI.notify("info", "Scan serial to jump to row. Changes save automatically.")' class="p-2 opacity-0 group-hover:opacity-100 text-zenith-200 hover:text-zenith-400 transition-all">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            <button
+                                                onclick='ZenithUI.notify("info", "Scan serial to jump to row. Changes save automatically.")'
+                                                class="p-2 opacity-0 group-hover:opacity-100 text-zenith-200 hover:text-zenith-400 transition-all">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
                                             </button>
                                         </td>
                                     </tr>
@@ -135,16 +157,16 @@
 
     <script>
         const bagInputs = document.querySelectorAll('.bag-input');
-        
+
         bagInputs.forEach(input => {
-            input.addEventListener('change', async function() {
+            input.addEventListener('change', async function () {
                 const row = this.closest('tr');
                 const bagId = row.dataset.bagId;
                 const indicator = row.querySelector('.sync-indicator');
                 const badge = row.querySelector('.status-badge');
-                
+
                 indicator.classList.remove('hidden');
-                
+
                 const formData = new FormData();
                 formData.append('bag_id', bagId);
                 formData.append('actual_weight', row.querySelector('[data-field="actual_weight"]').value);
@@ -167,7 +189,7 @@
                         indicator.classList.add('hidden');
                         badge.className = 'status-badge text-[10px] font-black uppercase px-2 py-0.5 rounded bg-green-50 text-green-600';
                         badge.textContent = 'Verified';
-                        
+
                         // Update discrepancy styling
                         const ref = parseFloat(row.querySelector('[data-field="actual_weight"]').dataset.ref);
                         const cur = parseFloat(row.querySelector('[data-field="actual_weight"]').value);
@@ -182,7 +204,7 @@
             });
 
             // Keyboard Navigation
-            input.addEventListener('keydown', function(e) {
+            input.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     const row = this.closest('tr');
@@ -196,20 +218,20 @@
                     }
                 }
                 if (e.key === 'ArrowDown') {
-                     const row = this.closest('tr');
-                     const nextRow = row.nextElementSibling;
-                     if (nextRow) nextRow.querySelector(`[data-field="${this.dataset.field}"]`).focus();
+                    const row = this.closest('tr');
+                    const nextRow = row.nextElementSibling;
+                    if (nextRow) nextRow.querySelector(`[data-field="${this.dataset.field}"]`).focus();
                 }
                 if (e.key === 'ArrowUp') {
-                     const row = this.closest('tr');
-                     const prevRow = row.previousElementSibling;
-                     if (prevRow) prevRow.querySelector(`[data-field="${this.dataset.field}"]`).focus();
+                    const row = this.closest('tr');
+                    const prevRow = row.previousElementSibling;
+                    if (prevRow) prevRow.querySelector(`[data-field="${this.dataset.field}"]`).focus();
                 }
             });
         });
 
         // Search/Scan Jump
-        document.getElementById('bagSearch').addEventListener('keypress', function(e) {
+        document.getElementById('bagSearch').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 const val = this.value.toUpperCase();
                 const rows = document.querySelectorAll('tbody tr');
@@ -226,5 +248,4 @@
             }
         });
     </script>
-@endsection
 @endsection

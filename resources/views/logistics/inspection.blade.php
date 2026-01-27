@@ -106,7 +106,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <tbody>
                                 @foreach($dispatch->batch->bags as $bag)
                                     <tr class="hover:bg-zenith-50/50 transition-colors group" id="bag-row-{{ $bag->id }}" data-bag-id="{{ $bag->id }}">
                                         <td>
@@ -268,7 +267,6 @@
             }
         });
     </script>
-@endsection
 
     <style>
         @keyframes zenith-in {
