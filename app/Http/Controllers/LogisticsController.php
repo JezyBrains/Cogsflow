@@ -35,7 +35,10 @@ class LogisticsController extends Controller
         $suppliers = Supplier::where('is_active', true)->get();
         $purchaseOrders = \App\Models\PurchaseOrder::with('supplier')
             ->whereIn('status', ['issued', 'partially_fulfilled'])
-            ->get();
+            ->get()
+            ->filter(function ($po) {
+                return $po->remaining_quantity_kg > 0;
+            });
         return view('logistics.batches_create', compact('suppliers', 'purchaseOrders'));
     }
 
@@ -52,6 +55,13 @@ class LogisticsController extends Controller
             'bags.*.weight_kg' => 'required|numeric|min:0.1',
             'bags.*.moisture' => 'nullable|numeric|min:0|max:100',
         ]);
+
+        if ($request->purchase_order_id) {
+            $po = \App\Models\PurchaseOrder::findOrFail($request->purchase_order_id);
+            if ($po->remaining_quantity_kg <= 0) {
+                return redirect()->back()->withErrors(['purchase_order_id' => 'This Purchase Order is already 100% fulfilled. No further batches can be recorded.']);
+            }
+        }
 
         $bags = $request->input('bags', []);
         $this->logisticsService->createBatch($request->except('bags'), $bags, Auth::id());

@@ -21,12 +21,18 @@
                     </svg>
                     Return to Hub
                 </a>
-                <a href="{{ route('logistics.batches.create', ['po_id' => $po->id]) }}" class="zenith-button">
-                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    New Intake Batch
-                </a>
+                @if($po->remaining_quantity_kg > 0)
+                    <a href="{{ route('logistics.batches.create', ['po_id' => $po->id]) }}" class="zenith-button">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        New Intake Batch
+                    </a>
+                @else
+                    <span class="zenith-badge bg-emerald-500 text-white px-6 py-3 rounded-2xl italic font-black shadow-emerald-200 shadow-lg">
+                        PROTOCOL COMPLETE
+                    </span>
+                @endif
             </div>
         </div>
 
@@ -56,6 +62,12 @@
                             <span class="text-[10px] font-bold uppercase text-zenith-300 block mb-1">Unit Valuation</span>
                             <p class="text-lg font-black text-emerald-400">{{ number_format($po->unit_price, 2) }} <span
                                     class="text-[10px] text-emerald-600">TZS/KG</span></p>
+                        </div>
+
+                        <div class="pb-4 border-b border-white/10">
+                            <span class="text-[10px] font-bold uppercase text-zenith-300 block mb-1">Contract Value</span>
+                            <p class="text-lg font-black text-white italic tracking-tighter">{{ number_format($po->total_quantity_kg * $po->unit_price, 0) }} <span
+                                    class="text-[10px] text-zenith-400">TZS</span></p>
                         </div>
 
                         <div>
@@ -130,6 +142,7 @@
                                 <tr>
                                     <th class="pl-8">Batch Node</th>
                                     <th>Volume</th>
+                                    <th>Unit Cost</th>
                                     <th>Quality / Moisture</th>
                                     <th>Custodian</th>
                                     <th class="text-right pr-8">Actions</th>
@@ -149,6 +162,11 @@
                                                     class="text-[10px] text-zenith-400">KG</span></p>
                                             <p class="text-[9px] text-zenith-400 font-black uppercase">
                                                 {{ $batch->expected_bags }} Units</p>
+                                        </td>
+                                        <td class="py-6">
+                                            <p class="text-xs font-black text-emerald-600">
+                                                {{ number_format($batch->total_weight_kg * $po->unit_price, 0) }} <span class="text-[8px] uppercase">TZS</span>
+                                            </p>
                                         </td>
                                         <td class="py-6">
                                             <div class="flex items-center gap-2">

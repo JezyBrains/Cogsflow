@@ -73,10 +73,21 @@
                                         Uplink</p>
                                 </td>
                                 <td class="text-right pr-10">
-                                    <button
-                                        class="zenith-button-outline px-4 py-2.5 rounded-xl text-[10px] uppercase tracking-widest bg-slate-50 border-slate-200 text-slate-500 hover:bg-zenith-500 hover:text-white hover:border-zenith-500 transition-all">
-                                        Modify Access
-                                    </button>
+                                    <div class="flex items-center justify-end gap-3">
+                                        <a href="{{ route('security.users.edit', $user->id) }}"
+                                            class="zenith-button-outline !px-4 !py-2 rounded-xl text-[10px] uppercase tracking-widest bg-slate-50 border-slate-200 text-slate-500 hover:bg-zenith-500 hover:text-white hover:border-zenith-500 transition-all">
+                                            Modify Access
+                                        </a>
+                                        @if($user->id !== auth()->id())
+                                            <form action="{{ route('security.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('Purge this identity from the directory? All access will be revoked.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
@@ -120,6 +131,11 @@
                             <input type="email" name="email" required class="zenith-input" placeholder="marcus@nipo.io">
                         </div>
 
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest ml-1">Initial Access Key (Password)</label>
+                            <input type="password" name="password" required class="zenith-input" placeholder="Minimum 8 characters">
+                        </div>
+
                         <div class="space-y-4">
                             <label class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest ml-1">Security
                                 Clearance Vectors</label>
@@ -128,7 +144,7 @@
                                     <label
                                         class="flex items-center justify-between p-5 rounded-2xl bg-zenith-50 border border-zenith-100 cursor-pointer hover:border-zenith-500/30 transition-all group">
                                         <div class="flex items-center gap-4">
-                                            <input type="checkbox" name="roles[]" value="{{ $role->id }}"
+                                            <input type="checkbox" name="roles[]" value="{{ $role->slug }}"
                                                 class="w-5 h-5 rounded-lg border-zenith-200 text-zenith-500 focus:ring-4 focus:ring-zenith-500/10 transition-all">
                                             <span
                                                 class="text-xs font-bold text-zenith-800 uppercase tracking-widest transition-colors group-hover:text-zenith-500">{{ $role->name }}</span>

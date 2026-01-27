@@ -20,6 +20,9 @@ Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'ind
 Route::middleware('auth')->prefix('security')->name('security.')->group(function () {
     Route::get('/users', [\App\Http\Controllers\SecurityController::class, 'users'])->name('users');
     Route::post('/users', [\App\Http\Controllers\SecurityController::class, 'storeUser'])->name('users.store');
+    Route::get('/users/{id}/edit', [\App\Http\Controllers\SecurityController::class, 'editUser'])->name('users.edit');
+    Route::put('/users/{id}', [\App\Http\Controllers\SecurityController::class, 'updateUser'])->name('users.update');
+    Route::delete('/users/{id}', [\App\Http\Controllers\SecurityController::class, 'destroyUser'])->name('users.destroy');
     Route::get('/audit', [\App\Http\Controllers\SecurityController::class, 'audit'])->name('audit');
 });
 
