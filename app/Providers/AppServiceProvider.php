@@ -22,5 +22,8 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
+
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Batch::class, \App\Policies\BatchPolicy::class);
+        \Illuminate\Support\Facades\Gate::policy(\App\Models\Dispatch::class, \App\Policies\DispatchPolicy::class);
     }
 }

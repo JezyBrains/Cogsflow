@@ -10,7 +10,7 @@ class BatchPolicy
 {
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->hasRole('admin')) {
+        if ($user->hasRole('admin') || $user->hasPermission('manage_logistics')) {
             return true;
         }
 
@@ -32,6 +32,7 @@ class BatchPolicy
     {
         return $user->hasRole('admin') ||
             $user->hasRole('logistics') ||
+            $user->hasPermission('manage_logistics') ||
             $user->hasRole('procurement') ||
             $user->hasRole('finance');
     }
