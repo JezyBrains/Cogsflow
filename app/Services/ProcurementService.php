@@ -29,6 +29,19 @@ class ProcurementService
     }
 
     /**
+     * Update an existing supplier.
+     */
+    public function updateSupplier(Supplier $supplier, array $data)
+    {
+        return DB::transaction(function () use ($supplier, $data) {
+            $oldValues = $supplier->toArray();
+            $supplier->update($data);
+            $this->audit->log('supplier_updated', $supplier, $oldValues, $data);
+            return $supplier;
+        });
+    }
+
+    /**
      * Create a new purchase order.
      */
     public function createPurchaseOrder(array $data, ?int $userId = null)

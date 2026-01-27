@@ -28,6 +28,8 @@ Route::middleware('auth')->prefix('procurement')->name('procurement.')->group(fu
     Route::get('/', [\App\Http\Controllers\ProcurementController::class, 'index'])->name('index');
     Route::get('/suppliers', [\App\Http\Controllers\ProcurementController::class, 'suppliers'])->name('suppliers');
     Route::get('/suppliers/{id}', [\App\Http\Controllers\ProcurementController::class, 'showSupplier'])->name('suppliers.show');
+    Route::get('/suppliers/{id}/edit', [\App\Http\Controllers\ProcurementController::class, 'editSupplier'])->name('suppliers.edit');
+    Route::put('/suppliers/{id}', [\App\Http\Controllers\ProcurementController::class, 'updateSupplier'])->name('suppliers.update');
     Route::post('/suppliers', [\App\Http\Controllers\ProcurementController::class, 'storeSupplier'])->name('suppliers.store');
     Route::get('/orders/{id}', [\App\Http\Controllers\ProcurementController::class, 'showPO'])->name('orders.show');
     Route::post('/orders', [\App\Http\Controllers\ProcurementController::class, 'storePO'])->name('orders.store');

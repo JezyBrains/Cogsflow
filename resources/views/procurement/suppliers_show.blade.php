@@ -43,7 +43,7 @@
                     </svg>
                     Return to Directory
                 </a>
-                <a href="#" class="zenith-button opacity-50 cursor-not-allowed">
+                <a href="{{ route('procurement.suppliers.edit', $supplier->id) }}" class="zenith-button">
                     EDIT PARTNER GRID
                 </a>
             </div>

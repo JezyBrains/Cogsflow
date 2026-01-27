@@ -52,6 +52,39 @@ class ProcurementController extends Controller
         return view('procurement.suppliers_show', compact('supplier'));
     }
 
+    public function editSupplier($id)
+    {
+        $supplier = Supplier::findOrFail($id);
+
+        if (!Auth::user()->can('update', $supplier)) {
+            abort(403, 'Unauthorized access to mutate partner data.');
+        }
+
+        return view('procurement.suppliers_edit', compact('supplier'));
+    }
+
+    public function updateSupplier(Request $request, $id)
+    {
+        $supplier = Supplier::findOrFail($id);
+
+        if (!Auth::user()->can('update', $supplier)) {
+            abort(403, 'Unauthorized access to mutate partner data.');
+        }
+
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'contact_person' => 'nullable|string',
+            'phone' => 'nullable|string',
+            'email' => 'nullable|email',
+            'address' => 'nullable|string',
+            'is_active' => 'required|boolean'
+        ]);
+
+        $this->procurement->updateSupplier($supplier, $data);
+
+        return redirect()->route('procurement.suppliers.show', $id)->with('success', 'Partner grid updated successfully.');
+    }
+
     public function storeSupplier(Request $request)
     {
         $data = $request->validate([
