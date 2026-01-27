@@ -12,7 +12,8 @@
                 </h2>
                 <p class="text-zenith-400 font-medium mt-1">Batch ID: <span
                         class="text-zenith-600 font-black">{{ $batch->batch_number }}</span> •
-                    {{ $batch->supplier->name ?? 'Unknown' }}</p>
+                    {{ $batch->supplier->name ?? 'Unknown' }}
+                </p>
             </div>
             <div class="flex gap-4">
                 <a href="{{ route('logistics.batches') }}" class="zenith-button-outline">
@@ -75,6 +76,7 @@
                                     <th>Identity</th>
                                     <th>Recorded Wt</th>
                                     <th>Moisture Content</th>
+                                    <th>Grade</th>
                                     <th>Discrepancy</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -109,6 +111,14 @@
                                                 data-field="actual_moisture">
                                         </td>
                                         <td>
+                                            <select class="bag-input bg-transparent border-none text-[10px] font-black uppercase focus:ring-0 p-0" data-field="condition_status">
+                                                <option value="Good" {{ ($bag->condition_status ?? 'Good') === 'Good' ? 'selected' : '' }}>PRIME</option>
+                                                <option value="Damaged" {{ ($bag->condition_status ?? '') === 'Damaged' ? 'selected' : '' }}>DAMAGED</option>
+                                                <option value="Wet" {{ ($bag->condition_status ?? '') === 'Wet' ? 'selected' : '' }}>WET</option>
+                                                <option value="Contaminated" {{ ($bag->condition_status ?? '') === 'Contaminated' ? 'selected' : '' }}>CONTAM</option>
+                                            </select>
+                                        </td>
+                                        <td>
                                             <div id="discrepancy-{{ $bag->id }}">
                                                 @php $diff = ($bag->actual_weight ?? $bag->weight_kg) - $bag->weight_kg; @endphp
                                                 <span
@@ -135,14 +145,9 @@
                                                 </span>
                                             </div>
                                         </td>
-                                        <td>
-                                            <button
-                                                onclick='ZenithUI.notify("info", "Scan serial to jump to row. Changes save automatically.")'
-                                                class="p-2 opacity-0 group-hover:opacity-100 text-zenith-200 hover:text-zenith-400 transition-all">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
+                                        <td class="flex items-center gap-1">
+                                            <button onclick='openNoteModal({{ $bag->id }}, "{{ addslashes($bag->inspection_notes ?? "") }}")' class="p-2 text-zenith-200 hover:text-zenith-500 transition-all" title="Manage Notes">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                             </button>
                                         </td>
                                     </tr>
@@ -171,7 +176,7 @@
                 formData.append('bag_id', bagId);
                 formData.append('actual_weight', row.querySelector('[data-field="actual_weight"]').value);
                 formData.append('actual_moisture', row.querySelector('[data-field="actual_moisture"]').value);
-                formData.append('condition_status', 'Good');
+                formData.append('condition_status', row.querySelector('[data-field="condition_status"]').value);
                 formData.append('dispatch_id', '{{ optional($batch->dispatches->first())->id ?? "" }}');
 
                 try {
