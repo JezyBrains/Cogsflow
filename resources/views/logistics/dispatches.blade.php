@@ -101,17 +101,18 @@
                                 </td>
                                 <td>
                                     <div class="flex flex-col gap-2">
+                                        @if($dispatch->batch_id)
+                                            <a href="{{ route('logistics.batches.show', $dispatch->batch_id) }}"
+                                                class="zenith-button-outline !px-4 !py-2 text-[10px] text-center">
+                                                VIEW BATCH
+                                            </a>
+                                        @endif
+
                                         @if($dispatch->status !== 'delivered')
                                             <a href="{{ route('logistics.dispatches.inspect', $dispatch->id) }}"
                                                 class="zenith-button-outline !px-4 !py-2 text-[10px] text-center">
                                                 PHYSICAL INSPECTION
                                             </a>
-                                            @if($dispatch->batch_id)
-                                                <a href="{{ route('logistics.batches.show', $dispatch->batch_id) }}"
-                                                    class="zenith-button-outline !px-4 !py-2 text-[10px] text-center">
-                                                    VIEW BATCH
-                                                </a>
-                                            @endif
                                             <form action="{{ route('logistics.dispatches.deliver', $dispatch->id) }}" method="POST"
                                                 onsubmit="zenithConfirmAction(event, 'Operational Node Arrival', 'Authorize arrival confirmation and localized stock integration?')">
                                                 @csrf
