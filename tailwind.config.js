@@ -22,12 +22,12 @@ export default {
                     100: '#f3f4f6',  // Secondary BG
                     200: '#e5e7eb',  // Borders
                     300: '#d1d5db',
-                    400: '#9ca3af',
-                    500: '#3b82f6',  // Primary Accent (Zenith Blue)
-                    600: '#2563eb',
-                    700: '#1d4ed8',
-                    800: '#1e293b',  // Text Primary
-                    900: '#0f172a',  // Dark Accents
+                    400: '#94a3b8',  // Slate-400 (Neutral)
+                    500: '#2E7D32',  // Strategic Green (Primary)
+                    600: '#1B5E20',  // Deep Forest Green
+                    700: '#134D16',  // Midnight Moss
+                    800: '#1e293b',  // Text Primary (Maintain Slate)
+                    900: '#0f172a',  // Dark Accents (Maintain Slate)
                 },
             },
             borderRadius: {

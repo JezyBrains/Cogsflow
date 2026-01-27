@@ -279,7 +279,7 @@
             <div class="p-6 border-t border-zenith-100 bg-zenith-50/50">
                 <div
                     class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-zenith-200 shadow-zenith-sm">
-                    <img src="https://ui-avatars.com/api/?name=John+Doe&background=3B82F6&color=fff"
+                    <img src="https://ui-avatars.com/api/?name=John+Doe&background=2E7D32&color=fff"
                         class="w-8 h-8 rounded-lg shadow-sm" alt="User">
                     <div class="flex-1 min-w-0">
                         <p class="text-xs font-bold text-zenith-800 truncate">John Doe</p>

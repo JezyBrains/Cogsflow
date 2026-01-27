@@ -150,12 +150,18 @@
 });
 
     // Unified confirm handler for form submissions
-    window.zenithConfirmAction = async (event, title, message) => {
+    window.zenithConfirmAction = (event, title, message) => {
         event.preventDefault();
-        const confirmed = await ZenithUI.confirm(title, message);
-        if (confirmed) {
-            event.target.onsubmit = null;
-            event.target.submit();
-        }
+        const form = event.target;
+
+        ZenithUI.confirm(title, message).then((confirmed) => {
+            if (confirmed) {
+                // Remove the onsubmit handler to prevent infinite loop
+                form.removeAttribute('onsubmit');
+                form.submit();
+            }
+        });
+
+        return false;
     };
 </script>
