@@ -88,3 +88,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/attachments', [\App\Http\Controllers\AttachmentController::class, 'store'])->name('attachments.store');
     Route::delete('/attachments/{id}', [\App\Http\Controllers\AttachmentController::class, 'destroy'])->name('attachments.destroy');
 });
+
+Route::get('/debug-auth', function () {
+    $user = auth()->user();
+    if (!$user)
+        return 'Not authenticated';
+    return [
+        'user' => [
+            'id' => $user->id,
+            'email' => $user->email,
+            'name' => $user->name,
+        ],
+        'roles' => $user->roles->pluck('slug')->toArray(),
+        'permissions' => \App\Models\Permission::whereHas('roles', function ($q) use ($user) {
+            $q->whereIn('roles.id', $user->roles->pluck('id'));
+        })->pluck('slug')->toArray(),
+    ];
+})->middleware(['auth']);

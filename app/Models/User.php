@@ -65,11 +65,11 @@ class User extends Authenticatable
 
     public function hasPermission($permissionSlug)
     {
-        foreach ($this->roles as $role) {
-            if ($role->permissions()->where('slug', $permissionSlug)->exists()) {
-                return true;
-            }
-        }
-        return false;
+        return \App\Models\Permission::where('slug', $permissionSlug)
+            ->whereHas('roles', function ($q) {
+                $q->whereHas('users', function ($uq) {
+                    $uq->where('users.id', $this->id);
+                });
+            })->exists();
     }
 }
