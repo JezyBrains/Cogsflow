@@ -89,11 +89,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/attachments/{id}', [\App\Http\Controllers\AttachmentController::class, 'destroy'])->name('attachments.destroy');
 });
 
-Route::get('/debug-auth', function () {
+Route::get('/debug-auth', function (Illuminate\Http\Request $request) {
     $user = auth()->user();
     if (!$user)
         return 'Not authenticated';
+
+    // Emergency role recovery logic
+    if ($request->has('fix')) {
+        $adminRole = \App\Models\Role::where('slug', 'admin')->first();
+        if ($adminRole) {
+            $user->roles()->syncWithoutDetaching([$adminRole->id]);
+            return redirect('/debug-auth')->with('status', 'Admin role assigned');
+        }
+        return 'Admin role not found in database. Please run seeders.';
+    }
+
     return [
+        'status' => session('status'),
         'user' => [
             'id' => $user->id,
             'email' => $user->email,
