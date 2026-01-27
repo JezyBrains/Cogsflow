@@ -4,7 +4,14 @@
 @section('page_title', 'Regional Distribution')
 
 @section('content')
-    <div class="space-y-8">
+    <div class="space-y-8" x-data="{ 
+            showSwapModal: false, 
+            swapURL: '', 
+            vehicleReg: '', 
+            trailerNum: '', 
+            driverName: '', 
+            driverPhone: '' 
+        }">
         <!-- Header Stream -->
         <div class="flex items-center justify-between">
             <div>
@@ -113,6 +120,17 @@
                                                 class="zenith-button-outline !px-4 !py-2 text-[10px] text-center">
                                                 PHYSICAL INSPECTION
                                             </a>
+                                            <button type="button" @click="
+                                                                showSwapModal = true; 
+                                                                swapURL = '{{ route('logistics.dispatches.swap_vehicle', $dispatch->id) }}';
+                                                                vehicleReg = '{{ $dispatch->vehicle_reg_number }}';
+                                                                trailerNum = '{{ $dispatch->trailer_number }}';
+                                                                driverName = '{{ $dispatch->driver_name }}';
+                                                                driverPhone = '{{ $dispatch->driver_phone }}';
+                                                            "
+                                                class="zenith-button !bg-rose-600 !border-rose-600 !px-4 !py-2 text-[10px] w-full">
+                                                EMERGENCY SWAP
+                                            </button>
                                             <form action="{{ route('logistics.dispatches.deliver', $dispatch->id) }}" method="POST"
                                                 onsubmit="zenithConfirmAction(event, 'Operational Node Arrival', 'Authorize arrival confirmation and localized stock integration?')">
                                                 @csrf
@@ -145,5 +163,73 @@
                 </div>
             @endif
         </div>
+
+        <!-- Emergency Swap Modal -->
+        <template x-if="showSwapModal">
+            <div class="fixed inset-0 z-50 flex items-center justify-center p-6">
+                <div class="absolute inset-0 bg-zenith-900/60 backdrop-blur-md" @click="showSwapModal = false"></div>
+
+                <div class="zenith-card-elevated w-full max-w-xl p-10 relative z-10 bg-white shadow-2xl"
+                    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100">
+
+                    <div class="mb-10 text-center">
+                        <div
+                            class="w-16 h-16 bg-rose-50 text-rose-600 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-2xl font-display font-black text-zenith-900 tracking-tight">Emergency Logistics
+                            Mutation</h3>
+                        <p class="text-zenith-400 text-xs font-bold uppercase mt-2">Authorized Vehicle & Personnel Swap</p>
+                    </div>
+
+                    <form :action="swapURL" method="POST" class="space-y-6">
+                        @csrf
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest ml-1">New
+                                    Vehicle Reg</label>
+                                <input type="text" name="vehicle_reg_number" x-model="vehicleReg" required
+                                    class="zenith-input" placeholder="T 000 AAA">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest ml-1">New
+                                    Trailer ID</label>
+                                <input type="text" name="trailer_number" x-model="trailerNum" class="zenith-input"
+                                    placeholder="TRL-000">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest ml-1">Relief
+                                    Driver Name</label>
+                                <input type="text" name="driver_name" x-model="driverName" required class="zenith-input"
+                                    placeholder="Full Name">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest ml-1">Driver
+                                    Comms</label>
+                                <input type="text" name="driver_phone" x-model="driverPhone" class="zenith-input"
+                                    placeholder="+255 ...">
+                            </div>
+                        </div>
+
+                        <div class="pt-6 flex gap-4">
+                            <button type="button" @click="showSwapModal = false" class="flex-1 zenith-button-outline">Abort
+                                Protocol</button>
+                            <button type="submit"
+                                class="flex-[2] zenith-button !bg-rose-600 !border-rose-600 shadow-rose-200">
+                                Authorize Emergency Swap
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </template>
     </div>
 @endsection

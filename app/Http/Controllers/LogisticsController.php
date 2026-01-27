@@ -155,4 +155,20 @@ class LogisticsController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Bag inspection recorded.']);
     }
+
+    public function swapVehicle(Request $request, $id)
+    {
+        $dispatch = \App\Models\Dispatch::findOrFail($id);
+
+        $data = $request->validate([
+            'vehicle_reg_number' => 'required|string|max:50',
+            'trailer_number' => 'nullable|string|max:50',
+            'driver_name' => 'required|string|max:255',
+            'driver_phone' => 'nullable|string|max:20'
+        ]);
+
+        $this->logisticsService->swapVehicle($id, $data);
+
+        return redirect()->back()->with('success', 'Emergency vehicle swap authorized and recorded.');
+    }
 }

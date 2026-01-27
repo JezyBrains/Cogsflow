@@ -45,6 +45,7 @@ Route::middleware('auth')->prefix('logistics')->name('logistics.')->group(functi
     Route::get('/dispatches/create', [\App\Http\Controllers\LogisticsController::class, 'createDispatch'])->name('dispatches.create');
     Route::post('/dispatches', [\App\Http\Controllers\LogisticsController::class, 'storeDispatch'])->name('dispatches.store');
     Route::post('/dispatches/{id}/deliver', [\App\Http\Controllers\LogisticsController::class, 'confirmDelivery'])->name('dispatches.deliver');
+    Route::post('/dispatches/{id}/swap-vehicle', [\App\Http\Controllers\LogisticsController::class, 'swapVehicle'])->name('dispatches.swap_vehicle');
 
     // Physical Inspection Terminal
     Route::get('/dispatches/{id}/inspect', [\App\Http\Controllers\LogisticsController::class, 'showInspection'])->name('dispatches.inspect');

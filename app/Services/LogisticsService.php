@@ -148,6 +148,28 @@ class LogisticsService
     }
 
     /**
+     * Emergency Vehicle Swap
+     */
+    public function swapVehicle(int $dispatchId, array $data)
+    {
+        return DB::transaction(function () use ($dispatchId, $data) {
+            $dispatch = Dispatch::findOrFail($dispatchId);
+            $oldValues = $dispatch->toArray();
+
+            $dispatch->update([
+                'vehicle_reg_number' => $data['vehicle_reg_number'],
+                'trailer_number' => $data['trailer_number'] ?? null,
+                'driver_name' => $data['driver_name'] ?? $dispatch->driver_name,
+                'driver_phone' => $data['driver_phone'] ?? $dispatch->driver_phone,
+            ]);
+
+            $this->auditService->log('dispatch_vehicle_swapped', $dispatch, $oldValues, $data);
+
+            return $dispatch;
+        });
+    }
+
+    /**
      * Record individual bag inspection with discrepancy tracking
      */
     public function recordBagInspection(array $data, ?int $userId = null)
