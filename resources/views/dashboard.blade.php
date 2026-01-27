@@ -27,10 +27,10 @@
                     <span class="zenith-badge bg-zenith-500/10 text-zenith-500">Live Uplink</span>
                 </div>
 
-                <!-- Zenith Stream Chart (Swapped Primary Green to Blue for Contrast) -->
+                <!-- Zenith Stream Chart (Restored to Brand Green) -->
                 <div class="h-72 w-full flex items-end gap-2.5 px-2 mb-8">
                     @for($i = 0; $i < 24; $i++)
-                        <div class="flex-1 bg-gradient-to-t from-blue-500/80 to-blue-500/10 rounded-t-lg transition-all duration-500 hover:from-blue-600 hover:translate-y-[-4px]"
+                        <div class="flex-1 bg-gradient-to-t from-zenith-500/80 to-zenith-500/10 rounded-t-lg transition-all duration-500 hover:from-zenith-600 hover:translate-y-[-4px]"
                             style="height: {{ rand(40, 90) }}%"></div>
                     @endfor
                 </div>
@@ -58,7 +58,7 @@
                 <!-- Active Agents Card -->
                 <div class="zenith-card p-10 flex-1 flex flex-col justify-between">
                     <div>
-                        <span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest block mb-1">Authorized
+                        <span class="text-[10px] font-bold text-zenith-500 uppercase tracking-widest block mb-1">Authorized
                             Agents</span>
                         <h3 class="text-4xl font-display font-black text-zenith-900">{{ $total_users }}</h3>
                         <p class="text-xs text-zenith-400 font-medium mt-3 leading-relaxed">Verified system operators across
@@ -74,7 +74,7 @@
                         </div>
                         <button class="w-px h-8 bg-zenith-100"></button>
                         <a href="{{ route('security.users') }}"
-                            class="text-[10px] font-bold text-blue-500 uppercase tracking-widest hover:text-blue-700">Manage</a>
+                            class="text-[10px] font-bold text-zenith-500 uppercase tracking-widest hover:text-zenith-700">Manage</a>
                     </div>
                 </div>
 
@@ -136,13 +136,12 @@
                     <tbody>
                         @forelse($recent_transactions as $transaction)
                             <tr class="hover:bg-zenith-50 transition-colors cursor-pointer group">
-                                <td class="font-mono text-[11px] text-blue-500">TX-{{ $transaction->id }}</td>
+                                <td class="font-mono text-[11px] text-zenith-500">TX-{{ $transaction->id }}</td>
                                 <td>
                                     <div class="flex items-center gap-3">
                                         <p class="text-xs font-bold text-zenith-800">{{ $transaction->description }}</p>
                                     </div>
-                                </td>
-                                <td class="text-xs font-bold text-blue-600">
+                                <td class="text-xs font-bold text-zenith-600">
                                     {{ number_format($transaction->amount) }} TZS
                                 </td>
                                 <td>

@@ -65,7 +65,7 @@
                 <div class="flex items-end justify-between">
                     <span class="text-3xl font-display font-black text-zenith-900">{{ $supplier->batches->count() }}</span>
                     <span
-                        class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md uppercase">{{ number_format($supplier->batches->sum('total_weight_kg'), 0) }}
+                        class="text-[10px] font-bold text-zenith-600 bg-zenith-50 px-2 py-1 rounded-md uppercase">{{ number_format($supplier->batches->sum('total_weight_kg'), 0) }}
                         KG Total</span>
                 </div>
             </div>
@@ -187,7 +187,7 @@
                                         </td>
                                         <td>
                                             <span
-                                                class="zenith-badge {{ $batch->status === 'accepted' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600' }}">
+                                                class="zenith-badge {{ $batch->status === 'accepted' ? 'bg-green-100 text-green-600' : 'bg-zenith-100 text-zenith-600' }}">
                                                 {{ strtoupper($batch->status) }}
                                             </span>
                                         </td>

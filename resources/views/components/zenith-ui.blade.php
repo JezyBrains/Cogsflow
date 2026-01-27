@@ -10,14 +10,14 @@
                 class="zenith-card !p-5 shadow-zenith-lg pointer-events-auto min-w-[320px] max-w-md border-l-4" :class="{
                     'border-green-500': toast.type === 'success',
                     'border-red-500': toast.type === 'error',
-                    'border-blue-500': toast.type === 'info',
+                    'border-zenith-500': toast.type === 'info',
                     'border-yellow-500': toast.type === 'warning'
                 }">
                 <div class="flex items-start gap-4">
                     <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0" :class="{
                             'bg-green-100 text-green-600': toast.type === 'success',
                             'bg-red-100 text-red-600': toast.type === 'error',
-                            'bg-blue-100 text-blue-600': toast.type === 'info',
+                            'bg-zenith-50 text-zenith-600': toast.type === 'info',
                             'bg-yellow-100 text-yellow-600': toast.type === 'warning'
                          }">
                         <template x-if="toast.type === 'success'"><svg class="w-4 h-4" fill="none" stroke="currentColor"

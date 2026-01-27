@@ -9,7 +9,7 @@
                 <p class="text-slate-500 text-sm mt-1">Unified Income & Expense Tracking</p>
             </div>
             <a href="{{ route('finance.create') }}"
-                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
+                class="bg-zenith-500 hover:bg-zenith-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
@@ -63,13 +63,13 @@
                     <div>
                         <h3 class="text-slate-500 text-xs font-semibold uppercase tracking-wider">Net Balance</h3>
                         <p
-                            class="text-2xl font-bold text-slate-800 mt-2 font-display {{ $summary['net_balance'] >= 0 ? 'text-blue-600' : 'text-red-500' }}">
+                            class="text-2xl font-bold text-slate-800 mt-2 font-display {{ $summary['net_balance'] >= 0 ? 'text-emerald-600' : 'text-red-500' }}">
                             {{ number_format($summary['net_balance'], 2) }} <span
                                 class="text-sm text-slate-400 font-normal">TZS</span>
                         </p>
                     </div>
-                    <div class="p-2 bg-blue-50 rounded-lg">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-2 bg-emerald-50 rounded-lg">
+                        <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3">
                             </path>
@@ -85,7 +85,7 @@
                 <h2 class="font-semibold text-slate-800">Transaction History</h2>
                 <div class="flex gap-2">
                     <a href="{{ route('reports.export', 'finance') }}"
-                        class="text-xs font-bold text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-2">
+                        class="text-xs font-bold text-slate-500 hover:text-zenith-500 transition-colors flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
@@ -157,7 +157,7 @@
                                     @endif
 
                                     <a href="{{ route('finance.edit', $trx->id) }}"
-                                        class="text-[10px] text-blue-600 hover:text-blue-800 font-black uppercase tracking-widest bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
+                                        class="text-[10px] text-zenith-600 hover:text-zenith-800 font-black uppercase tracking-widest bg-zenith-50 hover:bg-zenith-100 px-3 py-1.5 rounded-lg transition-colors">
                                         Edit
                                     </a>
 

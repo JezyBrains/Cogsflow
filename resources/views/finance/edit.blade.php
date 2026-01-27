@@ -26,7 +26,7 @@
                     <div class="space-y-2">
                         <label class="text-sm font-semibold text-slate-700">Category</label>
                         <select name="category_id" required
-                            class="w-full rounded-lg border-slate-200 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            class="w-full rounded-lg border-slate-200 focus:ring-zenith-500 focus:border-zenith-500 text-sm">
                             @foreach($categories as $category)
                                 <option value="{{ $category->id }}" {{ $transaction->category_id == $category->id ? 'selected' : '' }}>
                                     {{ $category->name }} ({{ ucfirst($category->type) }})
@@ -41,7 +41,7 @@
                         <div class="relative">
                             <input type="number" step="0.01" min="0.01" name="amount" required
                                 value="{{ $transaction->amount }}"
-                                class="w-full rounded-lg border-slate-200 focus:ring-blue-500 focus:border-blue-500 text-sm pl-12"
+                                class="w-full rounded-lg border-slate-200 focus:ring-zenith-500 focus:border-zenith-500 text-sm pl-12"
                                 placeholder="0.00">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-xs">TZS</span>
                         </div>
@@ -52,14 +52,14 @@
                         <label class="text-sm font-semibold text-slate-700">Transaction Date</label>
                         <input type="date" name="transaction_date" required
                             value="{{ $transaction->transaction_date->format('Y-m-d') }}"
-                            class="w-full rounded-lg border-slate-200 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            class="w-full rounded-lg border-slate-200 focus:ring-zenith-500 focus:border-zenith-500 text-sm">
                     </div>
 
                     <!-- Payment Method -->
                     <div class="space-y-2">
                         <label class="text-sm font-semibold text-slate-700">Payment Method</label>
                         <select name="payment_method" required
-                            class="w-full rounded-lg border-slate-200 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                            class="w-full rounded-lg border-slate-200 focus:ring-zenith-500 focus:border-zenith-500 text-sm">
                             <option value="Cash" {{ $transaction->payment_method === 'Cash' ? 'selected' : '' }}>Cash</option>
                             <option value="Bank Transfer" {{ $transaction->payment_method === 'Bank Transfer' ? 'selected' : '' }}>Bank Transfer</option>
                             <option value="Mobile Money" {{ $transaction->payment_method === 'Mobile Money' ? 'selected' : '' }}>Mobile Money</option>
@@ -73,7 +73,7 @@
                     <label class="text-sm font-semibold text-slate-700">Payee / Payer Name</label>
                     <input type="text" name="payee_payer_name" 
                         value="{{ $transaction->payee_payer_name }}"
-                        class="w-full rounded-lg border-slate-200 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                        class="w-full rounded-lg border-slate-200 focus:ring-zenith-500 focus:border-zenith-500 text-sm"
                         placeholder="Who is this payment for/from?">
                 </div>
 
@@ -81,7 +81,7 @@
                 <div class="space-y-2">
                     <label class="text-sm font-semibold text-slate-700">Additional Notes</label>
                     <textarea name="notes" rows="3"
-                        class="w-full rounded-lg border-slate-200 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                        class="w-full rounded-lg border-slate-200 focus:ring-zenith-500 focus:border-zenith-500 text-sm"
                         placeholder="Add some context to this transaction...">{{ $transaction->notes }}</textarea>
                 </div>
 
@@ -91,7 +91,7 @@
                         Cancel
                     </a>
                     <button type="submit"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
+                        class="bg-zenith-500 hover:bg-zenith-600 text-white px-6 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm">
                         Update Transaction
                     </button>
                 </div>

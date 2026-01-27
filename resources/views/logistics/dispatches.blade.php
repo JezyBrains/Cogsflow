@@ -102,7 +102,7 @@
                                 </td>
                                 <td>
                                     <span
-                                        class="zenith-badge {{ $dispatch->status === 'delivered' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600' }}">
+                                        class="zenith-badge {{ $dispatch->status === 'delivered' ? 'bg-green-100 text-green-600' : 'bg-zenith-100 text-zenith-600' }}">
                                         {{ strtoupper($dispatch->status) }}
                                     </span>
                                 </td>
