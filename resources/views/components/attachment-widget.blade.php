@@ -59,8 +59,8 @@ function uploadAttachment(input) {
     
     const formData = new FormData();
     formData.append('file', input.files[0]);
-    formData.append('attachable_type', '{{ $attachable_type }}');
-    formData.append('attachable_id', '{{ $attachable_id }}');
+    formData.append('attachable_type', {!! json_encode($attachable_type) !!});
+    formData.append('attachable_id', {!! json_encode($attachable_id) !!});
     
     const btn = input.parentElement.querySelector('button');
     const originalText = btn.innerHTML;
