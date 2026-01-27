@@ -43,9 +43,9 @@
                     </svg>
                     Return to Directory
                 </a>
-                <button class="zenith-button">
+                <a href="#" class="zenith-button opacity-50 cursor-not-allowed">
                     EDIT PARTNER GRID
-                </button>
+                </a>
             </div>
         </div>
 
@@ -95,40 +95,55 @@
             <div class="lg:col-span-2 space-y-6">
                 <div class="zenith-card">
                     <div class="p-6 border-b border-zenith-100 bg-zenith-50/20">
-                        <h3 class="text-lg font-display font-black text-zenith-900 italic tracking-tight">Active
-                            Relationship Stream</h3>
+                        <h3 class="text-lg font-display font-black text-zenith-900 italic tracking-tight">Purchase Protocols</h3>
                     </div>
-                    <div class="p-6">
-                        <div
-                            class="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-zenith-100 before:via-zenith-50 before:to-transparent">
-                            @forelse($supplier->purchaseOrders->sortByDesc('created_at')->take(5) as $po)
-                                <div class="relative flex items-center justify-between gap-6 group">
-                                    <div class="flex items-center gap-6">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-white border-4 border-zenith-50 flex items-center justify-center text-zenith-500 shadow-zenith-sm z-10">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                                </path>
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h4 class="text-xs font-black text-zenith-900 uppercase">Purchase Order Issued:
-                                                {{ $po->commodity_type }}</h4>
-                                            <p class="text-[10px] text-zenith-400 font-bold uppercase mt-1">Ref:
-                                                PO-{{ str_pad($po->id, 5, '0', STR_PAD_LEFT) }} •
-                                                {{ $po->created_at->format('d M, Y') }}</p>
-                                        </div>
-                                    </div>
-                                    <span
-                                        class="text-xs font-black text-zenith-600 bg-zenith-50 px-3 py-1 rounded-full uppercase">{{ number_format($po->total_quantity_kg, 0) }}
-                                        KG</span>
-                                </div>
-                            @empty
-                                <div class="text-center py-8 text-zenith-300 italic font-bold uppercase text-xs">No active
-                                    stream threads detected.</div>
-                            @endforelse
-                        </div>
+                    <div class="overflow-x-auto">
+                        <table class="zenith-table">
+                            <thead>
+                                <tr>
+                                    <th class="pl-8">Reference</th>
+                                    <th>Volume</th>
+                                    <th>Status</th>
+                                    <th>Dispatched</th>
+                                    <th>Remaining</th>
+                                    <th class="text-right pr-8">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($supplier->purchaseOrders->sortByDesc('created_at') as $po)
+                                    <tr>
+                                        <td class="pl-8">
+                                            <p class="text-xs font-black text-zenith-900">{{ $po->po_number }}</p>
+                                            <p class="text-[9px] text-zenith-400 font-bold uppercase">{{ $po->created_at->format('M d, Y') }}</p>
+                                        </td>
+                                        <td>
+                                            <p class="text-xs font-bold text-zenith-800">{{ number_format($po->total_quantity_kg) }} KG</p>
+                                            <p class="text-[9px] text-zenith-400 font-black uppercase">{{ $po->commodity_type }}</p>
+                                        </td>
+                                        <td>
+                                            <span class="zenith-badge {{ $po->status === 'issued' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500' }}">
+                                                {{ strtoupper($po->status) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="text-xs font-black text-emerald-600">{{ number_format($po->supplied_quantity_kg) }} KG</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-xs font-black text-rose-500">{{ number_format($po->remaining_quantity_kg) }} KG</span>
+                                        </td>
+                                        <td class="text-right pr-8">
+                                            <a href="{{ route('procurement.orders.show', $po->id) }}" class="text-[10px] font-black uppercase bg-zenith-50 text-zenith-600 px-3 py-1.5 rounded-lg hover:bg-zenith-900 hover:text-white transition-all">
+                                                Inspect
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="p-8 text-center text-zenith-300 italic font-bold uppercase text-xs">No active protocols detected.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -147,6 +162,7 @@
                                     <th>Quantity</th>
                                     <th>Grade</th>
                                     <th>Status</th>
+                                    <th class="text-right pr-8">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -174,6 +190,9 @@
                                                 class="zenith-badge {{ $batch->status === 'accepted' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600' }}">
                                                 {{ strtoupper($batch->status) }}
                                             </span>
+                                        </td>
+                                        <td class="text-right pr-8">
+                                            <a href="{{ route('logistics.batches.show', $batch->id) }}" class="text-[9px] font-black uppercase text-zenith-400 hover:text-zenith-900 underline underline-offset-4">View Node</a>
                                         </td>
                                     </tr>
                                 @endforeach

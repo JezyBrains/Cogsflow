@@ -25,9 +25,11 @@
             <div class="zenith-card p-8 bg-white border-zenith-200">
                 <p class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest mb-4">Cumulative Volume</p>
                 <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-3xl font-display font-black text-zenith-900 tracking-tight">{{ number_format($totalVolumeTons, 1) }} <span class="text-xs text-zenith-400 uppercase">MT</span></h3>
-                        <p class="text-[10px] font-bold text-zenith-400 mt-1 uppercase">{{ number_format($totalVolumeKg) }} KG</p>
+                    <div class="flex items-center gap-4">
+                        <div class="flex flex-col">
+                            <h3 class="text-4xl font-display font-black text-zenith-900 tracking-tight leading-none">{{ number_format($totalVolumeTons, 1) }} <span class="text-xs text-zenith-400 uppercase">MT</span></h3>
+                            <p class="text-[11px] font-black text-zenith-500 mt-2 uppercase tracking-tighter">Total Capacity: {{ number_format($totalVolumeKg) }} KG</p>
+                        </div>
                     </div>
                     <div class="w-12 h-12 rounded-2xl bg-zenith-50 flex items-center justify-center text-zenith-500 shadow-zenith-sm">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,8 +99,8 @@
                                     </p>
                                 </td>
                                 <td class="text-right pr-10 py-8">
-                                    <a href="{{ route('procurement.orders.show', $po->id) }}" class="zenith-button-outline px-4 py-2.5 rounded-xl text-[10px] uppercase tracking-widest bg-slate-50 border-slate-200 text-slate-500 hover:bg-zenith-500 hover:text-white hover:border-zenith-500 transition-all inline-block">
-                                        Inspect
+                                    <a href="{{ route('procurement.orders.show', $po->id) }}" class="zenith-button text-[10px] py-2 px-6 shadow-zenith-sm">
+                                        INSPECT
                                     </a>
                                 </td>
                             </tr>
