@@ -29,6 +29,18 @@ class LogisticsService
         if (!$userId) {
             throw new \Exception("Authentication context missing for batch creation.");
         }
+
+        // Secondary Capacity Validation
+        if (isset($data['purchase_order_id'])) {
+            $po = \App\Models\PurchaseOrder::find($data['purchase_order_id']);
+            if ($po) {
+                $incomingWeight = collect($bags)->sum('weight_kg');
+                if ($incomingWeight > $po->remaining_quantity_kg) {
+                    throw new \Exception("Batch weight (" . number_format($incomingWeight, 2) . " KG) exceeds remaining PO capacity (" . number_format($po->remaining_quantity_kg, 2) . " KG).");
+                }
+            }
+        }
+
         return DB::transaction(function () use ($data, $bags, $userId) {
             $batch = Batch::create([
                 'batch_number' => $data['batch_number'] ?? 'B-' . now()->format('YmdHis'),

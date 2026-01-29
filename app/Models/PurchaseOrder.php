@@ -35,11 +35,11 @@ class PurchaseOrder extends Model
     }
 
     /**
-     * Volume currently fulfilled by batches
+     * Volume currently fulfilled by batches (excluding rejected ones)
      */
     public function getSuppliedQuantityKgAttribute()
     {
-        return $this->batches()->sum('total_weight_kg');
+        return $this->batches()->where('status', '!=', 'rejected')->sum('total_weight_kg');
     }
 
     /**
@@ -48,5 +48,13 @@ class PurchaseOrder extends Model
     public function getRemainingQuantityKgAttribute()
     {
         return max(0, $this->total_quantity_kg - $this->supplied_quantity_kg);
+    }
+
+    /**
+     * Check if the PO is 100% fulfilled
+     */
+    public function isFull(): bool
+    {
+        return $this->remaining_quantity_kg <= 0;
     }
 }

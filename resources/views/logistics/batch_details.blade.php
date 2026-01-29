@@ -99,7 +99,8 @@
                                                 <input type="number" step="0.01"
                                                     value="{{ $bag->actual_weight ?? $bag->weight_kg }}"
                                                     class="bag-input w-24 bg-transparent border-none focus:ring-2 focus:ring-zenith-500 rounded-lg text-xs font-black text-zenith-800 p-1"
-                                                    data-field="actual_weight" data-ref="{{ $bag->weight_kg }}">
+                                                    data-field="actual_weight" data-ref="{{ $bag->weight_kg }}"
+                                                    {{ !in_array($batch->status, ['at_gate', 'in_inspection']) ? 'disabled' : '' }}>
                                                 <span class="text-[9px] text-zenith-200 block">REF:
                                                     {{ number_format($bag->weight_kg, 2) }}</span>
                                             </div>
@@ -108,10 +109,13 @@
                                             <input type="number" step="0.1"
                                                 value="{{ $bag->actual_moisture ?? $bag->moisture_content ?? 0 }}"
                                                 class="bag-input w-20 bg-transparent border-none focus:ring-2 focus:ring-zenith-500 rounded-lg text-xs font-black text-zenith-500 p-1"
-                                                data-field="actual_moisture">
+                                                data-field="actual_moisture"
+                                                {{ !in_array($batch->status, ['at_gate', 'in_inspection']) ? 'disabled' : '' }}>
                                         </td>
                                         <td>
-                                            <select class="bag-input bg-transparent border-none text-[10px] font-black uppercase focus:ring-0 p-0" data-field="condition_status">
+                                            <select class="bag-input bg-transparent border-none text-[10px] font-black uppercase focus:ring-0 p-0" 
+                                                data-field="condition_status"
+                                                {{ !in_array($batch->status, ['at_gate', 'in_inspection']) ? 'disabled' : '' }}>
                                                 <option value="Good" {{ ($bag->condition_status ?? 'Good') === 'Good' ? 'selected' : '' }}>PRIME</option>
                                                 <option value="Damaged" {{ ($bag->condition_status ?? '') === 'Damaged' ? 'selected' : '' }}>DAMAGED</option>
                                                 <option value="Wet" {{ ($bag->condition_status ?? '') === 'Wet' ? 'selected' : '' }}>WET</option>

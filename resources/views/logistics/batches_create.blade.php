@@ -30,10 +30,14 @@
                         onchange="autoFillFromPO(this)">
                         <option value="">-- STANDALONE BATCH (NO PO LINK) --</option>
                         @foreach($purchaseOrders as $po)
-                            <option value="{{ $po->id }}" data-supplier-id="{{ $po->supplier_id }}"
-                                data-commodity="{{ $po->commodity_type }}" data-weight="{{ $po->total_quantity_kg }}">
+                            <option value="{{ $po->id }}" 
+                                data-supplier-id="{{ $po->supplier_id }}"
+                                data-commodity="{{ $po->commodity_type }}" 
+                                data-weight="{{ $po->total_quantity_kg }}"
+                                data-remaining="{{ $po->remaining_quantity_kg }}"
+                                {{ (isset($selectedPo) && $selectedPo->id == $po->id) ? 'selected' : '' }}>
                                 {{ $po->po_number }} | {{ $po->supplier->name }} | {{ $po->commodity_type }}
-                                ({{ number_format($po->total_quantity_kg, 0) }} KG)
+                                ({{ number_format($po->remaining_quantity_kg, 0) }} KG LEFT)
                             </option>
                         @endforeach
                     </select>
@@ -64,9 +68,8 @@
 
                 <div class="grid grid-cols-2 gap-8">
                     <div>
-                        <label class="block text-[10px] font-black text-zenith-400 uppercase tracking-widest mb-3">Expected
-                            Volume (from PO)</label>
-                        <input type="text" id="expected_weight" class="zenith-input w-full bg-zenith-50 font-bold" readonly
+                        <label class="block text-[10px] font-black text-zenith-400 uppercase tracking-widest mb-3">Remaining Capacity (KG)</label>
+                        <input type="text" id="expected_weight" class="zenith-input w-full bg-zenith-50 font-black text-emerald-600" readonly
                             placeholder="N/A">
                     </div>
                     <div class="flex items-end">
@@ -137,9 +140,32 @@
             document.getElementById('bagStream').addEventListener('input', function(e) {
                 if (e.target.tagName === 'INPUT') {
                     checkAndAddRow();
+                    updateCurrentTotal();
                 }
             });
+
+            // Initial calculation
+            updateCurrentTotal();
         });
+
+        function updateCurrentTotal() {
+            let total = 0;
+            document.querySelectorAll('input[name$="[weight_kg]"]').forEach(input => {
+                total += parseFloat(input.value || 0);
+            });
+
+            const remainingStr = document.getElementById('expected_weight').value;
+            if (remainingStr && remainingStr !== 'N/A') {
+                const remainingRaw = parseFloat(remainingStr.replace(/,/g, '').replace(' KG', ''));
+                if (total > remainingRaw) {
+                    document.getElementById('expected_weight').classList.remove('text-emerald-600');
+                    document.getElementById('expected_weight').classList.add('text-rose-600', 'ring-2', 'ring-rose-500');
+                } else {
+                    document.getElementById('expected_weight').classList.remove('text-rose-600', 'ring-2', 'ring-rose-500');
+                    document.getElementById('expected_weight').classList.add('text-emerald-600');
+                }
+            }
+        }
 
         function checkAndAddRow() {
             const rows = document.querySelectorAll('#bagStream > div');
@@ -165,11 +191,11 @@
 
             const supplierId = option.getAttribute('data-supplier-id');
             const commodity = option.getAttribute('data-commodity');
-            const weight = option.getAttribute('data-weight');
+            const remaining = option.getAttribute('data-remaining');
 
             // Set values
             document.getElementById('supplier_id').value = supplierId;
-            document.getElementById('expected_weight').value = parseFloat(weight).toLocaleString() + ' KG';
+            document.getElementById('expected_weight').value = parseFloat(remaining).toLocaleString() + ' KG';
 
             // Fuzzy Commodity Matching
             const commoditySelect = document.getElementById('commodity_type');

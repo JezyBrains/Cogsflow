@@ -37,9 +37,19 @@ class LogisticsController extends Controller
             ->whereIn('status', ['issued', 'partially_fulfilled'])
             ->get()
             ->filter(function ($po) {
-                return $po->remaining_quantity_kg > 0;
+                return !$po->isFull();
             });
-        return view('logistics.batches_create', compact('suppliers', 'purchaseOrders'));
+
+        // Request-based auto-selection and bypass
+        $selectedPo = null;
+        if (request('po_id')) {
+            $selectedPo = \App\Models\PurchaseOrder::find(request('po_id'));
+            if ($selectedPo && $selectedPo->isFull()) {
+                return redirect()->route('logistics.batches')->with('info', 'Purchase Order protocol is already 100% fulfilled. Directed to active batches.');
+            }
+        }
+
+        return view('logistics.batches_create', compact('suppliers', 'purchaseOrders', 'selectedPo'));
     }
 
     /**
@@ -58,8 +68,14 @@ class LogisticsController extends Controller
 
         if ($request->purchase_order_id) {
             $po = \App\Models\PurchaseOrder::findOrFail($request->purchase_order_id);
-            if ($po->remaining_quantity_kg <= 0) {
+            if ($po->isFull()) {
                 return redirect()->back()->withErrors(['purchase_order_id' => 'This Purchase Order is already 100% fulfilled. No further batches can be recorded.']);
+            }
+
+            // Strict weight sum validation
+            $incomingWeight = collect($request->bags)->sum('weight_kg');
+            if ($incomingWeight > $po->remaining_quantity_kg) {
+                return redirect()->back()->withErrors(['purchase_order_id' => 'Batch weight (' . number_format($incomingWeight, 2) . ' KG) exceeds remaining PO capacity (' . number_format($po->remaining_quantity_kg, 2) . ' KG). intake rejected.']);
             }
         }
 
