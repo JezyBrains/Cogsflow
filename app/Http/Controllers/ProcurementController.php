@@ -30,7 +30,7 @@ class ProcurementController extends Controller
 
     public function showPO($id)
     {
-        $po = PurchaseOrder::with(['supplier', 'batches.receiver', 'creator'])->findOrFail($id);
+        $po = PurchaseOrder::with(['supplier', 'batches.receiver', 'batches.dispatches', 'creator'])->findOrFail($id);
 
         return view('procurement.po_details', compact('po'));
     }

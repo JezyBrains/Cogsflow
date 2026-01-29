@@ -29,7 +29,8 @@
                         New Intake Batch
                     </a>
                 @else
-                    <span class="zenith-badge bg-emerald-500 text-white px-6 py-3 rounded-2xl italic font-black shadow-emerald-200 shadow-lg">
+                    <span
+                        class="zenith-badge bg-emerald-500 text-white px-6 py-3 rounded-2xl italic font-black shadow-emerald-200 shadow-lg">
                         PROTOCOL COMPLETE
                     </span>
                 @endif
@@ -50,7 +51,8 @@
                                 {{ number_format($po->total_quantity_kg) }} <span class="text-xs text-zenith-400">KG</span>
                             </p>
                             <p class="text-[10px] text-zenith-400 font-bold uppercase mt-1">
-                                {{ number_format($po->total_quantity_kg / 1000, 2) }} Metric Tons (MT)</p>
+                                {{ number_format($po->total_quantity_kg / 1000, 2) }} Metric Tons (MT)
+                            </p>
                         </div>
 
                         <div class="pb-4 border-b border-white/10">
@@ -66,7 +68,8 @@
 
                         <div class="pb-4 border-b border-white/10">
                             <span class="text-[10px] font-bold uppercase text-zenith-300 block mb-1">Contract Value</span>
-                            <p class="text-lg font-black text-white italic tracking-tighter">{{ number_format($po->total_quantity_kg * $po->unit_price, 0) }} <span
+                            <p class="text-lg font-black text-white italic tracking-tighter">
+                                {{ number_format($po->total_quantity_kg * $po->unit_price, 0) }} <span
                                     class="text-[10px] text-zenith-400">TZS</span></p>
                         </div>
 
@@ -114,12 +117,14 @@
                         <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
                             <span class="text-[9px] font-bold text-emerald-600 uppercase block mb-1">Dispatched</span>
                             <p class="text-lg font-black text-emerald-700">{{ number_format($po->supplied_quantity_kg) }}
-                                <span class="text-[9px]">KG</span></p>
+                                <span class="text-[9px]">KG</span>
+                            </p>
                         </div>
                         <div class="p-4 bg-rose-50 rounded-2xl border border-rose-100">
                             <span class="text-[9px] font-bold text-rose-600 uppercase block mb-1">Remaining</span>
                             <p class="text-lg font-black text-rose-700">{{ number_format($po->remaining_quantity_kg) }}
-                                <span class="text-[9px]">KG</span></p>
+                                <span class="text-[9px]">KG</span>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -143,55 +148,73 @@
                                     <th class="pl-8">Batch Node</th>
                                     <th>Volume</th>
                                     <th>Unit Cost</th>
-                                    <th>Quality / Moisture</th>
+                                    <th>Dispatched Status</th>
                                     <th>Custodian</th>
                                     <th class="text-right pr-8">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($po->batches as $batch)
-                                    <tr class="hover:bg-zenith-50 transition-colors group">
-                                        <td class="pl-8 py-6">
-                                            <p class="text-xs font-black text-zenith-900">{{ $batch->batch_number }}</p>
-                                            <p class="text-[9px] text-zenith-400 font-bold uppercase mt-1">
-                                                {{ $batch->created_at->format('M d, Y • H:i') }}</p>
-                                        </td>
-                                        <td class="py-6">
-                                            <p class="text-sm font-black text-zenith-800">
-                                                {{ number_format($batch->total_weight_kg, 2) }} <span
-                                                    class="text-[10px] text-zenith-400">KG</span></p>
-                                            <p class="text-[9px] text-zenith-400 font-black uppercase">
-                                                {{ $batch->expected_bags }} Units</p>
-                                        </td>
-                                        <td class="py-6">
-                                            <p class="text-xs font-black text-emerald-600">
-                                                {{ number_format($batch->total_weight_kg * $po->unit_price, 0) }} <span class="text-[8px] uppercase">TZS</span>
-                                            </p>
-                                        </td>
-                                        <td class="py-6">
-                                            <div class="flex items-center gap-2">
-                                                <span
-                                                    class="zenith-badge {{ $batch->average_moisture <= 14 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
-                                                    M: {{ $batch->average_moisture }}%
-                                                </span>
-                                                <span
-                                                    class="text-[10px] font-black text-zenith-400 uppercase">{{ $batch->quality_grade ?? 'G1' }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="py-6">
-                                            <div class="flex items-center gap-2">
-                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($batch->receiver->name ?? 'System') }}&background=E2E8F0&color=475569"
-                                                    class="w-6 h-6 rounded-lg" alt="">
-                                                <span
-                                                    class="text-[10px] font-bold text-zenith-600">{{ $batch->receiver->name ?? 'Automation' }}</span>
-                                            </div>
-                                        </td>
-                                        <td class="text-right pr-8 py-6">
-                                            <a href="{{ route('logistics.batches.show', $batch->id) }}"
-                                                class="text-[10px] font-black uppercase text-zenith-400 hover:text-zenith-900 transition-colors underline decoration-zenith-100">View
-                                                Node</a>
-                                        </td>
-                                    </tr>
+                                                    <tr class="hover:bg-zenith-50 transition-colors group">
+                                                        <td class="pl-8 py-6">
+                                                            <p class="text-xs font-black text-zenith-900">{{ $batch->batch_number }}</p>
+                                                            <p class="text-[9px] text-zenith-400 font-bold uppercase mt-1">
+                                                                {{ $batch->created_at->format('M d, Y • H:i') }}
+                                                            </p>
+                                                        </td>
+                                                        <td class="py-6">
+                                                            <p class="text-sm font-black text-zenith-800">
+                                                                {{ number_format($batch->total_weight_kg, 2) }} <span
+                                                                    class="text-[10px] text-zenith-400">KG</span>
+                                                            </p>
+                                                            <p class="text-[9px] text-zenith-400 font-black uppercase">
+                                                                {{ $batch->expected_bags }} Units
+                                                            </p>
+                                                        </td>
+                                                        <td class="py-6">
+                                                            <p class="text-xs font-black text-emerald-600">
+                                                                {{ number_format($batch->total_weight_kg * $po->unit_price, 0) }} <span
+                                                                    class="text-[8px] uppercase">TZS</span>
+                                                            </p>
+                                                        </td>
+                                                        <td class="py-6">
+                                                            @php $dispatch = $batch->dispatches->where('status', '!=', 'cancelled')->first(); @endphp
+                                                            <div class="flex flex-col gap-1">
+                                                                <span class="zenith-badge {{ 
+                                                                            $batch->status === 'accepted' ? 'bg-green-100 text-green-600' : (
+                                    $batch->status === 'shipped' ? 'bg-amber-100 text-amber-600' :
+                                    'bg-zenith-100 text-zenith-500') 
+                                                                        }}">
+                                                                    {{ strtoupper(str_replace('_', ' ', $batch->status)) }}
+                                                                </span>
+                                                                @if($dispatch)
+                                                                    <span class="text-[9px] font-black text-zenith-400 uppercase tracking-tighter">
+                                                                        NODE: {{ $dispatch->dispatch_number }}
+                                                                    </span>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+                                                        <td class="py-6">
+                                                            <div class="flex items-center gap-2">
+                                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($batch->receiver->name ?? 'System') }}&background=E2E8F0&color=475569"
+                                                                    class="w-6 h-6 rounded-lg" alt="">
+                                                                <span
+                                                                    class="text-[10px] font-bold text-zenith-600">{{ $batch->receiver->name ?? 'Automation' }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-right pr-8 py-6">
+                                                            <div class="flex flex-col items-end gap-2">
+                                                                <a href="{{ route('logistics.batches.show', $batch->id) }}"
+                                                                    class="text-[10px] font-black uppercase text-zenith-400 hover:text-zenith-900 transition-colors underline decoration-zenith-100">View
+                                                                    Node</a>
+                                                                @if($dispatch)
+                                                                    <a href="{{ route('logistics.dispatches') }}"
+                                                                        class="text-[9px] font-bold text-zenith-500 hover:text-zenith-900 uppercase">Track
+                                                                        Transit</a>
+                                                                @endif
+                                                            </div>
+                                                        </td>
+                                                    </tr>
                                 @empty
                                     <tr>
                                         <td colspan="5" class="py-20 text-center">

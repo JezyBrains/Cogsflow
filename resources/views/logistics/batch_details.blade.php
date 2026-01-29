@@ -160,6 +160,23 @@
         </div>
     </div>
 
+    <!-- Note Management Modal -->
+    <div id="noteModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-6">
+        <div class="absolute inset-0 bg-zenith-900/60 backdrop-blur-md" onclick="closeNoteModal()"></div>
+        <div class="zenith-card-elevated w-full max-w-lg p-10 relative z-10 bg-white">
+            <h3 class="text-xl font-display font-black text-zenith-900 italic mb-2">Unit Note Protocol</h3>
+            <p class="text-[10px] text-zenith-400 font-bold uppercase tracking-widest mb-8">Synchronizing qualitative observations</p>
+            
+            <input type="hidden" id="modalBagId">
+            <textarea id="modalNoteLabel" class="zenith-input h-32 mb-6" placeholder="Enter observations..."></textarea>
+            
+            <div class="flex gap-4">
+                <button onclick="closeNoteModal()" class="flex-1 zenith-button-outline">Abort</button>
+                <button onclick="saveNote()" class="flex-2 zenith-button">Synchronize Note</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const bagInputs = document.querySelectorAll('.bag-input');
 
@@ -252,5 +269,58 @@
                 }
             }
         });
+
+        // Note Modal Management
+        function openNoteModal(id, currentNote) {
+            document.getElementById('modalBagId').value = id;
+            document.getElementById('modalNoteLabel').value = currentNote;
+            document.getElementById('noteModal').classList.remove('hidden');
+        }
+
+        function closeNoteModal() {
+            document.getElementById('noteModal').classList.add('hidden');
+        }
+
+        async function saveNote() {
+            const id = document.getElementById('modalBagId').value;
+            const note = document.getElementById('modalNoteLabel').value;
+            const row = document.querySelector(`tr[data-bag-id="${id}"]`);
+            const indicator = row.querySelector('.sync-indicator');
+            const badge = row.querySelector('.status-badge');
+
+            closeNoteModal();
+            indicator.classList.remove('hidden');
+
+            const formData = new FormData();
+            formData.append('bag_id', id);
+            formData.append('notes', note);
+            formData.append('actual_weight', row.querySelector('[data-field="actual_weight"]').value);
+            formData.append('actual_moisture', row.querySelector('[data-field="actual_moisture"]').value);
+            formData.append('condition_status', row.querySelector('[data-field="condition_status"]').value);
+
+            try {
+                const response = await fetch('{{ route("logistics.dispatches.inspect.bag") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    indicator.classList.add('hidden');
+                    badge.className = 'status-badge text-[10px] font-black uppercase px-2 py-0.5 rounded bg-green-50 text-green-600';
+                    badge.textContent = 'Verified';
+                    
+                    // Update the onclick handler with the new note
+                    const noteBtn = row.querySelector('button[onclick^="openNoteModal"]');
+                    noteBtn.setAttribute('onclick', `openNoteModal(${id}, "${note.replace(/"/g, '&quot;')}")`);
+                }
+            } catch (error) {
+                indicator.classList.add('hidden');
+                ZenithUI.notify('error', 'Note sync failure.');
+            }
+        }
     </script>
 @endsection
