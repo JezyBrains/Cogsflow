@@ -7,7 +7,7 @@
 
 @layer base {
     html {
-        @apply h-full antialiased;
+        @apply antialiased scroll-smooth;
     }
 
     body {

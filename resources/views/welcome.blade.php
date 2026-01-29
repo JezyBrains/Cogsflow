@@ -55,17 +55,10 @@
                     <a href="#products"
                         class="text-sm font-semibold text-gray-600 hover:text-[#2E7D32] transition-colors uppercase tracking-wide">Product</a>
 
-                    @auth
-                        <a href="{{ route('dashboard') }}"
-                            class="px-6 py-3 rounded-full bg-[#2E7D32] text-white text-sm font-bold shadow-lg hover:bg-[#1b5e20] transition-transform transform hover:-translate-y-0.5">
-                            Dashboard
-                        </a>
-                    @else
-                        <a href="#contact"
-                            class="px-6 py-3 rounded-full border-2 border-[#2E7D32] text-[#2E7D32] text-sm font-bold hover:bg-[#2E7D32] hover:text-white transition-all uppercase tracking-wide">
-                            Contact Us
-                        </a>
-                    @endauth
+                    <a href="#contact"
+                        class="px-6 py-3 rounded-full border-2 border-[#2E7D32] text-[#2E7D32] text-sm font-bold hover:bg-[#2E7D32] hover:text-white transition-all uppercase tracking-wide">
+                        Contact Us
+                    </a>
                 </div>
             </div>
         </div>
