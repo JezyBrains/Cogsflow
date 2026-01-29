@@ -11,7 +11,7 @@
     }
 
     body {
-        @apply font-sans bg-zenith-50 text-zenith-800 h-full overflow-hidden;
+        @apply font-sans bg-zenith-50 text-zenith-800 min-h-full;
     }
 
     h1,
