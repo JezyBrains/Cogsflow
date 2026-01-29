@@ -100,6 +100,8 @@ class LogisticsService
                 'driver_id' => $data['driver_id'] ?? null,
                 'driver_name' => $data['driver_name'] ?? null,
                 'driver_phone' => $data['driver_phone'] ?? null,
+                'driver_id_type' => $data['driver_id_type'] ?? null,
+                'driver_id_number' => $data['driver_id_number'] ?? null,
                 'destination' => $data['destination'],
                 'status' => 'pending',
                 'dispatcher_id' => $userId,
@@ -161,6 +163,8 @@ class LogisticsService
                 'trailer_number' => $data['trailer_number'] ?? null,
                 'driver_name' => $data['driver_name'] ?? $dispatch->driver_name,
                 'driver_phone' => $data['driver_phone'] ?? $dispatch->driver_phone,
+                'driver_id_type' => $data['driver_id_type'] ?? $dispatch->driver_id_type,
+                'driver_id_number' => $data['driver_id_number'] ?? $dispatch->driver_id_number,
             ]);
 
             $this->auditService->log('dispatch_vehicle_swapped', $dispatch, $oldValues, $data);

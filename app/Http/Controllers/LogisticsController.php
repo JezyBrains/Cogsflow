@@ -100,6 +100,10 @@ class LogisticsController extends Controller
             'vehicle_reg_number' => 'required|string',
             'destination' => 'required|string',
             'batch_id' => 'required|exists:batches,id',
+            'driver_name' => 'required|string|max:255',
+            'driver_phone' => 'required|string|max:20',
+            'driver_id_type' => 'required|string|max:50',
+            'driver_id_number' => 'required|string|max:50',
         ]);
 
         $this->logisticsService->createDispatch($request->all(), Auth::id());
@@ -174,7 +178,9 @@ class LogisticsController extends Controller
             'vehicle_reg_number' => 'required|string|max:50',
             'trailer_number' => 'nullable|string|max:50',
             'driver_name' => 'required|string|max:255',
-            'driver_phone' => 'nullable|string|max:20'
+            'driver_phone' => 'nullable|string|max:20',
+            'driver_id_type' => 'required|string|max:50',
+            'driver_id_number' => 'required|string|max:50',
         ]);
 
         $this->logisticsService->swapVehicle($id, $data);

@@ -62,6 +62,45 @@
                         <input type="datetime-local" name="estimated_arrival" class="zenith-input"
                             value="{{ now()->addDays(1)->format('Y-m-d\TH:i') }}">
                     </div>
+
+                    <div class="col-span-2 pt-4">
+                        <h4 class="text-xs font-black text-zenith-400 uppercase tracking-[0.2em] mb-6">Driver Particulars
+                        </h4>
+                        <div class="grid grid-cols-2 gap-8">
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-zenith-400 uppercase tracking-widest mb-3">Driver
+                                    Full Name</label>
+                                <input type="text" name="driver_name" class="zenith-input" placeholder="e.g. John Doe"
+                                    required>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-zenith-400 uppercase tracking-widest mb-3">Driver
+                                    Phone Number</label>
+                                <input type="text" name="driver_phone" class="zenith-input" placeholder="e.g. +255..."
+                                    required>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-zenith-400 uppercase tracking-widest mb-3">ID
+                                    Selection</label>
+                                <select name="driver_id_type" class="zenith-input w-full appearance-none" required>
+                                    <option value="National ID">National ID (NIDA)</option>
+                                    <option value="Driving License">Driving License</option>
+                                    <option value="Voter ID">Voter ID</option>
+                                    <option value="Passport">Passport</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-zenith-400 uppercase tracking-widest mb-3">ID
+                                    Number</label>
+                                <input type="text" name="driver_id_number" class="zenith-input" placeholder="ID Number"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="pt-6 border-t border-zenith-50 flex gap-4">

@@ -5,13 +5,15 @@
 
 @section('content')
     <div class="space-y-8" x-data="{ 
-            showSwapModal: false, 
-            swapURL: '', 
-            vehicleReg: '', 
-            trailerNum: '', 
-            driverName: '', 
-            driverPhone: '' 
-        }">
+                    showSwapModal: false, 
+                    swapURL: '', 
+                    vehicleReg: '', 
+                    trailerNum: '', 
+                    driverName: '', 
+                    driverPhone: '',
+                    driverIdType: '',
+                    driverIdNumber: ''
+                }">
         <!-- Header Stream -->
         <div class="flex items-center justify-between">
             <div>
@@ -121,13 +123,15 @@
                                                 PHYSICAL INSPECTION
                                             </a>
                                             <button type="button" @click="
-                                                                showSwapModal = true; 
-                                                                swapURL = '{{ route('logistics.dispatches.swap_vehicle', $dispatch->id) }}';
-                                                                vehicleReg = '{{ $dispatch->vehicle_reg_number }}';
-                                                                trailerNum = '{{ $dispatch->trailer_number }}';
-                                                                driverName = '{{ $dispatch->driver_name }}';
-                                                                driverPhone = '{{ $dispatch->driver_phone }}';
-                                                            "
+                                                                                        showSwapModal = true; 
+                                                                                        swapURL = '{{ route('logistics.dispatches.swap_vehicle', $dispatch->id) }}';
+                                                                                        vehicleReg = '{{ $dispatch->vehicle_reg_number }}';
+                                                                                        trailerNum = '{{ $dispatch->trailer_number }}';
+                                                                                        driverName = '{{ $dispatch->driver_name }}';
+                                                                                        driverPhone = '{{ $dispatch->driver_phone }}';
+                                                                                        driverIdType = '{{ $dispatch->driver_id_type }}';
+                                                                                        driverIdNumber = '{{ $dispatch->driver_id_number }}';
+                                                                                    "
                                                 class="zenith-button !bg-rose-600 !border-rose-600 !px-4 !py-2 text-[10px] w-full">
                                                 EMERGENCY SWAP
                                             </button>
@@ -216,6 +220,25 @@
                                     Comms</label>
                                 <input type="text" name="driver_phone" x-model="driverPhone" class="zenith-input"
                                     placeholder="+255 ...">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest ml-1">ID
+                                    Selection</label>
+                                <select name="driver_id_type" x-model="driverIdType"
+                                    class="zenith-input w-full appearance-none" required>
+                                    <option value="National ID">National ID (NIDA)</option>
+                                    <option value="Driving License">Driving License</option>
+                                    <option value="Voter ID">Voter ID</option>
+                                    <option value="Passport">Passport</option>
+                                </select>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-bold text-zenith-400 uppercase tracking-widest ml-1">ID
+                                    Number</label>
+                                <input type="text" name="driver_id_number" x-model="driverIdNumber" class="zenith-input"
+                                    placeholder="ID Number" required>
                             </div>
                         </div>
 

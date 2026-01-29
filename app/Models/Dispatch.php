@@ -14,6 +14,8 @@ class Dispatch extends Model
         'driver_id',
         'driver_name',
         'driver_phone',
+        'driver_id_type',
+        'driver_id_number',
         'destination',
         'route_plan',
         'status',
