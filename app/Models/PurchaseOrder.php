@@ -43,6 +43,17 @@ class PurchaseOrder extends Model
     }
 
     /**
+     * Volume officially dispatched (linked to a dispatch record)
+     */
+    public function getDispatchedQuantityKgAttribute()
+    {
+        return $this->batches()
+            ->whereHas('dispatches') // Only batches with at least one dispatch
+            ->where('status', '!=', 'rejected')
+            ->sum('total_weight_kg');
+    }
+
+    /**
      * Volume remaining to be fulfilled
      */
     public function getRemainingQuantityKgAttribute()

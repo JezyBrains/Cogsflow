@@ -126,7 +126,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <span class="text-xs font-black text-emerald-600">{{ number_format($po->supplied_quantity_kg) }} KG</span>
+                                            <span class="text-xs font-black text-emerald-600">{{ number_format($po->dispatched_quantity_kg) }} KG</span>
                                         </td>
                                         <td>
                                             <span class="text-xs font-black text-rose-500">{{ number_format($po->remaining_quantity_kg) }} KG</span>
@@ -186,10 +186,16 @@
                                                 class="text-[10px] font-black text-zenith-500 uppercase">{{ $batch->quality_grade ?? 'Pending' }}</span>
                                         </td>
                                         <td>
-                                            <span
-                                                class="zenith-badge {{ $batch->status === 'accepted' ? 'bg-green-100 text-green-600' : 'bg-zenith-100 text-zenith-600' }}">
-                                                {{ strtoupper($batch->status) }}
-                                            </span>
+                                            @php $dispatch = $batch->dispatches->where('status', '!=', 'cancelled')->first(); @endphp
+                                            @if($dispatch)
+                                                <span class="zenith-badge {{ $batch->status === 'accepted' ? 'bg-green-100 text-green-600' : 'bg-zenith-100 text-zenith-600' }}">
+                                                    DISPATCHED
+                                                </span>
+                                            @else
+                                                <span class="zenith-badge bg-zenith-50 text-zenith-300 italic">
+                                                    NOT DISPATCHED
+                                                </span>
+                                            @endif
                                         </td>
                                         <td class="text-right pr-8">
                                             <a href="{{ route('logistics.batches.show', $batch->id) }}" class="text-[9px] font-black uppercase text-zenith-400 hover:text-zenith-900 underline underline-offset-4">View Node</a>

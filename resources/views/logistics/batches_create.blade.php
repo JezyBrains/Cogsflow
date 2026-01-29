@@ -92,6 +92,9 @@
 
                     <div id="bagStream" class="space-y-3">
                         <div class="flex items-center gap-2 group relative">
+                            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-zenith-50 text-[10px] font-black text-zenith-400 sn-label">
+                                1
+                            </div>
                             <div class="grid grid-cols-3 gap-4 flex-1">
                                 <input type="number" step="0.1" name="bags[0][weight_kg]" class="zenith-input"
                                     placeholder="Weight (KG)" required>
@@ -100,7 +103,7 @@
                                 <input type="text" name="bags[0][serial]" class="zenith-input"
                                     placeholder="Serial (Optional)">
                             </div>
-                            <button type="button" onclick="if(document.querySelectorAll('#bagStream > div').length > 1) this.closest('.group').remove()"
+                            <button type="button" onclick="removeBagRow(this)"
                                 class="p-2 text-zenith-300 hover:text-red-500 transition-colors" title="Remove Entry">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
@@ -218,20 +221,37 @@
         function addBagRow() {
             const stream = document.getElementById('bagStream');
             const row = document.createElement('div');
-            row.className = 'flex items-center gap-2 group mt-3';
+            row.className = 'flex items-center gap-2 group mt-3 relative';
             row.innerHTML = `
+                                <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-zenith-50 text-[10px] font-black text-zenith-400 sn-label">
+                                    ${document.querySelectorAll('#bagStream > div').length + 1}
+                                </div>
                                 <div class="grid grid-cols-3 gap-4 flex-1">
                                     <input type="number" step="0.1" name="bags[${bagCount}][weight_kg]" class="zenith-input" placeholder="Weight (KG)" required>
                                     <input type="number" step="0.1" name="bags[${bagCount}][moisture]" class="zenith-input" placeholder="Moisture %" required>
                                     <input type="text" name="bags[${bagCount}][serial]" class="zenith-input" placeholder="Serial (Optional)">
                                 </div>
-                                <button type="button" onclick="if(document.querySelectorAll('#bagStream > div').length > 1) this.closest('.group').remove()"
+                                <button type="button" onclick="removeBagRow(this)"
                                     class="p-2 text-zenith-300 hover:text-red-500 transition-colors" title="Remove Entry">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                 </button>
                             `;
             stream.appendChild(row);
             bagCount++;
+        }
+
+        function removeBagRow(btn) {
+            if (document.querySelectorAll('#bagStream > div').length > 1) {
+                btn.closest('.group').remove();
+                recalculateSN();
+                updateCurrentTotal();
+            }
+        }
+
+        function recalculateSN() {
+            document.querySelectorAll('#bagStream .sn-label').forEach((el, index) => {
+                el.innerText = index + 1;
+            });
         }
     </script>
 @endsection
