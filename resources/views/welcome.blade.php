@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8">
@@ -16,10 +16,18 @@
         [x-cloak] {
             display: none !important;
         }
+
+        /* Forced Scroll Restoration */
+        html,
+        body {
+            overflow-y: auto !important;
+            height: auto !important;
+            min-height: 100vh !important;
+        }
     </style>
 </head>
 
-<body class="font-sans antialiased bg-white text-gray-700">
+<body class="font-sans antialiased bg-white text-gray-700 overflow-y-auto">
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
